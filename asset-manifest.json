@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/settlekar-web/static/css/main.272886c6.css",
-    "main.js": "/settlekar-web/static/js/main.3ba574fb.js",
+    "main.css": "/settlekar-web/static/css/main.c27909db.css",
+    "main.js": "/settlekar-web/static/js/main.a32e5ffb.js",
     "static/js/453.fafdcabb.chunk.js": "/settlekar-web/static/js/453.fafdcabb.chunk.js",
     "index.html": "/settlekar-web/index.html",
-    "main.272886c6.css.map": "/settlekar-web/static/css/main.272886c6.css.map",
-    "main.3ba574fb.js.map": "/settlekar-web/static/js/main.3ba574fb.js.map",
+    "main.c27909db.css.map": "/settlekar-web/static/css/main.c27909db.css.map",
+    "main.a32e5ffb.js.map": "/settlekar-web/static/js/main.a32e5ffb.js.map",
     "453.fafdcabb.chunk.js.map": "/settlekar-web/static/js/453.fafdcabb.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.272886c6.css",
-    "static/js/main.3ba574fb.js"
+    "static/css/main.c27909db.css",
+    "static/js/main.a32e5ffb.js"
   ]
 }
