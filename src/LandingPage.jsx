@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styles from './LandingPage.module.css';
+import logoImage from '/logo.png';
 
 const LandingPage = () => {
 
@@ -10,7 +11,7 @@ const LandingPage = () => {
       <header className={styles.header}>
         <div className={`${styles.container} ${styles.headerContainer}`}>
           <div className={styles.logo}>
-            <img src="/logo.png" alt="SettleKar" className={styles.logoImage} />
+            <img src={logoImage} alt="SettleKar" className={styles.logoImage} />
           </div>
           <nav className={styles.nav}>
             <a href="#features" className={styles.navLink}>Features</a>

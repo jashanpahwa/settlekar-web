@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styles from './PrivacyPolicy.module.css';
+import logoImage from '/logo.png';
 
 const PrivacyPolicy = () => {
 
@@ -10,7 +11,7 @@ const PrivacyPolicy = () => {
       <header className={styles.header}>
         <div className={`${styles.container} ${styles.headerContainer}`}>
           <div className={styles.logo}>
-            <img src="/logo.png" alt="SettleKar" className={styles.logoImage} />
+            <img src={logoImage} alt="SettleKar" className={styles.logoImage} />
           </div>
           <nav className={styles.nav}>
             <Link to="/" className={styles.navLink}>Home</Link>

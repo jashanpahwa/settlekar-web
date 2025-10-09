@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styles from './NotFound.module.css';
+import logoImage from '/logo.png';
 
 const NotFound = () => {
   return (
@@ -10,7 +11,7 @@ const NotFound = () => {
         <div className={`${styles.container} ${styles.headerContainer}`}>
           <div className={styles.logo}>
             <Link to="/">
-              <img src="/logo.png" alt="SettleKar" className={styles.logoImage} />
+              <img src={logoImage} alt="SettleKar" className={styles.logoImage} />
             </Link>
           </div>
           <nav className={styles.nav}>

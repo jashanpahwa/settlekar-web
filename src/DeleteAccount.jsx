@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './DeleteAccount.module.css';
+import logoImage from '/logo.png';
 
 const DeleteAccount = () => {
   const [step, setStep] = useState(1);
@@ -96,7 +97,7 @@ const DeleteAccount = () => {
         <div className={`${styles.container} ${styles.headerContainer}`}>
           <div className={styles.logo}>
             <Link to="/">
-              <img src="/logo.png" alt="SettleKar" className={styles.logoImage} />
+              <img src={logoImage} alt="SettleKar" className={styles.logoImage} />
             </Link>
           </div>
           <nav className={styles.nav}>
