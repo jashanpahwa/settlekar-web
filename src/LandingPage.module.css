@@ -1,0 +1,856 @@
+/* Landing Page Styles - CSS Modules Version */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+.landingPage {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  line-height: 1.6;
+  color: #0F172A;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Header */
+.header {
+  background: #0A2540;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 1000;
+}
+
+.headerContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 20px;
+}
+
+.logoH2 {
+  color: #4f46e5;
+  font-size: 1.8rem;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+}
+
+.logoImage {
+  
+  max-width: 250px;
+  object-fit: contain;
+}
+
+.nav {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  
+}
+
+.navherf{
+  color: #fff;
+}
+
+.navLink {
+  text-decoration: none;
+  color: #fff;
+  font-weight: 500;
+  transition: color 0.3s;
+  font-size: 1rem;
+}
+
+.navLink:hover {
+  color: #93C5FD;
+}
+
+/* Hero Section */
+.hero {
+  background: linear-gradient(180deg, #0A2540 0%, #93C5FD 100%);
+  color: white;
+  padding: 120px 0 80px;
+  position: relative;
+  overflow: hidden;
+  margin-top: 70px;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 30% 20%, rgba(147, 197, 253, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.heroContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+}
+
+.heroContent h1 {
+  font-size: 3.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  line-height: 1.2;
+}
+
+.heroContent p {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  opacity: 0.9;
+  line-height: 1.6;
+}
+
+.ctaButtons {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 3rem;
+}
+
+.btn {
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s;
+  display: inline-block;
+}
+
+.btnPrimary {
+  background: #fff;
+  color: #0A2540;
+}
+
+.btnPrimary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.btnSecondary {
+  background: transparent;
+  color: white;
+  border: 2px solid white;
+}
+
+.btnSecondary:hover {
+  background: white;
+  color: #0A2540;
+}
+
+/* Hero Stats */
+.heroStats {
+  display: flex;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.statNumber {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #93C5FD;
+}
+
+.statLabel {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  text-align: center;
+}
+
+/* Phone Mockup */
+.heroImage {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+}
+
+.phoneMockup {
+  position: relative;
+  transform: perspective(1000px) rotateY(-5deg) rotateX(5deg);
+  transition: transform 0.3s ease;
+}
+
+.phoneMockup:hover {
+  transform: perspective(1000px) rotateY(-2deg) rotateX(2deg);
+}
+
+.phoneFrame {
+  width: 320px;
+  height: 640px;
+  background: linear-gradient(145deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+  border-radius: 40px;
+  padding: 8px;
+  box-shadow: 
+    0 0 0 2px #333,
+    0 0 0 3px #555,
+    0 20px 40px rgba(0,0,0,0.4),
+    0 40px 80px rgba(0,0,0,0.2),
+    inset 0 2px 4px rgba(255,255,255,0.1);
+  position: relative;
+}
+
+.phoneNotch {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 140px;
+  height: 28px;
+  background: #000;
+  border-radius: 0 0 20px 20px;
+  z-index: 10;
+}
+
+.phoneSpeaker {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 6px;
+  background: #333;
+  border-radius: 3px;
+  z-index: 11;
+}
+
+.phoneCamera {
+  position: absolute;
+  top: 18px;
+  right: 40px;
+  width: 12px;
+  height: 12px;
+  background: radial-gradient(circle, #1a1a1a 30%, #333 70%);
+  border-radius: 50%;
+  z-index: 11;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);
+}
+
+.phoneScreen {
+  width: 100%;
+  height: 100%;
+  background: #f8fafc;
+  border-radius: 32px;
+  overflow: hidden;
+  position: relative;
+}
+
+.phoneHomeIndicator {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 140px;
+  height: 4px;
+  background: rgba(255,255,255,0.3);
+  border-radius: 2px;
+}
+
+.statusBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px 8px;
+  background: #0A2540;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.statusLeft .time {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+}
+
+.statusRight {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.statusRight span {
+  font-size: 12px;
+}
+
+.appPreview {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.appHeader {
+  background: #f8fafc;
+  padding: 20px 16px 16px;
+  color: #0F172A;
+}
+
+.headerContent {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.searchContainer {
+  background: #FFFFFF;
+  border-radius: 24px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid #E2E8F0;
+}
+
+.searchIconContainer {
+  background: rgba(10, 37, 64, 0.1);
+  border-radius: 50%;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.searchIcon {
+  font-size: 14px;
+  color: #64748B;
+}
+
+.searchText {
+  font-size: 14px;
+  color: #0F172A;
+  font-weight: 600;
+  flex: 1;
+  text-align: center;
+  font-family: 'Inter', sans-serif;
+}
+
+.searchArrow {
+  background: rgba(10, 37, 64, 0.1);
+  border-radius: 50%;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748B;
+  font-size: 12px;
+}
+
+.appContent {
+  padding: 16px;
+  flex: 1;
+  background: #f8fafc;
+  overflow-y: auto;
+}
+
+.propertyCardFeatured {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  margin-bottom: 16px;
+  border: 1px solid #E2E8F0;
+}
+
+.propertyImage {
+  height: 140px;
+  background: linear-gradient(135deg, #93C5FD, #2563EB);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.propertyBadge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: rgba(0,0,0,0.7);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+}
+
+.propertyTypeBadge {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  background: rgba(0,0,0,0.7);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+}
+
+.wishlistBtn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(255,255,255,0.9);
+  color: #333;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.propertyInfo {
+  padding: 12px;
+}
+
+.locationRatingRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.propertyLocation {
+  font-size: 12px;
+  color: #64748B;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.star {
+  font-size: 10px;
+}
+
+.ratingText {
+  font-size: 10px;
+  color: #0F172A;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+}
+
+.propertyTitle {
+  font-size: 12px;
+  font-weight: 400;
+  color: #64748B;
+  margin-bottom: 4px;
+  font-family: 'Inter', sans-serif;
+  line-height: 1.3;
+}
+
+.propertyFeatures {
+  font-size: 10px;
+  color: #64748B;
+  margin-bottom: 8px;
+  font-family: 'Inter', sans-serif;
+}
+
+.propertyPrice {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0A2540;
+  font-family: 'Inter', sans-serif;
+}
+
+.propertyPrice span {
+  font-size: 10px;
+  font-weight: 400;
+  color: #64748B;
+}
+
+.citySection {
+  margin-bottom: 20px;
+}
+
+.sectionTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0F172A;
+  margin-bottom: 12px;
+  font-family: 'Inter', sans-serif;
+}
+
+.propertyList {
+  background: white;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  border: 1px solid #E2E8F0;
+}
+
+.propertyItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+}
+
+.propertyItem:not(:last-child) {
+  border-bottom: 1px solid #F3F4F6;
+}
+
+.propertyThumb {
+  width: 40px;
+  height: 30px;
+  background: linear-gradient(135deg, #E2E8F0, #CBD5E1);
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.propertyDetails {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.propertyName {
+  font-size: 11px;
+  color: #0F172A;
+  font-family: 'Inter', sans-serif;
+}
+
+.propertyRent {
+  font-size: 11px;
+  font-weight: 600;
+  color: #0A2540;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Features Section */
+.features {
+  padding: 80px 0;
+  background: #f8fafc;
+}
+
+.features h2 {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 3rem;
+  color: #1f2937;
+}
+
+.featuresGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2rem;
+}
+
+.featureCard {
+  background: white;
+  padding: 2rem;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  transition: transform 0.3s;
+}
+
+.featureCard:hover {
+  transform: translateY(-5px);
+}
+
+.featureIcon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.featureCard h3 {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  color: #1f2937;
+}
+
+.featureCard p {
+  color: #6b7280;
+  line-height: 1.6;
+}
+
+/* How It Works Section */
+.howItWorks {
+  padding: 80px 0;
+  background: white;
+}
+
+.howItWorks h2 {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 3rem;
+  color: #1f2937;
+}
+
+.stepsContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  gap: 3rem;
+  margin-top: 3rem;
+}
+
+.step {
+  text-align: center;
+  position: relative;
+}
+
+.stepNumber {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #0A2540, #2563EB);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 auto 1.5rem;
+}
+
+.stepContent h3 {
+  color: #0A2540;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+}
+
+.stepContent h4 {
+  font-size: 1.3rem;
+  color: #1f2937;
+  margin-bottom: 1rem;
+}
+
+.stepContent p {
+  color: #6b7280;
+  line-height: 1.6;
+}
+
+/* Download Section */
+.download {
+  padding: 80px 0;
+  background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+  color: white;
+  text-align: center;
+}
+
+.download h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.download p {
+  font-size: 1.2rem;
+  margin-bottom: 3rem;
+  opacity: 0.9;
+}
+
+.downloadButtons {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.downloadBtn {
+  background: #fff;
+  color: #333;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: transform 0.3s;
+  min-width: 200px;
+}
+
+.downloadBtn:hover {
+  transform: translateY(-3px);
+}
+
+.btnContent {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.btnIcon {
+  font-size: 2rem;
+}
+
+.btnText {
+  text-align: left;
+}
+
+.btnText span {
+  display: block;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.btnText strong {
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.appFeatures {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.appFeature {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.featureCheck {
+  color: #10B981;
+  font-weight: 700;
+}
+
+.comingSoon {
+  font-style: italic;
+  opacity: 0.7;
+}
+
+/* Footer */
+.footer {
+  background: #1f2937;
+  color: white;
+  padding: 60px 0 20px;
+}
+
+.footerContent {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.footerSection h3, .footerSection h4 {
+  margin-bottom: 1rem;
+  color: #f9fafb;
+}
+
+.footerSection p {
+  opacity: 0.8;
+  line-height: 1.6;
+}
+
+.footerSection ul {
+  list-style: none;
+}
+
+.footerSection ul li {
+  margin-bottom: 0.5rem;
+}
+
+.footerSection ul li a, .footerLink {
+  color: #d1d5db;
+  text-decoration: none;
+  transition: color 0.3s;
+  font-size: 1rem;
+}
+
+.footerSection ul li a:hover, .footerLink:hover {
+  color: #fff;
+}
+
+.footerBottom {
+  border-top: 1px solid #374151;
+  padding-top: 2rem;
+  text-align: center;
+  opacity: 0.7;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .heroContainer {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  
+  .heroContent h1 {
+    font-size: 2.5rem;
+  }
+  
+  .phoneMockup {
+    width: 250px;
+    height: 500px;
+  }
+  
+  .nav {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .logoImage {
+    height: 70px;
+    max-width: 180px;
+  }
+  
+  .downloadButtons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .featuresGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .ctaButtons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .heroStats {
+    justify-content: center;
+  }
+  
+  .appFeatures {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .stepsContainer {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .heroContent h1 {
+    font-size: 2rem;
+  }
+  
+  .heroStats {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .phoneMockup {
+    width: 220px;
+    height: 440px;
+  }
+}

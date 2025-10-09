@@ -1,0 +1,661 @@
+/* DeleteAccount.css - CSS Modules Version */
+.deleteAccountPage {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Header Styles */
+.header {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid #e2e8f0;
+  padding: 1rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.headerContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.logoImage {
+  height: 40px;
+  width: auto;
+}
+
+.nav {
+  display: flex;
+  gap: 2rem;
+}
+
+.navLink {
+  color: #64748b;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.navLink:hover {
+  color: #0a2540;
+}
+
+/* Container */
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Main Content */
+.deleteAccountContainer {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  margin: 2rem auto;
+  padding: 3rem;
+  max-width: 700px;
+}
+
+.deleteAccountHeader {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.deleteAccountHeader h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 1rem;
+  letter-spacing: -0.5px;
+}
+
+.deleteAccountHeader p {
+  font-size: 1.125rem;
+  color: #64748b;
+  line-height: 1.6;
+}
+
+/* Progress Indicator */
+.progressIndicator {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 3rem;
+  position: relative;
+}
+
+.progressIndicator::before {
+  content: '';
+  position: absolute;
+  top: 20px;
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background: #e2e8f0;
+  z-index: 1;
+}
+
+.progressStep {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+  flex: 1;
+}
+
+.stepNumber {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.progressStep.active .stepNumber {
+  background: #2563eb;
+  color: white;
+}
+
+.progressStep.completed .stepNumber {
+  background: #10b981;
+  color: white;
+}
+
+.progressStep span {
+  font-size: 0.875rem;
+  color: #64748b;
+  font-weight: 500;
+  text-align: center;
+}
+
+.progressStep.active span {
+  color: #0f172a;
+  font-weight: 600;
+}
+
+/* Form Styles */
+.deleteAccountForm {
+  margin-bottom: 3rem;
+}
+
+.formStep {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.formStep h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 2rem;
+}
+
+.formGroup {
+  margin-bottom: 1.5rem;
+}
+
+.formGroup label {
+  display: block;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+.formGroup input,
+.formGroup select,
+.formGroup textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+  font-family: inherit;
+}
+
+.formGroup input:focus,
+.formGroup select:focus,
+.formGroup textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.formGroup small {
+  display: block;
+  color: #64748b;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.formGroup textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* Warning Boxes */
+.warningBox,
+.confirmationBox,
+.finalWarning {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  display: flex;
+  gap: 1rem;
+}
+
+.confirmationBox {
+  background: #fff7ed;
+  border-color: #fed7aa;
+}
+
+.finalWarning {
+  background: #fef2f2;
+  border-color: #fca5a5;
+}
+
+.warningIcon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.warningContent h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #dc2626;
+  margin-bottom: 0.5rem;
+}
+
+.warningContent p {
+  color: #7f1d1d;
+  line-height: 1.5;
+}
+
+.warningContent ul {
+  margin: 0.5rem 0 0 1rem;
+  color: #7f1d1d;
+}
+
+.warningContent li {
+  margin-bottom: 0.25rem;
+}
+
+/* Data Retention Info */
+.dataRetentionInfo {
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.dataRetentionInfo h4 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #0369a1;
+  margin-bottom: 0.5rem;
+}
+
+.dataRetentionInfo p {
+  color: #075985;
+  line-height: 1.5;
+}
+
+/* Review Summary */
+.reviewSummary {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.reviewSummary h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 1rem;
+}
+
+.summaryItem {
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.summaryItem:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.summaryItem strong {
+  color: #374151;
+  display: inline-block;
+  min-width: 80px;
+}
+
+/* Checkbox Styles */
+.checkboxLabel {
+  display: flex !important;
+  align-items: flex-start;
+  gap: 0.75rem;
+  cursor: pointer;
+  font-weight: 400 !important;
+  line-height: 1.5;
+}
+
+.checkboxLabel input[type="checkbox"] {
+  width: auto !important;
+  margin: 0;
+}
+
+.checkmark {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #d1d5db;
+  border-radius: 4px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* Button Styles */
+.btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.btnPrimary {
+  background: #2563eb;
+  color: white;
+}
+
+.btnPrimary:hover:not(:disabled) {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+.btnSecondary {
+  background: #64748b;
+  color: white;
+}
+
+.btnSecondary:hover:not(:disabled) {
+  background: #475569;
+}
+
+.btnDanger {
+  background: #dc2626;
+  color: white;
+}
+
+.btnDanger:hover:not(:disabled) {
+  background: #b91c1c;
+}
+
+.btnOutline {
+  background: transparent;
+  color: #64748b;
+  border: 2px solid #e2e8f0;
+}
+
+.btnOutline:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.btnOutlineSmall {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  background: transparent;
+  color: #2563eb;
+  border: 1px solid #2563eb;
+}
+
+.btnOutlineSmall:hover {
+  background: #2563eb;
+  color: white;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* Form Navigation */
+.formNavigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.navRight {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+/* Alternative Options */
+.alternativeOptions {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 2rem;
+  margin-top: 2rem;
+}
+
+.alternativeOptions h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 0.5rem;
+}
+
+.alternativeOptions > p {
+  color: #64748b;
+  margin-bottom: 1.5rem;
+}
+
+.alternativesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.alternativeCard {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.alternativeCard h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 0.5rem;
+}
+
+.alternativeCard p {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin-bottom: 1rem;
+  line-height: 1.4;
+}
+
+/* Success Page */
+.successContainer {
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.successIcon {
+  width: 80px;
+  height: 80px;
+  background: #10b981;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 0 auto 2rem;
+}
+
+.successContainer h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 1rem;
+}
+
+.successContainer p {
+  font-size: 1.125rem;
+  color: #64748b;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.successActions {
+  margin-top: 2rem;
+}
+
+/* Footer */
+.footer {
+  background: #0f172a;
+  color: white;
+  padding: 3rem 0 1rem;
+  margin-top: 4rem;
+}
+
+.footerContent {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.footerSection h3,
+.footerSection h4 {
+  margin-bottom: 1rem;
+  color: white;
+}
+
+.footerSection p,
+.footerSection li {
+  color: #94a3b8;
+  line-height: 1.6;
+}
+
+.footerSection ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footerSection li {
+  margin-bottom: 0.5rem;
+}
+
+.footerSection a {
+  color: #94a3b8;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footerSection a:hover {
+  color: white;
+}
+
+.footerBottom {
+  border-top: 1px solid #334155;
+  padding-top: 1rem;
+  text-align: center;
+}
+
+.footerBottom p {
+  color: #64748b;
+  margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1rem;
+  }
+
+  .deleteAccountContainer {
+    padding: 2rem 1.5rem;
+    margin: 1rem auto;
+  }
+
+  .deleteAccountHeader h1 {
+    font-size: 2rem;
+  }
+
+  .progressIndicator {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .progressIndicator::before {
+    display: none;
+  }
+
+  .progressStep {
+    flex-direction: row;
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .stepNumber {
+    margin-bottom: 0;
+    margin-right: 1rem;
+  }
+
+  .formNavigation {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .navRight {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .alternativesGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .headerContainer {
+    padding: 0 1rem;
+  }
+
+  .nav {
+    gap: 1rem;
+  }
+
+  .navLink {
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .deleteAccountContainer {
+    padding: 1.5rem 1rem;
+  }
+
+  .btn {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+  }
+
+  .navRight {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .navRight .btn {
+    width: 100%;
+  }
+}

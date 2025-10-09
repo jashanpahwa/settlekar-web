@@ -1,0 +1,256 @@
+/* Privacy Policy Styles - CSS Modules Version */
+.privacyPolicy {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  line-height: 1.6;
+  color: #333;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Header */
+.header {
+  background: #fff;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 1000;
+}
+
+.headerContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 20px;
+}
+
+.logoH2 {
+  color: #4f46e5;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.logoImage {
+  height: 40px;
+  width: auto;
+  max-width: 150px;
+  object-fit: contain;
+}
+
+.navLink {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  transition: all 0.3s;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.navLink:hover {
+  color: #4f46e5;
+  background: #f3f4f6;
+}
+
+/* Main Content */
+.privacyContent {
+  flex: 1;
+  padding: 120px 0 60px;
+  background: #f9fafb;
+}
+
+.privacyContentContainer {
+  max-width: 800px;
+  background: white;
+  padding: 3rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.privacyContent h1 {
+  font-size: 2.5rem;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.lastUpdated {
+  text-align: center;
+  color: #6b7280;
+  font-style: italic;
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.policySection {
+  margin-bottom: 2.5rem;
+}
+
+.policySection h2 {
+  font-size: 1.5rem;
+  color: #1f2937;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.policySection h3 {
+  font-size: 1.2rem;
+  color: #374151;
+  margin: 1.5rem 0 0.75rem 0;
+}
+
+.policySection p {
+  margin-bottom: 1rem;
+  color: #4b5563;
+  line-height: 1.7;
+}
+
+.policySection ul {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+}
+
+.policySection li {
+  margin-bottom: 0.5rem;
+  color: #4b5563;
+  line-height: 1.6;
+}
+
+.policySection li strong {
+  color: #1f2937;
+}
+
+.contactInfo {
+  background: #f3f4f6;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+
+.contactInfo p {
+  margin-bottom: 0.5rem;
+  color: #374151;
+}
+
+.contactInfo strong {
+  color: #1f2937;
+}
+
+/* Footer */
+.footer {
+  background: #1f2937;
+  color: white;
+  padding: 60px 0 20px;
+  margin-top: auto;
+}
+
+.footerContent {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.footerSection h3, .footerSection h4 {
+  margin-bottom: 1rem;
+  color: #f9fafb;
+}
+
+.footerSection p {
+  opacity: 0.8;
+  line-height: 1.6;
+}
+
+.footerSection ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footerSection ul li {
+  margin-bottom: 0.5rem;
+}
+
+.footerSection ul li a, .footerLink {
+  color: #d1d5db;
+  text-decoration: none;
+  transition: color 0.3s;
+  font-size: 1rem;
+}
+
+.footerSection ul li a:hover, .footerLink:hover {
+  color: #fff;
+}
+
+.footerBottom {
+  border-top: 1px solid #374151;
+  padding-top: 2rem;
+  text-align: center;
+  opacity: 0.7;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .privacyContentContainer {
+    padding: 2rem 1.5rem;
+    margin: 0 10px;
+  }
+  
+  .privacyContent h1 {
+    font-size: 2rem;
+  }
+  
+  .policySection h2 {
+    font-size: 1.3rem;
+  }
+  
+  .headerContainer {
+    padding: 1rem 10px;
+  }
+  
+  .logoH2 {
+    font-size: 1.5rem;
+  }
+  
+  .logoImage {
+    height: 35px;
+    max-width: 120px;
+  }
+  
+  .footerContent {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .privacyContent {
+    padding: 100px 0 40px;
+  }
+  
+  .privacyContentContainer {
+    padding: 1.5rem 1rem;
+    margin: 0 5px;
+  }
+  
+  .privacyContent h1 {
+    font-size: 1.8rem;
+  }
+  
+  .policySection {
+    margin-bottom: 2rem;
+  }
+  
+  .policySection ul {
+    padding-left: 1rem;
+  }
+}
