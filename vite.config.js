@@ -5,15 +5,9 @@ import react from '@vitejs/plugin-react'
 export default defineConfig(({ command, mode }) => {
   const config = {
     plugins: [react()],
+    // Use relative path for GitHub Pages deployment
+    base: command === 'build' ? '/settlekar-web/' : '/',
   }
- 
-  if (command === 'serve') {
-    // Development server configuration
-    config.base = '/'
-  } else {
-    // Production build configuration
-    config.base = 'https://jashanpahwa.github.io/settlekar-web/'
-  }
- 
+  
   return config
 })

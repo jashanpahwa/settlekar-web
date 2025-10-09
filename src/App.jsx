@@ -7,9 +7,12 @@ import PrivacyPolicy from './PrivacyPolicy.jsx';
 import DeleteAccount from './DeleteAccount.jsx';
 import NotFound from './NotFound.jsx';
 
+// Get base name for router based on environment
+const basename = import.meta.env.PROD ? '/settlekar-web' : '';
+
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={basename}>
       <div className="App">
         <Routes>
           <Route path="/" element={<LandingPage />} />
