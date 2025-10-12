@@ -8,7 +8,7 @@ import DeleteAccount from './DeleteAccount.jsx';
 import NotFound from './NotFound.jsx';
 
 // Get base name for router based on environment
-const basename = import.meta.env.PROD ? '/settlekar-web' : '';
+const basename = '';
 
 function App() {
   return (
