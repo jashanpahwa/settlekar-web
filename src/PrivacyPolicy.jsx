@@ -15,6 +15,7 @@ const PrivacyPolicy = () => {
           </div>
           <nav className={styles.nav}>
             <Link to="/" className={styles.navLink}>Home</Link>
+            <Link to="/terms-of-service" className={styles.navLink}>Terms of Service</Link>
             <Link to="/delete-account" className={styles.navLink}>Delete Account</Link>
           </nav>
         </div>
@@ -268,7 +269,27 @@ const PrivacyPolicy = () => {
               <p>Your trusted partner in finding the perfect rental property.</p>
             </div>
             <div className={styles.footerSection}>
-              <h4>Quick Links</h4>
+              <h4>Legal</h4>
+              <ul>
+                <li>
+                  <Link to="/privacy-policy" className={styles.footerLink}>
+                    Privacy Policy
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/terms-of-service" className={styles.footerLink}>
+                    Terms of Service
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/delete-account" className={styles.footerLink}>
+                    Delete Account
+                  </Link>
+                </li>
+              </ul>
+            </div>
+            <div className={styles.footerSection}>
+              <h4>Support</h4>
               <ul>
                 <li>
                   <Link to="/" className={styles.footerLink}>

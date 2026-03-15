@@ -20,6 +20,9 @@ const LandingPage = () => {
             <Link to="/privacy-policy" className={styles.navLink}>
               Privacy Policy
             </Link>
+            <Link to="/terms-of-service" className={styles.navLink}>
+              Terms of Service
+            </Link>
           </nav>
         </div>
       </header>
@@ -266,6 +269,11 @@ const LandingPage = () => {
                 <li>
                   <Link to="/privacy-policy" className={styles.footerLink}>
                     Privacy Policy
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/terms-of-service" className={styles.footerLink}>
+                    Terms of Service
                   </Link>
                 </li>
                 <li>

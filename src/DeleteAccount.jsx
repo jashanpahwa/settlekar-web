@@ -103,6 +103,7 @@ const DeleteAccount = () => {
           <nav className={styles.nav}>
             <Link to="/" className={styles.navLink}>Home</Link>
             <Link to="/privacy-policy" className={styles.navLink}>Privacy Policy</Link>
+            <Link to="/terms-of-service" className={styles.navLink}>Terms of Service</Link>
           </nav>
         </div>
       </header>
@@ -355,10 +356,16 @@ const DeleteAccount = () => {
               <p>Your trusted partner in finding the perfect rental property.</p>
             </div>
             <div className={styles.footerSection}>
+              <h4>Legal</h4>
+              <ul>
+                <li><Link to="/privacy-policy">Privacy Policy</Link></li>
+                <li><Link to="/terms-of-service">Terms of Service</Link></li>
+              </ul>
+            </div>
+            <div className={styles.footerSection}>
               <h4>Support</h4>
               <ul>
                 <li><a href="mailto:support@settlekar.com">Contact Support</a></li>
-                <li><Link to="/privacy-policy">Privacy Policy</Link></li>
                 <li><a href="#help">Help Center</a></li>
               </ul>
             </div>
