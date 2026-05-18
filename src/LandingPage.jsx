@@ -1,9 +1,37 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import styles from './LandingPage.module.css';
 import logoImage from '/logo.png';
 
 const LandingPage = () => {
+  const location = useLocation();
+  
+  // Google Play Store URL for SettleKar app
+  const googlePlayUrl = 'https://play.google.com/store/apps/details?id=com.settlekar.settlekar';
+
+  // Handle hash navigation when component mounts or hash changes
+  useEffect(() => {
+    // Check if there's a hash in the URL (like #features or #how-it-works)
+    const hash = window.location.hash;
+    if (hash && (hash === '#features' || hash === '#how-it-works' || hash === '#download')) {
+      const element = document.getElementById(hash.substring(1));
+      if (element) {
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+      }
+    }
+  }, [location]);
+
+  const handleScrollToSection = (sectionId, e) => {
+    e.preventDefault();
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+      // Update URL hash without causing page jump
+      window.history.pushState(null, '', `#${sectionId}`);
+    }
+  };
 
   return (
     <div className={styles.landingPage}>
@@ -14,9 +42,27 @@ const LandingPage = () => {
             <img src={logoImage} alt="SettleKar" className={styles.logoImage} />
           </div>
           <nav className={styles.nav}>
-            <a href="#features" className={styles.navLink}>Features</a>
-            <a href="#how-it-works" className={styles.navLink}>How It Works</a>
-            <a href="#download" className={styles.navLink}>Download</a>
+            <a 
+              href="#features" 
+              onClick={(e) => handleScrollToSection('features', e)}
+              className={styles.navLink}
+            >
+              Features
+            </a>
+            <a 
+              href="#how-it-works" 
+              onClick={(e) => handleScrollToSection('how-it-works', e)}
+              className={styles.navLink}
+            >
+              How It Works
+            </a>
+            <a 
+              href="#download" 
+              onClick={(e) => handleScrollToSection('download', e)}
+              className={styles.navLink}
+            >
+              Download
+            </a>
             <Link to="/privacy-policy" className={styles.navLink}>
               Privacy Policy
             </Link>
@@ -38,8 +84,21 @@ const LandingPage = () => {
               property discovery with location-based search, real-time updates, and direct owner communication.
             </p>
             <div className={styles.ctaButtons}>
-              <a href="#download" className={`${styles.btn} ${styles.btnPrimary}`}>Download App</a>
-              <a href="#features" className={`${styles.btn} ${styles.btnSecondary}`}>Explore Features</a>
+              <a 
+                href={googlePlayUrl} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className={`${styles.btn} ${styles.btnPrimary}`}
+              >
+                Download App
+              </a>
+              <a 
+                href="#features" 
+                onClick={(e) => handleScrollToSection('features', e)} 
+                className={`${styles.btn} ${styles.btnSecondary}`}
+              >
+                Explore Features
+              </a>
             </div>
             <div className={styles.heroStats}>
               <div className={styles.stat}>
@@ -215,7 +274,12 @@ const LandingPage = () => {
           <h2>Download SettleKar Today</h2>
           <p>Join thousands of users who have found their perfect rental homes. Available on Android and iOS.</p>
           <div className={styles.downloadButtons}>
-            <a href="#" className={`${styles.downloadBtn} android`}>
+            <a 
+              href={googlePlayUrl} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className={`${styles.downloadBtn} android`}
+            >
               <div className={styles.btnContent}>
                 <div className={styles.btnIcon}>📱</div>
                 <div className={styles.btnText}>
@@ -263,9 +327,30 @@ const LandingPage = () => {
             <div className={styles.footerSection}>
               <h4>Quick Links</h4>
               <ul>
-                <li><a href="#features">Features</a></li>
-                <li><a href="#how-it-works">How It Works</a></li>
-                <li><a href="#download">Download</a></li>
+                <li>
+                  <a 
+                    href="#features" 
+                    onClick={(e) => handleScrollToSection('features', e)}
+                  >
+                    Features
+                  </a>
+                </li>
+                <li>
+                  <a 
+                    href="#how-it-works" 
+                    onClick={(e) => handleScrollToSection('how-it-works', e)}
+                  >
+                    How It Works
+                  </a>
+                </li>
+                <li>
+                  <a 
+                    href="#download" 
+                    onClick={(e) => handleScrollToSection('download', e)}
+                  >
+                    Download
+                  </a>
+                </li>
                 <li>
                   <Link to="/privacy-policy" className={styles.footerLink}>
                     Privacy Policy
