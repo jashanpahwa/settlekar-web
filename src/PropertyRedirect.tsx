@@ -5,20 +5,18 @@ function PropertyRedirect() {
   const { id } = useParams();
 
   useEffect(() => {
-    if (!id) return;
+  if (!id) return;
 
-    const deepLink =
-      `settlekar://property/detail-property?id=${id}`;
+  const deepLink =
+    `settlekar://property/detail-property?id=${id}`;
 
-    // Try opening app
-    window.location.href = deepLink;
+  window.location.href = deepLink;
 
-    // Fallback to Play Store if app not installed
-    setTimeout(() => {
-      window.location.href =
-        'https://play.google.com/store/apps/details?id=com.settlekar.settlekar';
-    });
-  }, [id]);
+  setTimeout(() => {
+    window.location.href =
+      'https://play.google.com/store/apps/details?id=com.settlekar.settlekar';
+  });
+}, [id]);
 
   return (
     <div

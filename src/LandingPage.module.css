@@ -93,9 +93,11 @@
 
 /* Hero Section */
 .hero {
-  background: linear-gradient(180deg, #0A2540 0%, #93C5FD 100%);
+  background: radial-gradient(circle at 80% 20%, rgba(37, 99, 235, 0.15), transparent 50%),
+              radial-gradient(circle at 20% 80%, rgba(147, 197, 253, 0.1), transparent 50%),
+              linear-gradient(180deg, #0A2540 0%, #0F172A 100%);
   color: white;
-  padding: 160px 0 80px;
+  padding: 180px 0 100px;
   position: relative;
   overflow: hidden;
   margin-top: 0px;
@@ -108,7 +110,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(circle at 30% 20%, rgba(147, 197, 253, 0.1) 0%, transparent 50%);
+  background: radial-gradient(circle at 30% 20%, rgba(147, 197, 253, 0.12) 0%, transparent 55%);
   pointer-events: none;
 }
 
@@ -291,6 +293,692 @@
   height: 100%;
   object-fit: cover;
   display: block;
+}
+
+/* Interactive Web Listings Explorer */
+.listingsSection {
+  padding: 100px 0;
+  background: #f8fafc;
+  position: relative;
+}
+
+.listingsHeader {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto 3rem;
+}
+
+.listingsHeader h2 {
+  font-size: 2.75rem;
+  font-weight: 800;
+  color: #0F172A;
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+}
+
+.listingsHeader p {
+  font-size: 1.15rem;
+  color: #64748B;
+  line-height: 1.6;
+}
+
+.cityTabs {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 3.5rem;
+  background: rgba(15, 23, 42, 0.04);
+  padding: 6px;
+  border-radius: 30px;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+  border: 1px solid rgba(15, 23, 42, 0.02);
+}
+
+.cityTab {
+  border: none;
+  background: transparent;
+  padding: 10px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #475569;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cityTab:hover {
+  color: #0F172A;
+  background: rgba(15, 23, 42, 0.04);
+}
+
+.activeTab {
+  background: #2563EB;
+  color: white !important;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
+}
+
+.webPropertiesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 2.5rem;
+}
+
+.webPropertyCard {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.webPropertyCard:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.07);
+  border-color: rgba(37, 99, 235, 0.15);
+}
+
+.cardImageContainer {
+  position: relative;
+  height: 230px;
+  overflow: hidden;
+}
+
+.cardImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.webPropertyCard:hover .cardImage {
+  transform: scale(1.06);
+}
+
+.cardBadge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 30px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.cardRating {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #0F172A;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.cardContent {
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.cardContent h3 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #0F172A;
+  margin-bottom: 0.5rem;
+  line-height: 1.3;
+}
+
+.cardAddress {
+  font-size: 0.95rem;
+  color: #64748B;
+  margin-bottom: 1rem;
+}
+
+.cardFeatures {
+  font-size: 0.9rem;
+  color: #475569;
+  padding: 12px 0;
+  border-top: 1px dashed #E2E8F0;
+  border-bottom: 1px dashed #E2E8F0;
+  margin-bottom: 1.5rem;
+}
+
+.cardFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+}
+
+.cardPrice {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #2563EB;
+}
+
+.cardPrice small {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #64748B;
+}
+
+.cardCta {
+  text-decoration: none;
+  background: transparent;
+  color: #2563EB;
+  border: 1.5px solid #2563EB;
+  padding: 8px 18px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.cardCta:hover {
+  background: #2563EB;
+  color: white;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.2);
+}
+
+/* Pricing / Listing Plans Section */
+.pricingSection {
+  padding: 100px 0;
+  background: white;
+  position: relative;
+}
+
+.pricingHeader {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto 4rem;
+}
+
+.pricingHeader h2 {
+  font-size: 2.75rem;
+  font-weight: 800;
+  color: #0F172A;
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+}
+
+.pricingHeader p {
+  font-size: 1.15rem;
+  color: #64748B;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.billingToggleContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  font-weight: 600;
+  color: #64748B;
+  font-size: 1.05rem;
+}
+
+.activeBilling {
+  color: #0F172A;
+}
+
+.toggleSwitch {
+  width: 58px;
+  height: 32px;
+  background: #E2E8F0;
+  border-radius: 20px;
+  position: relative;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  padding: 0;
+}
+
+.toggleSwitch:hover {
+  background: #CBD5E1;
+}
+
+.toggleSwitch.toggled {
+  background: #2563EB;
+}
+
+.toggleKnob {
+  width: 24px;
+  height: 24px;
+  background: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+
+.toggleSwitch.toggled .toggleKnob {
+  transform: translateX(26px);
+}
+
+.discountBadge {
+  background: #ECFDF5;
+  color: #059669;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 12px;
+  margin-left: 6px;
+  border: 1px solid rgba(5, 150, 105, 0.15);
+}
+
+.pricingGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2.5rem;
+  align-items: stretch;
+}
+
+.pricingCard {
+  background: white;
+  border: 1px solid #E2E8F0;
+  border-radius: 24px;
+  padding: 3rem 2.25rem;
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.pricingCard:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+}
+
+.popularCard {
+  background: linear-gradient(135deg, #0A2540 0%, #0F172A 100%);
+  color: white;
+  border: none;
+  box-shadow: 0 20px 40px rgba(10, 37, 64, 0.15);
+}
+
+.popularCard:hover {
+  box-shadow: 0 25px 50px rgba(10, 37, 64, 0.25);
+}
+
+.popularBadge {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #2563EB;
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 6px 18px;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.cardHeader h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.popularCard .cardHeader h3 {
+  color: white;
+}
+
+.pricingCard:not(.popularCard) .cardHeader h3 {
+  color: #0F172A;
+}
+
+.planPrice {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: 1.5rem;
+}
+
+.planPrice h4 {
+  font-size: 3.5rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.planPrice span {
+  font-size: 1rem;
+  color: #64748B;
+  margin-left: 6px;
+  font-weight: 500;
+}
+
+.popularCard .planPrice span {
+  color: #94A3B8;
+}
+
+.cardHeader p {
+  font-size: 0.95rem;
+  color: #64748B;
+  margin-bottom: 2.5rem;
+  line-height: 1.5;
+}
+
+.popularCard .cardHeader p {
+  color: #94A3B8;
+}
+
+.cardFeaturesList {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 3rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  flex-grow: 1;
+}
+
+.cardFeaturesList li {
+  display: flex;
+  align-items: center;
+  font-size: 0.95rem;
+  color: #334155;
+  font-weight: 500;
+}
+
+.popularCard .cardFeaturesList li {
+  color: #E2E8F0;
+}
+
+.checkIcon {
+  color: #10B981;
+  font-weight: 800;
+  margin-right: 12px;
+  font-size: 1.1rem;
+}
+
+.crossIcon {
+  color: #94A3B8;
+  font-weight: 800;
+  margin-right: 12px;
+  font-size: 1.1rem;
+}
+
+.disabledFeature {
+  opacity: 0.55;
+}
+
+.planBtn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid #CBD5E1;
+  background: white;
+  color: #0F172A;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.planBtn:hover {
+  background: #F8FAFC;
+  border-color: #94A3B8;
+  transform: translateY(-2px);
+}
+
+.planBtnPrimary {
+  background: #2563EB;
+  color: white;
+  border: none;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+}
+
+.planBtnPrimary:hover {
+  background: #1D4ED8;
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.55);
+  transform: translateY(-2px);
+}
+
+/* Testimonials Section */
+.testimonialsSection {
+  padding: 100px 0;
+  background: #f8fafc;
+  position: relative;
+}
+
+.testimonialsHeader {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto 4rem;
+}
+
+.testimonialsHeader h2 {
+  font-size: 2.75rem;
+  font-weight: 800;
+  color: #0F172A;
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+}
+
+.testimonialsHeader p {
+  font-size: 1.15rem;
+  color: #64748B;
+  line-height: 1.6;
+}
+
+.testimonialsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2.5rem;
+}
+
+.testimonialCard {
+  background: white;
+  border-radius: 24px;
+  padding: 2.5rem;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.015);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.testimonialCard:hover {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+  border-color: rgba(37, 99, 235, 0.12);
+}
+
+.stars {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 1.25rem;
+}
+
+.starIcon {
+  color: #F59E0B;
+  font-size: 1.2rem;
+}
+
+.comment {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #334155;
+  margin-bottom: 2rem;
+  font-style: italic;
+  font-weight: 450;
+  flex-grow: 1;
+}
+
+.userProfile {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: auto;
+}
+
+.avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #E2E8F0;
+  transition: border-color 0.3s;
+}
+
+.testimonialCard:hover .avatar {
+  border-color: #2563EB;
+}
+
+.userInfo h4 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0F172A;
+  margin: 0 0 2px 0;
+}
+
+.userInfo span {
+  font-size: 0.85rem;
+  color: #64748B;
+  font-weight: 550;
+}
+
+/* FAQ Accordion Section */
+.faqSection {
+  padding: 100px 0;
+  background: white;
+  position: relative;
+}
+
+.faqHeader {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto 4rem;
+}
+
+.faqHeader h2 {
+  font-size: 2.75rem;
+  font-weight: 800;
+  color: #0F172A;
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+}
+
+.faqHeader p {
+  font-size: 1.15rem;
+  color: #64748B;
+  line-height: 1.6;
+}
+
+.accordionContainer {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.accordionItem {
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.accordionItem:hover {
+  border-color: #CBD5E1;
+  background: #F1F5F9;
+}
+
+.activeFaq {
+  background: white !important;
+  border-color: #2563EB !important;
+  box-shadow: 0 10px 30px rgba(37, 99, 235, 0.06);
+}
+
+.accordionTitle {
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 22px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+  cursor: pointer;
+  outline: none;
+  font-family: inherit;
+}
+
+.accordionTitle span:first-child {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #0F172A;
+  padding-right: 1.5rem;
+  transition: color 0.2s;
+}
+
+.accordionItem:hover .accordionTitle span:first-child {
+  color: #000;
+}
+
+.activeFaq .accordionTitle span:first-child {
+  color: #2563EB;
+}
+
+.faqArrow {
+  font-size: 0.8rem;
+  color: #64748B;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s;
+}
+
+.activeFaq .faqArrow {
+  transform: rotate(180deg);
+  color: #2563EB;
+}
+
+.accordionContent {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s cubic-bezier(0.16, 1, 0.3, 1), padding 0.3s ease;
+  padding: 0 28px;
+}
+
+.activeFaq .accordionContent {
+  max-height: 200px;
+  padding-bottom: 22px;
+}
+
+.accordionContent p {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: #475569;
+  margin: 0;
 }
 
 /* Features Section */
@@ -612,14 +1300,14 @@
 }
 
 /* Scroll-Driven Reveal Animations */
-.featureCard, .step, .heroContent, .phoneMockup {
+.featureCard, .step, .heroContent, .phoneMockup, .listingsSection, .pricingSection, .testimonialsSection, .faqSection {
   opacity: 0;
   transform: translateY(40px);
   will-change: opacity, transform;
   transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.featureCard.visible, .step.visible, .heroContent.visible, .phoneMockup.visible {
+.featureCard.visible, .step.visible, .heroContent.visible, .phoneMockup.visible, .listingsSection.visible, .pricingSection.visible, .testimonialsSection.visible, .faqSection.visible {
   opacity: 1;
   transform: translateY(0);
 }
@@ -629,7 +1317,11 @@
 .btnSecondary:focus-visible, 
 .navLink:focus-visible, 
 .wishlistBtn:focus-visible, 
-.propertyItem:focus-visible {
+.propertyItem:focus-visible,
+.cityTab:focus-visible,
+.cardCta:focus-visible,
+.planBtn:focus-visible,
+.accordionTitle:focus-visible {
   outline: 3px solid #2563EB;
   outline-offset: 4px;
   box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
@@ -649,4 +1341,14 @@
 .propertyItem:focus-visible {
   outline-offset: -2px;
   box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
+}
+
+.cityTab:focus-visible {
+  outline-offset: 2px;
+  border-radius: 24px;
+}
+
+.accordionTitle:focus-visible {
+  outline-offset: -4px;
+  border-radius: 16px;
 }
