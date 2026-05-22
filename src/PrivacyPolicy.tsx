@@ -1,12 +1,15 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import styles from './PrivacyPolicy.module.css';
 import logoImage from '/logo.png';
 
-const PrivacyPolicy = () => {
+const PrivacyPolicy: React.FC = () => {
 
   return (
     <div className={styles.privacyPolicy}>
+      {/* React 19 Document Metadata */}
+      <title>SettleKar - Privacy Policy</title>
+      <meta name="description" content="Read SettleKar's Privacy Policy to understand how we collect, use, and protect your personal information and property listing data." />
+
       {/* Header */}
       <header className={styles.header}>
         <div className={`${styles.container} ${styles.headerContainer}`}>

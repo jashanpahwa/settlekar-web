@@ -1,17 +1,16 @@
-import React from 'react';
-import { HashRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import './App.css';
-import LandingPage from './LandingPage.jsx';
-import PrivacyPolicy from './PrivacyPolicy.jsx';
-import TermsOfService from './TermsOfService.jsx';
-import DeleteAccount from './DeleteAccount.jsx';
-import NotFound from './NotFound.jsx';
-import PropertyRedirect from './PropertyRedirect.jsx';
+import LandingPage from './LandingPage';
+import PrivacyPolicy from './PrivacyPolicy';
+import TermsOfService from './TermsOfService';
+import DeleteAccount from './DeleteAccount';
+import NotFound from './NotFound';
+import PropertyRedirect from './PropertyRedirect';
 
 function App() {
   return (
-    <HashRouter>
+    <BrowserRouter>
       <div className="App">
         <Routes>
           <Route path="/" element={<LandingPage />} />
@@ -25,7 +24,7 @@ function App() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
-    </HashRouter>
+    </BrowserRouter>
   );
 }
 

@@ -1,13 +1,53 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import styles from './LandingPage.module.css';
 import logoImage from '/logo.png';
 
-const LandingPage = () => {
+const LandingPage: React.FC = () => {
   const location = useLocation();
   
   // Google Play Store URL for SettleKar app
   const googlePlayUrl = 'https://play.google.com/store/apps/details?id=com.settlekar.settlekar';
+
+  // Modern UX States
+  const [scrolled, setScrolled] = useState<boolean>(false);
+
+  // Dynamic Scroll Listener for glassmorphic navbar
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 40) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Intersection Observer for scroll-reveal animations
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add(styles.visible);
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+    );
+
+    // Track feature cards, steps, phone mockup, and hero text
+    const elements = document.querySelectorAll(
+      `.${styles.featureCard}, .${styles.step}, .${styles.heroContent}, .${styles.phoneMockup}`
+    );
+    elements.forEach((el) => observer.observe(el));
+
+    return () => {
+      elements.forEach((el) => observer.unobserve(el));
+    };
+  }, []);
 
   // Handle hash navigation when component mounts or hash changes
   useEffect(() => {
@@ -23,7 +63,7 @@ const LandingPage = () => {
     }
   }, [location]);
 
-  const handleScrollToSection = (sectionId, e) => {
+  const handleScrollToSection = (sectionId: string, e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     const element = document.getElementById(sectionId);
     if (element) {
@@ -35,8 +75,12 @@ const LandingPage = () => {
 
   return (
     <div className={styles.landingPage}>
+      {/* React 19 Document Metadata */}
+      <title>SettleKar - Discover Your Perfect Rental Home</title>
+      <meta name="description" content="Discover SettleKar's location-based rental property portal. Connect directly with verified property owners in Bangalore and other cities." />
+
       {/* Header */}
-      <header className={styles.header}>
+      <header role="banner" className={`${styles.header} ${scrolled ? styles.scrolled : ''}`}>
         <div className={`${styles.container} ${styles.headerContainer}`}>
           <div className={styles.logo}>
             <img src={logoImage} alt="SettleKar" className={styles.logoImage} />
@@ -123,71 +167,7 @@ const LandingPage = () => {
                 <div className={styles.phoneSpeaker}></div>
                 <div className={styles.phoneCamera}></div>
                 <div className={styles.phoneScreen}>
-                  <div className={styles.statusBar}>
-                    <div className={styles.statusLeft}>
-                      <span className="time">9:41</span>
-                    </div>
-                    <div className={styles.statusRight}>
-                      <span className="signal">📶</span>
-                      <span className="wifi">📶</span>
-                      <span className="battery">🔋</span>
-                    </div>
-                  </div>
-                  <div className={styles.appPreview}>
-                    <div className={styles.appHeader}>
-                      <div className={styles.headerContent}>
-                        <div className={styles.searchContainer}>
-                          <div className={styles.searchIconContainer}>
-                            <span className={styles.searchIcon}>🔍</span>
-                          </div>
-                          <span className={styles.searchText}>Discover Properties Nearby</span>
-                          <div className={styles.searchArrow}>
-                            <span>→</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className={styles.appContent}>
-                      <div className={styles.citySection}>
-                        <div className={styles.sectionTitle}>Bangalore</div>
-                        <div className={styles.propertyCardFeatured}>
-                          <div className={styles.propertyImage}>
-                            <div className={styles.propertyBadge}>2 BHK</div>
-                            <div className={styles.wishlistBtn}>♡</div>
-                            <div className={styles.propertyTypeBadge}>Residential</div>
-                          </div>
-                          <div className={styles.propertyInfo}>
-                            <div className={styles.locationRatingRow}>
-                              <span className={styles.propertyLocation}>Koramangala</span>
-                              <div className={styles.rating}>
-                                <span className={styles.star}>⭐</span>
-                                <span className={styles.ratingText}>4.8</span>
-                              </div>
-                            </div>
-                            <div className={styles.propertyTitle}>Modern Apartment</div>
-                            <div className={styles.propertyFeatures}>Independent house</div>
-                            <div className={styles.propertyPrice}>₹28,000 <span>/month</span></div>
-                          </div>
-                        </div>
-                        <div className={styles.propertyList}>
-                          <div className={styles.propertyItem}>
-                            <div className={styles.propertyThumb}></div>
-                            <div className={styles.propertyDetails}>
-                              <span className={styles.propertyName}>1 BHK Studio</span>
-                              <span className={styles.propertyRent}>₹18,000</span>
-                            </div>
-                          </div>
-                          <div className={styles.propertyItem}>
-                            <div className={styles.propertyThumb}></div>
-                            <div className={styles.propertyDetails}>
-                              <span className={styles.propertyName}>3 BHK Villa</span>
-                              <span className={styles.propertyRent}>₹45,000</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  <img src="/app-screenshot.jpg" alt="SettleKar Mobile App Home Page" className={styles.appScreenshot} />
                 </div>
                 <div className={styles.phoneHomeIndicator}></div>
               </div>

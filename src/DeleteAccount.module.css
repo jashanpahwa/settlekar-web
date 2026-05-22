@@ -659,3 +659,23 @@
     width: 100%;
   }
 }
+
+/* Keyboard Focus Indicators for Accessibility */
+.btn:focus-visible,
+.navLink:focus-visible,
+.footerSection a:focus-visible,
+.logo a:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 4px;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
+}
+
+.btnDanger:focus-visible {
+  outline-color: #dc2626;
+  box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.2);
+}
+
+.navLink:focus-visible {
+  outline-color: #2563eb;
+  outline-offset: 2px;
+}

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import styles from './TermsOfService.module.css';
 import logoImage from '/logo.png';
@@ -7,6 +6,10 @@ const TermsOfService = () => {
 
   return (
     <div className={styles.termsOfService}>
+      {/* React 19 Document Metadata */}
+      <title>SettleKar - Terms of Service</title>
+      <meta name="description" content="Review the Terms of Service for SettleKar. Understand user registration, listing plans, property owner responsibilities, and legal agreements." />
+
       {/* Header */}
       <header className={styles.header}>
         <div className={`${styles.container} ${styles.headerContainer}`}>

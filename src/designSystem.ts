@@ -22,7 +22,7 @@ export const Colors = {
   overlay: 'rgba(0, 0, 0, 0.5)',
 
   milky: '#f9f7f5ff',
-};
+} as const;
 
 export const Spacing = {
   xxs: '2px',
@@ -34,7 +34,7 @@ export const Spacing = {
   xxl: '40px',
   xxxl: '48px',
   xxxxl: '60px',
-};
+} as const;
 
 export const Typography = {
   h1: {
@@ -98,7 +98,7 @@ export const Typography = {
     color: Colors.primary,
     textAlign: 'center',
   },
-};
+} as const;
 
 export const Shadows = {
   small: {
@@ -113,7 +113,7 @@ export const Shadows = {
   xl: {
     boxShadow: '0 12px 16px rgba(0, 0, 0, 0.2)',
   },
-};
+} as const;
 
 export const BorderRadius = {
   sm: '6px',
@@ -122,7 +122,7 @@ export const BorderRadius = {
   xl: '24px',
   xxl: '32px',
   round: '9999px',
-};
+} as const;
 
 export const CommonStyles = {
   container: {
@@ -158,4 +158,4 @@ export const CommonStyles = {
     cursor: 'pointer',
     transition: 'all 0.3s ease',
   },
-};
+} as const;

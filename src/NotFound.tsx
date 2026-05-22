@@ -1,11 +1,14 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import styles from './NotFound.module.css';
 import logoImage from '/logo.png';
 
-const NotFound = () => {
+const NotFound: React.FC = () => {
   return (
     <div className={styles.notFoundPage}>
+      {/* React 19 Document Metadata */}
+      <title>SettleKar - 404 Page Not Found</title>
+      <meta name="description" content="The page you are looking for does not exist on SettleKar. Navigate back to our home page to discover great rental homes." />
+
       {/* Header */}
       <header className={styles.header}>
         <div className={`${styles.container} ${styles.headerContainer}`}>

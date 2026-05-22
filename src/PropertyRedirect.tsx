@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 function PropertyRedirect() {
@@ -17,7 +17,7 @@ function PropertyRedirect() {
     setTimeout(() => {
       window.location.href =
         'https://play.google.com/store/apps/details?id=com.settlekar.settlekar';
-    }, 2000);
+    });
   }, [id]);
 
   return (

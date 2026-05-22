@@ -1,21 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useTransition } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './DeleteAccount.module.css';
 import logoImage from '/logo.png';
 
-const DeleteAccount = () => {
-  const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState({
+interface DeleteAccountFormData {
+  email: string;
+  reason: string;
+  feedback: string;
+  confirmText: string;
+  agreeToTerms: boolean;
+}
+
+const DeleteAccount: React.FC = () => {
+  const [step, setStep] = useState<number>(1);
+  const [formData, setFormData] = useState<DeleteAccountFormData>({
     email: '',
     reason: '',
     feedback: '',
     confirmText: '',
     agreeToTerms: false
   });
-  const [isLoading, setIsLoading] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
+  const [isPending, startTransition] = useTransition();
+  const [showSuccess, setShowSuccess] = useState<boolean>(false);
 
-  const reasons = [
+  const reasons: string[] = [
     'I found another platform',
     'Too many notifications',
     'Privacy concerns',
@@ -24,8 +32,11 @@ const DeleteAccount = () => {
     'Other'
   ];
 
-  const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value, type } = e.target;
+    const checked = type === 'checkbox' ? (e.target as HTMLInputElement).checked : false;
     setFormData(prev => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value
@@ -44,15 +55,13 @@ const DeleteAccount = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsLoading(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
+    startTransition(async () => {
+      // Simulate API call
+      await new Promise<void>((resolve) => setTimeout(resolve, 2000));
       setShowSuccess(true);
-    }, 2000);
+    });
   };
 
   const isStepValid = () => {
@@ -71,9 +80,13 @@ const DeleteAccount = () => {
   if (showSuccess) {
     return (
       <div className={styles.deleteAccountPage}>
+        {/* React 19 Document Metadata */}
+        <title>SettleKar - Account Deletion Request Submitted</title>
+        <meta name="description" content="Your SettleKar account deletion request has been submitted successfully." />
+
         <div className={styles.container}>
-          <div className={styles.successContainer}>
-            <div className={styles.successIcon}>✓</div>
+          <div className={styles.successContainer} role="alert" aria-live="polite">
+            <div className={styles.successIcon} aria-hidden="true">✓</div>
             <h1>Account Deletion Request Submitted</h1>
             <p>
               Your account deletion request has been received. We'll process your request within 7-10 business days.
@@ -92,15 +105,19 @@ const DeleteAccount = () => {
 
   return (
     <div className={styles.deleteAccountPage}>
+      {/* React 19 Document Metadata */}
+      <title>SettleKar - Delete Your Account</title>
+      <meta name="description" content="Request the permanent deletion of your SettleKar account and associated rental property listings." />
+
       {/* Header */}
-      <header className={styles.header}>
+      <header role="banner" className={styles.header}>
         <div className={`${styles.container} ${styles.headerContainer}`}>
           <div className={styles.logo}>
-            <Link to="/">
-              <img src={logoImage} alt="SettleKar" className={styles.logoImage} />
+            <Link to="/" aria-label="SettleKar Homepage">
+              <img src={logoImage} alt="SettleKar logo" className={styles.logoImage} />
             </Link>
           </div>
-          <nav className={styles.nav}>
+          <nav role="navigation" aria-label="Secondary navigation" className={styles.nav}>
             <Link to="/" className={styles.navLink}>Home</Link>
             <Link to="/privacy-policy" className={styles.navLink}>Privacy Policy</Link>
             <Link to="/terms-of-service" className={styles.navLink}>Terms of Service</Link>
@@ -108,7 +125,7 @@ const DeleteAccount = () => {
         </div>
       </header>
 
-      <div className={styles.container}>
+      <main id="main-content" role="main" className={styles.container}>
         <div className={styles.deleteAccountContainer}>
           <div className={styles.deleteAccountHeader}>
             <h1>Delete Your Account</h1>
@@ -116,7 +133,7 @@ const DeleteAccount = () => {
           </div>
 
           {/* Progress Indicator */}
-          <div className={styles.progressIndicator}>
+          <div className={styles.progressIndicator} role="navigation" aria-label="Deletion steps progress">
             <div className={`${styles.progressStep} ${step >= 1 ? styles.active : ''} ${step > 1 ? styles.completed : ''}`}>
               <div className={styles.stepNumber}>1</div>
               <span>Account Details</span>
@@ -147,8 +164,9 @@ const DeleteAccount = () => {
                     onChange={handleInputChange}
                     placeholder="Enter your registered email address"
                     required
+                    aria-required="true"
                   />
-                  <small>Please enter the email address associated with your SettleKar account</small>
+                  <small id="emailHelp">Please enter the email address associated with your SettleKar account</small>
                 </div>
 
                 <div className={styles.formGroup}>
@@ -159,6 +177,7 @@ const DeleteAccount = () => {
                     value={formData.reason}
                     onChange={handleInputChange}
                     required
+                    aria-required="true"
                   >
                     <option value="">Select a reason</option>
                     {reasons.map((reason, index) => (
@@ -175,12 +194,12 @@ const DeleteAccount = () => {
                     value={formData.feedback}
                     onChange={handleInputChange}
                     placeholder="Help us improve by sharing your experience..."
-                    rows="4"
+                    rows={4}
                   />
                 </div>
 
-                <div className={styles.warningBox}>
-                  <div className={styles.warningIcon}>⚠️</div>
+                <div className={styles.warningBox} role="alert" aria-live="assertive">
+                  <div className={styles.warningIcon} aria-hidden="true">⚠️</div>
                   <div className={styles.warningContent}>
                     <h3>Important Information</h3>
                     <ul>
@@ -200,7 +219,7 @@ const DeleteAccount = () => {
               <div className={styles.formStep}>
                 <h2>Step 2: Confirm Your Decision</h2>
                 
-                <div className={styles.confirmationBox}>
+                <div className={styles.confirmationBox} role="alert" aria-live="assertive">
                   <h3>Are you absolutely sure?</h3>
                   <p>
                     This action cannot be undone. This will permanently delete your account, 
@@ -254,7 +273,7 @@ const DeleteAccount = () => {
                   )}
                 </div>
 
-                <div className={styles.finalWarning}>
+                <div className={styles.finalWarning} role="alert" aria-live="assertive">
                   <div className={styles.warningIcon}>🚨</div>
                   <div className={styles.warningContent}>
                     <h3>Last Chance!</h3>
@@ -267,13 +286,15 @@ const DeleteAccount = () => {
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label className={styles.checkboxLabel}>
+                  <label className={styles.checkboxLabel} htmlFor="agreeToTerms">
                     <input
                       type="checkbox"
+                      id="agreeToTerms"
                       name="agreeToTerms"
                       checked={formData.agreeToTerms}
                       onChange={handleInputChange}
                       required
+                      aria-required="true"
                     />
                     <span className={styles.checkmark}></span>
                     I understand that this action is permanent and I agree to the deletion of my account and all associated data.
@@ -289,7 +310,7 @@ const DeleteAccount = () => {
                   type="button"
                   onClick={handlePrevStep}
                   className={`${styles.btn} ${styles.btnSecondary}`}
-                  disabled={isLoading}
+                  disabled={isPending}
                 >
                   Previous
                 </button>
@@ -313,9 +334,9 @@ const DeleteAccount = () => {
                   <button
                     type="submit"
                     className={`${styles.btn} ${styles.btnDanger}`}
-                    disabled={!isStepValid() || isLoading}
+                    disabled={!isStepValid() || isPending}
                   >
-                    {isLoading ? 'Processing...' : 'Delete My Account'}
+                    {isPending ? 'Processing...' : 'Delete My Account'}
                   </button>
                 )}
               </div>
@@ -345,7 +366,7 @@ const DeleteAccount = () => {
             </div>
           </div>
         </div>
-      </div>
+      </main>
 
       {/* Footer */}
       <footer className={styles.footer}>

@@ -15,19 +15,40 @@
 
 /* Header */
 .header {
-  background: #0A2540;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  background: rgba(10, 37, 64, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
   position: fixed;
-  width: 100%;
-  top: 0;
+  width: 90%;
+  max-width: 1200px;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 20px;
   z-index: 1000;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.header.scrolled {
+  background: rgba(10, 37, 64, 0.9);
+  width: 85%;
+  top: 10px;
+  box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.25);
+  border-radius: 16px;
 }
 
 .headerContainer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 20px;
+  padding: 0.75rem 24px;
+  transition: padding 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.header.scrolled .headerContainer {
+  padding: 0.5rem 20px;
 }
 
 .logoH2 {
@@ -38,16 +59,19 @@
 }
 
 .logoImage {
-  
-  max-width: 250px;
+  max-width: 180px;
   object-fit: contain;
+  transition: max-width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.header.scrolled .logoImage {
+  max-width: 150px;
 }
 
 .nav {
   display: flex;
   gap: 2rem;
   align-items: center;
-  
 }
 
 .navherf{
@@ -56,24 +80,25 @@
 
 .navLink {
   text-decoration: none;
-  color: #fff;
+  color: rgba(255, 255, 255, 0.85);
   font-weight: 500;
-  transition: color 0.3s;
+  transition: all 0.3s;
   font-size: 1rem;
 }
 
 .navLink:hover {
   color: #93C5FD;
+  text-shadow: 0 0 10px rgba(147, 197, 253, 0.3);
 }
 
 /* Hero Section */
 .hero {
   background: linear-gradient(180deg, #0A2540 0%, #93C5FD 100%);
   color: white;
-  padding: 120px 0 80px;
+  padding: 160px 0 80px;
   position: relative;
   overflow: hidden;
-  margin-top: 70px;
+  margin-top: 0px;
 }
 
 .hero::before {
@@ -119,18 +144,19 @@
   border-radius: 8px;
   text-decoration: none;
   font-weight: 600;
-  transition: all 0.3s;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   display: inline-block;
 }
 
 .btnPrimary {
   background: #fff;
   color: #0A2540;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 .btnPrimary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 15px 30px rgba(255, 255, 255, 0.25);
 }
 
 .btnSecondary {
@@ -142,6 +168,8 @@
 .btnSecondary:hover {
   background: white;
   color: #0A2540;
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 15px 30px rgba(255, 255, 255, 0.15);
 }
 
 /* Hero Stats */
@@ -258,283 +286,11 @@
   border-radius: 2px;
 }
 
-.statusBar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 20px 8px;
-  background: #0A2540;
-  color: white;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.statusLeft .time {
-  font-family: 'Inter', sans-serif;
-  font-weight: 600;
-}
-
-.statusRight {
-  display: flex;
-  gap: 4px;
-  align-items: center;
-}
-
-.statusRight span {
-  font-size: 12px;
-}
-
-.appPreview {
+.appScreenshot {
+  width: 100%;
   height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.appHeader {
-  background: #f8fafc;
-  padding: 20px 16px 16px;
-  color: #0F172A;
-}
-
-.headerContent {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.searchContainer {
-  background: #FFFFFF;
-  border-radius: 24px;
-  padding: 12px 16px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  border: 1px solid #E2E8F0;
-}
-
-.searchIconContainer {
-  background: rgba(10, 37, 64, 0.1);
-  border-radius: 50%;
-  padding: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.searchIcon {
-  font-size: 14px;
-  color: #64748B;
-}
-
-.searchText {
-  font-size: 14px;
-  color: #0F172A;
-  font-weight: 600;
-  flex: 1;
-  text-align: center;
-  font-family: 'Inter', sans-serif;
-}
-
-.searchArrow {
-  background: rgba(10, 37, 64, 0.1);
-  border-radius: 50%;
-  padding: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #64748B;
-  font-size: 12px;
-}
-
-.appContent {
-  padding: 16px;
-  flex: 1;
-  background: #f8fafc;
-  overflow-y: auto;
-}
-
-.propertyCardFeatured {
-  background: white;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  margin-bottom: 16px;
-  border: 1px solid #E2E8F0;
-}
-
-.propertyImage {
-  height: 140px;
-  background: linear-gradient(135deg, #93C5FD, #2563EB);
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.propertyBadge {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  background: rgba(0,0,0,0.7);
-  color: white;
-  padding: 4px 8px;
-  border-radius: 6px;
-  font-size: 10px;
-  font-weight: 600;
-  font-family: 'Inter', sans-serif;
-}
-
-.propertyTypeBadge {
-  position: absolute;
-  bottom: 8px;
-  left: 8px;
-  background: rgba(0,0,0,0.7);
-  color: white;
-  padding: 4px 8px;
-  border-radius: 6px;
-  font-size: 10px;
-  font-weight: 500;
-  font-family: 'Inter', sans-serif;
-}
-
-.wishlistBtn {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  background: rgba(255,255,255,0.9);
-  color: #333;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.propertyInfo {
-  padding: 12px;
-}
-
-.locationRatingRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
-}
-
-.propertyLocation {
-  font-size: 12px;
-  color: #64748B;
-  font-weight: 500;
-  font-family: 'Inter', sans-serif;
-}
-
-.rating {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-}
-
-.star {
-  font-size: 10px;
-}
-
-.ratingText {
-  font-size: 10px;
-  color: #0F172A;
-  font-weight: 600;
-  font-family: 'Inter', sans-serif;
-}
-
-.propertyTitle {
-  font-size: 12px;
-  font-weight: 400;
-  color: #64748B;
-  margin-bottom: 4px;
-  font-family: 'Inter', sans-serif;
-  line-height: 1.3;
-}
-
-.propertyFeatures {
-  font-size: 10px;
-  color: #64748B;
-  margin-bottom: 8px;
-  font-family: 'Inter', sans-serif;
-}
-
-.propertyPrice {
-  font-size: 14px;
-  font-weight: 700;
-  color: #0A2540;
-  font-family: 'Inter', sans-serif;
-}
-
-.propertyPrice span {
-  font-size: 10px;
-  font-weight: 400;
-  color: #64748B;
-}
-
-.citySection {
-  margin-bottom: 20px;
-}
-
-.sectionTitle {
-  font-size: 18px;
-  font-weight: 700;
-  color: #0F172A;
-  margin-bottom: 12px;
-  font-family: 'Inter', sans-serif;
-}
-
-.propertyList {
-  background: white;
-  border-radius: 12px;
-  padding: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  border: 1px solid #E2E8F0;
-}
-
-.propertyItem {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 0;
-}
-
-.propertyItem:not(:last-child) {
-  border-bottom: 1px solid #F3F4F6;
-}
-
-.propertyThumb {
-  width: 40px;
-  height: 30px;
-  background: linear-gradient(135deg, #E2E8F0, #CBD5E1);
-  border-radius: 6px;
-  flex-shrink: 0;
-}
-
-.propertyDetails {
-  flex: 1;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.propertyName {
-  font-size: 11px;
-  color: #0F172A;
-  font-family: 'Inter', sans-serif;
-}
-
-.propertyRent {
-  font-size: 11px;
-  font-weight: 600;
-  color: #0A2540;
-  font-family: 'Inter', sans-serif;
+  object-fit: cover;
+  display: block;
 }
 
 /* Features Section */
@@ -853,4 +609,44 @@
     width: 220px;
     height: 440px;
   }
+}
+
+/* Scroll-Driven Reveal Animations */
+.featureCard, .step, .heroContent, .phoneMockup {
+  opacity: 0;
+  transform: translateY(40px);
+  will-change: opacity, transform;
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.featureCard.visible, .step.visible, .heroContent.visible, .phoneMockup.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Keyboard Focus Indicators for Accessibility */
+.btnPrimary:focus-visible, 
+.btnSecondary:focus-visible, 
+.navLink:focus-visible, 
+.wishlistBtn:focus-visible, 
+.propertyItem:focus-visible {
+  outline: 3px solid #2563EB;
+  outline-offset: 4px;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
+}
+
+.navLink:focus-visible {
+  outline-color: #93C5FD;
+  box-shadow: 0 0 0 4px rgba(147, 197, 253, 0.25);
+}
+
+.wishlistBtn:focus-visible {
+  outline-color: #EC4899;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(236, 72, 153, 0.25);
+}
+
+.propertyItem:focus-visible {
+  outline-offset: -2px;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
 }
