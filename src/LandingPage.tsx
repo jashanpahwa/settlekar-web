@@ -2,11 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import styles from './LandingPage.module.css';
 import logoImage from '/logo.png';
+import InquiryModal from './InquiryModal';
+import { db } from './firebase';
+import { collection, getDocs, query, limit } from 'firebase/firestore';
 
-interface WebPropertyItem {
+export interface WebPropertyItem {
   id: number;
   title: string;
-  city: 'Mumbai' | 'Bangalore' | 'Pune';
+  city: string;
   location: string;
   price: string;
   rating: string;
@@ -29,7 +32,7 @@ interface FaqItem {
   answer: string;
 }
 
-const mockWebProperties: WebPropertyItem[] = [
+export const mockWebProperties: WebPropertyItem[] = [
   {
     id: 1,
     title: "Modern 1 BHK Apartment",
@@ -174,8 +177,66 @@ const LandingPage: React.FC = () => {
 
   // Modern UX States
   const [scrolled, setScrolled] = useState<boolean>(false);
-  const [selectedCity, setSelectedCity] = useState<'Mumbai' | 'Bangalore' | 'Pune'>('Mumbai');
+  const [selectedCity, setSelectedCity] = useState<string>('Mumbai');
   const [activeFaqIndex, setActiveFaqIndex] = useState<number | null>(null);
+
+  // New States for Portal & Interactive Flow
+  const [properties, setProperties] = useState<any[]>(mockWebProperties);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
+  const [inquiryModalOpen, setInquiryModalOpen] = useState<boolean>(false);
+  const [selectedPropertyForInquiry, setSelectedPropertyForInquiry] = useState<any | null>(null);
+
+  // Load live listed properties from Firestore on mount
+  useEffect(() => {
+    const loadProperties = async () => {
+      try {
+        const propertiesQuery = query(collection(db, 'properties'), limit(10));
+        const querySnapshot = await getDocs(propertiesQuery);
+        const dbProps: any[] = [];
+        querySnapshot.forEach((docSnap) => {
+          const data = docSnap.data();
+          dbProps.push({
+            id: docSnap.id,
+            title: data.title || '',
+            city: data.city || 'Mumbai',
+            location: data.location || '',
+            address: data.address || '',
+            price: typeof data.price === 'number' ? '₹' + data.price.toLocaleString('en-IN') : data.price || '',
+            rating: data.rating || '5.0',
+            badge: data.badge || data.propertyType || '1 BHK',
+            features: data.features || (data.propertyType ? `${data.propertyType} • ${data.area || 0} sq.ft • ${data.furnishing || 'Semi-Furnished'}` : ''),
+            image: data.image || (data.images && data.images.length > 0 ? data.images[0] : '') || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80',
+            createdBy: data.createdBy || '',
+            ownerName: data.ownerName || 'Verified Owner'
+          });
+        });
+        
+        // Merge Firestore properties with static mockWebProperties and limit to exactly 10 properties total
+        const combinedProps = [...dbProps, ...mockWebProperties].slice(0, 10);
+        setProperties(combinedProps);
+      } catch (err) {
+        console.error('Error fetching Firestore properties:', err);
+        setProperties(mockWebProperties.slice(0, 10));
+      }
+    };
+
+    loadProperties();
+  }, []);
+
+  // Synchronize selectedCity with loaded properties list
+  useEffect(() => {
+    if (properties.length > 0) {
+      const cities = Array.from(new Set(properties.map((p) => p.city || 'Mumbai')));
+      if (!cities.includes(selectedCity) && cities.length > 0) {
+        setSelectedCity(cities.includes('Mumbai') ? 'Mumbai' : cities[0]);
+      }
+    }
+  }, [properties, selectedCity]);
+
+  const handleOpenInquiryModal = (property: any) => {
+    setSelectedPropertyForInquiry(property);
+    setInquiryModalOpen(true);
+  };
 
   // Dynamic Scroll Listener for glassmorphic navbar
   useEffect(() => {
@@ -238,6 +299,9 @@ const LandingPage: React.FC = () => {
     }
   };
 
+  // Dynamically extract unique cities from both mock and Firestore properties
+  const availableCities = Array.from(new Set(properties.map((p) => p.city || 'Mumbai'))).sort();
+
   return (
     <div className={styles.landingPage}>
       {/* React 19 Document Metadata */}
@@ -245,37 +309,53 @@ const LandingPage: React.FC = () => {
       <meta name="description" content="Discover SettleKar's location-based rental property portal. Connect directly with verified property owners in Bangalore and other cities." />
 
       {/* Header */}
-      <header role="banner" className={`${styles.header} ${scrolled ? styles.scrolled : ''}`}>
+      <header role="banner" className={`${styles.header} ${scrolled ? styles.scrolled : ''} ${isMobileMenuOpen ? styles.headerMobileOpen : ''}`}>
         <div className={`${styles.container} ${styles.headerContainer}`}>
           <div className={styles.logo}>
             <img src={logoImage} alt="SettleKar" className={styles.logoImage} />
           </div>
-          <nav className={styles.nav}>
+
+          {/* Hamburger Menu Icon */}
+          <button 
+            className={styles.hamburgerBtn} 
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label="Toggle Navigation Menu"
+            aria-expanded={isMobileMenuOpen}
+          >
+            <span className={`${styles.hamburgerBar} ${isMobileMenuOpen ? styles.barOpen1 : ''}`}></span>
+            <span className={`${styles.hamburgerBar} ${isMobileMenuOpen ? styles.barOpen2 : ''}`}></span>
+            <span className={`${styles.hamburgerBar} ${isMobileMenuOpen ? styles.barOpen3 : ''}`}></span>
+          </button>
+
+          <nav className={`${styles.nav} ${isMobileMenuOpen ? styles.navOpen : ''}`}>
             <a 
               href="#features" 
-              onClick={(e) => handleScrollToSection('features', e)}
+              onClick={(e) => { setIsMobileMenuOpen(false); handleScrollToSection('features', e); }}
               className={styles.navLink}
             >
               Features
             </a>
             <a 
               href="#how-it-works" 
-              onClick={(e) => handleScrollToSection('how-it-works', e)}
+              onClick={(e) => { setIsMobileMenuOpen(false); handleScrollToSection('how-it-works', e); }}
               className={styles.navLink}
             >
               How It Works
             </a>
             <a 
               href="#download" 
-              onClick={(e) => handleScrollToSection('download', e)}
+              onClick={(e) => { setIsMobileMenuOpen(false); handleScrollToSection('download', e); }}
               className={styles.navLink}
             >
               Download
             </a>
-            <Link to="/privacy-policy" className={styles.navLink}>
+            <Link to="/dashboard" onClick={() => setIsMobileMenuOpen(false)} className={`${styles.navLink} ${styles.navLinkSpecial}`}>
+              ➕ List Property
+            </Link>
+            <Link to="/privacy-policy" onClick={() => setIsMobileMenuOpen(false)} className={styles.navLink}>
               Privacy Policy
             </Link>
-            <Link to="/terms-of-service" className={styles.navLink}>
+            <Link to="/terms-of-service" onClick={() => setIsMobileMenuOpen(false)} className={styles.navLink}>
               Terms of Service
             </Link>
           </nav>
@@ -301,6 +381,12 @@ const LandingPage: React.FC = () => {
               >
                 Download App
               </a>
+              <Link 
+                to="/dashboard"
+                className={`${styles.btn} ${styles.btnListProperty}`}
+              >
+                ➕ List Property
+              </Link>
               <a 
                 href="#features" 
                 onClick={(e) => handleScrollToSection('features', e)} 
@@ -351,7 +437,7 @@ const LandingPage: React.FC = () => {
           
           {/* City Toggle Buttons */}
           <div className={styles.cityTabs} role="tablist" aria-label="Explore properties by city">
-            {(['Mumbai', 'Bangalore', 'Pune'] as const).map((city) => (
+            {availableCities.map((city) => (
               <button
                 key={city}
                 className={`${styles.cityTab} ${selectedCity === city ? styles.activeTab : ''}`}
@@ -360,9 +446,13 @@ const LandingPage: React.FC = () => {
                 aria-selected={selectedCity === city}
                 tabIndex={0}
               >
-                {city === 'Mumbai' && '🌉 '}
-                {city === 'Bangalore' && '🌳 '}
-                {city === 'Pune' && '⛰️ '}
+                {city.toLowerCase() === 'mumbai' && '🌉 '}
+                {city.toLowerCase() === 'bangalore' && '🌳 '}
+                {city.toLowerCase() === 'bengaluru' && '🌳 '}
+                {city.toLowerCase() === 'pune' && '⛰️ '}
+                {city.toLowerCase() === 'delhi' && '🏛️ '}
+                {city.toLowerCase() === 'new delhi' && '🏛️ '}
+                {!['mumbai', 'bangalore', 'bengaluru', 'pune', 'delhi', 'new delhi'].includes(city.toLowerCase()) && '🏢 '}
                 {city}
               </button>
             ))}
@@ -370,7 +460,7 @@ const LandingPage: React.FC = () => {
 
           {/* Properties Grid */}
           <div className={styles.webPropertiesGrid}>
-            {mockWebProperties
+            {properties
               .filter((prop) => prop.city === selectedCity)
               .map((prop) => (
                 <div key={prop.id} className={styles.webPropertyCard}>
@@ -383,13 +473,34 @@ const LandingPage: React.FC = () => {
                   </div>
                   <div className={styles.cardContent}>
                     <h3>{prop.title}</h3>
-                    <p className={styles.cardAddress}>📍 {prop.location}</p>
+                    <p className={styles.cardAddress}>
+                      📍 {prop.address || (prop.location && !prop.location.startsWith('http') ? prop.location : '') || prop.city}
+                      {prop.location && prop.location.startsWith('http') && (
+                        <a 
+                          href={prop.location} 
+                          target="_blank" 
+                          rel="noopener noreferrer" 
+                          className={styles.mapLinkBadge}
+                          title="Open Google Maps"
+                        >
+                          🌐 Maps
+                        </a>
+                      )}
+                    </p>
                     <p className={styles.cardFeatures}>{prop.features}</p>
                     <div className={styles.cardFooter}>
                       <span className={styles.cardPrice}>{prop.price} <small>/month</small></span>
-                      <a href={googlePlayUrl} target="_blank" rel="noopener noreferrer" className={styles.cardCta}>
-                        View in App
-                      </a>
+                      <div className={styles.cardButtonsGroup}>
+                        <button 
+                          onClick={() => handleOpenInquiryModal(prop)}
+                          className={styles.cardInquireBtn}
+                        >
+                          Send Inquiry
+                        </button>
+                        <a href={googlePlayUrl} target="_blank" rel="noopener noreferrer" className={styles.cardCta} title="View details in App">
+                          📱 App
+                        </a>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -644,6 +755,18 @@ const LandingPage: React.FC = () => {
           </div>
         </div>
       </footer>
+
+      {selectedPropertyForInquiry && (
+        <InquiryModal
+          isOpen={inquiryModalOpen}
+          onClose={() => setInquiryModalOpen(false)}
+          propertyId={selectedPropertyForInquiry.id}
+          propertyTitle={selectedPropertyForInquiry.title}
+          propertyPrice={selectedPropertyForInquiry.price}
+          ownerId={selectedPropertyForInquiry.createdBy}
+          ownerName={selectedPropertyForInquiry.ownerName}
+        />
+      )}
     </div>
   );
 };

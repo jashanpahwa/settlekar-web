@@ -1352,3 +1352,191 @@
   outline-offset: -4px;
   border-radius: 16px;
 }
+
+/* Card Buttons Group & Action Button */
+.cardButtonsGroup {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.cardInquireBtn {
+  flex-grow: 1;
+  background: #2563EB;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.15);
+}
+
+.cardInquireBtn:hover {
+  background: #1D4ED8;
+  box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3);
+  transform: translateY(-1px);
+}
+
+.btnListProperty {
+  background: linear-gradient(135deg, #4f46e5 0%, #2563eb 100%);
+  color: white !important;
+  border: none;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+}
+
+.btnListProperty:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 15px 30px rgba(79, 70, 229, 0.4);
+}
+
+/* Glassmorphic Navbar Special Item */
+.navLinkSpecial {
+  background: #2563EB;
+  color: white !important;
+  padding: 8px 16px !important;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+  transition: all 0.2s ease !important;
+}
+
+.navLinkSpecial:hover {
+  background: #1D4ED8;
+  box-shadow: 0 6px 15px rgba(37, 99, 235, 0.35);
+  transform: translateY(-1px);
+}
+
+/* Mobile Hamburger Button Styling */
+.hamburgerBtn {
+  display: none;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 24px;
+  height: 20px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 1010;
+  outline: none;
+}
+
+.hamburgerBar {
+  width: 24px;
+  height: 2px;
+  background-color: #ffffff;
+  border-radius: 2px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Hamburger Animations */
+.barOpen1 {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+.barOpen2 {
+  opacity: 0;
+  transform: translateX(-10px);
+}
+.barOpen3 {
+  transform: rotate(-45deg) translate(5px, -6px);
+}
+
+/* Responsiveness overrides for Mobile Header & Nav Drawer */
+@media (max-width: 768px) {
+  .hamburgerBtn {
+    display: flex;
+  }
+
+  .nav {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 280px;
+    height: 100vh;
+    background: rgba(10, 37, 64, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 100px 30px 40px 30px;
+    gap: 20px;
+    transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 1005;
+  }
+
+  .navOpen {
+    right: 0;
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.25);
+  }
+
+  .navLink {
+    font-size: 1.1rem;
+    width: 100%;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .navLinkSpecial {
+    margin-top: 10px;
+    width: 100%;
+    text-align: center;
+    padding: 12px !important;
+  }
+
+  /* Keep stats grid layout responsive */
+  .heroStats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    width: 100%;
+    gap: 16px;
+  }
+
+  /* Improve interactive explorer grid layout on tablet */
+  .webPropertiesGrid {
+    grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .heroStats {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .header {
+    width: 95%;
+  }
+
+  .header.scrolled {
+    width: 92%;
+  }
+}
+
+.mapLinkBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(37, 99, 235, 0.08);
+  color: #2563eb;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+  margin-left: 8px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  vertical-align: middle;
+  border: 1px solid rgba(37, 99, 235, 0.1);
+}
+
+.mapLinkBadge:hover {
+  background: rgba(37, 99, 235, 0.15);
+  transform: translateY(-1px);
+}

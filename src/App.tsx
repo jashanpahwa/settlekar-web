@@ -7,6 +7,7 @@ import TermsOfService from './TermsOfService';
 import DeleteAccount from './DeleteAccount';
 import NotFound from './NotFound';
 import PropertyRedirect from './PropertyRedirect';
+import Dashboard from './Dashboard';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="/delete-account" element={<DeleteAccount />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route
             path="/property/:id"
             element={<PropertyRedirect />}
