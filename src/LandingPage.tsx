@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import styles from './LandingPage.module.css';
 import logoImage from '/logo.png';
-import InquiryModal from './InquiryModal';
 import { db } from './firebase';
 import { collection, getDocs, query, limit } from 'firebase/firestore';
 
@@ -183,8 +182,6 @@ const LandingPage: React.FC = () => {
   // New States for Portal & Interactive Flow
   const [properties, setProperties] = useState<any[]>(mockWebProperties);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
-  const [inquiryModalOpen, setInquiryModalOpen] = useState<boolean>(false);
-  const [selectedPropertyForInquiry, setSelectedPropertyForInquiry] = useState<any | null>(null);
 
   // Load live listed properties from Firestore on mount
   useEffect(() => {
@@ -233,11 +230,7 @@ const LandingPage: React.FC = () => {
     }
   }, [properties, selectedCity]);
 
-  const handleOpenInquiryModal = (property: any) => {
-    setSelectedPropertyForInquiry(property);
-    setInquiryModalOpen(true);
-  };
-
+  
   // Dynamic Scroll Listener for glassmorphic navbar
   useEffect(() => {
     const handleScroll = () => {
@@ -299,8 +292,7 @@ const LandingPage: React.FC = () => {
     }
   };
 
-  // Dynamically extract unique cities from both mock and Firestore properties
-  const availableCities = Array.from(new Set(properties.map((p) => p.city || 'Mumbai'))).sort();
+ 
 
   return (
     <div className={styles.landingPage}>
@@ -351,12 +343,6 @@ const LandingPage: React.FC = () => {
             </a>
             <Link to="/dashboard" onClick={() => setIsMobileMenuOpen(false)} className={`${styles.navLink} ${styles.navLinkSpecial}`}>
               ➕ List Property
-            </Link>
-            <Link to="/privacy-policy" onClick={() => setIsMobileMenuOpen(false)} className={styles.navLink}>
-              Privacy Policy
-            </Link>
-            <Link to="/terms-of-service" onClick={() => setIsMobileMenuOpen(false)} className={styles.navLink}>
-              Terms of Service
             </Link>
           </nav>
         </div>
@@ -427,87 +413,7 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Interactive Web Listings Explorer */}
-      <section className={styles.listingsSection}>
-        <div className={styles.container}>
-          <div className={styles.listingsHeader}>
-            <h2>Explore Verified Listings</h2>
-            <p>Get a live sneak peek of premium properties uploaded by verified landlords on our network.</p>
-          </div>
-          
-          {/* City Toggle Buttons */}
-          <div className={styles.cityTabs} role="tablist" aria-label="Explore properties by city">
-            {availableCities.map((city) => (
-              <button
-                key={city}
-                className={`${styles.cityTab} ${selectedCity === city ? styles.activeTab : ''}`}
-                onClick={() => setSelectedCity(city)}
-                role="tab"
-                aria-selected={selectedCity === city}
-                tabIndex={0}
-              >
-                {city.toLowerCase() === 'mumbai' && '🌉 '}
-                {city.toLowerCase() === 'bangalore' && '🌳 '}
-                {city.toLowerCase() === 'bengaluru' && '🌳 '}
-                {city.toLowerCase() === 'pune' && '⛰️ '}
-                {city.toLowerCase() === 'delhi' && '🏛️ '}
-                {city.toLowerCase() === 'new delhi' && '🏛️ '}
-                {!['mumbai', 'bangalore', 'bengaluru', 'pune', 'delhi', 'new delhi'].includes(city.toLowerCase()) && '🏢 '}
-                {city}
-              </button>
-            ))}
-          </div>
 
-          {/* Properties Grid */}
-          <div className={styles.webPropertiesGrid}>
-            {properties
-              .filter((prop) => prop.city === selectedCity)
-              .map((prop) => (
-                <div key={prop.id} className={styles.webPropertyCard}>
-                  <div className={styles.cardImageContainer}>
-                    <img src={prop.image} alt={prop.title} className={styles.cardImage} />
-                    <div className={styles.cardBadge}>{prop.badge}</div>
-                    <div className={styles.cardRating}>
-                      <span>⭐</span> {prop.rating}
-                    </div>
-                  </div>
-                  <div className={styles.cardContent}>
-                    <h3>{prop.title}</h3>
-                    <p className={styles.cardAddress}>
-                      📍 {prop.address || (prop.location && !prop.location.startsWith('http') ? prop.location : '') || prop.city}
-                      {prop.location && prop.location.startsWith('http') && (
-                        <a 
-                          href={prop.location} 
-                          target="_blank" 
-                          rel="noopener noreferrer" 
-                          className={styles.mapLinkBadge}
-                          title="Open Google Maps"
-                        >
-                          🌐 Maps
-                        </a>
-                      )}
-                    </p>
-                    <p className={styles.cardFeatures}>{prop.features}</p>
-                    <div className={styles.cardFooter}>
-                      <span className={styles.cardPrice}>{prop.price} <small>/month</small></span>
-                      <div className={styles.cardButtonsGroup}>
-                        <button 
-                          onClick={() => handleOpenInquiryModal(prop)}
-                          className={styles.cardInquireBtn}
-                        >
-                          Send Inquiry
-                        </button>
-                        <a href={googlePlayUrl} target="_blank" rel="noopener noreferrer" className={styles.cardCta} title="View details in App">
-                          📱 App
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-          </div>
-        </div>
-      </section>
 
       {/* Features Section */}
       <section id="features" className={styles.features}>
@@ -745,28 +651,18 @@ const LandingPage: React.FC = () => {
             </div>
             <div className={styles.footerSection}>
               <h4>Contact</h4>
-              <p>Email: support@settlekar.com</p>
-              <p>Phone: +91 12345 67890</p>
-              <p>Address: Bangalore, Karnataka, India</p>
+              <p>Email: jashanphw@gmail.com</p>
+              <p>Phone: +91 6367073699</p>
+              {/* <p>Address: Bangalore, Karnataka, India</p> */}
             </div>
           </div>
           <div className={styles.footerBottom}>
-            <p>&copy; 2024 SettleKar. All rights reserved.</p>
+            <p>&copy; 2026 SettleKar. All rights reserved.</p>
           </div>
         </div>
       </footer>
 
-      {selectedPropertyForInquiry && (
-        <InquiryModal
-          isOpen={inquiryModalOpen}
-          onClose={() => setInquiryModalOpen(false)}
-          propertyId={selectedPropertyForInquiry.id}
-          propertyTitle={selectedPropertyForInquiry.title}
-          propertyPrice={selectedPropertyForInquiry.price}
-          ownerId={selectedPropertyForInquiry.createdBy}
-          ownerName={selectedPropertyForInquiry.ownerName}
-        />
-      )}
+      
     </div>
   );
 };

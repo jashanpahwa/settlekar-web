@@ -119,8 +119,6 @@ const DeleteAccount: React.FC = () => {
           </div>
           <nav role="navigation" aria-label="Secondary navigation" className={styles.nav}>
             <Link to="/" className={styles.navLink}>Home</Link>
-            <Link to="/privacy-policy" className={styles.navLink}>Privacy Policy</Link>
-            <Link to="/terms-of-service" className={styles.navLink}>Terms of Service</Link>
           </nav>
         </div>
       </header>

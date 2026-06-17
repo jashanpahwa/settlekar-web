@@ -18,7 +18,6 @@ const TermsOfService = () => {
           </div>
           <nav className={styles.nav}>
             <Link to="/" className={styles.navLink}>Home</Link>
-            <Link to="/privacy-policy" className={styles.navLink}>Privacy Policy</Link>
             <Link to="/delete-account" className={styles.navLink}>Delete Account</Link>
           </nav>
         </div>

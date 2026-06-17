@@ -18,7 +18,6 @@ const PrivacyPolicy: React.FC = () => {
           </div>
           <nav className={styles.nav}>
             <Link to="/" className={styles.navLink}>Home</Link>
-            <Link to="/terms-of-service" className={styles.navLink}>Terms of Service</Link>
             <Link to="/delete-account" className={styles.navLink}>Delete Account</Link>
           </nav>
         </div>
