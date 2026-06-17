@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import styles from './LandingPage.module.css';
 import logoImage from '/logo.png';
-import { db } from './firebase';
-import { collection, getDocs, query, limit } from 'firebase/firestore';
 
 export interface WebPropertyItem {
   id: number;
@@ -31,96 +29,7 @@ interface FaqItem {
   answer: string;
 }
 
-export const mockWebProperties: WebPropertyItem[] = [
-  {
-    id: 1,
-    title: "Modern 1 BHK Apartment",
-    city: "Mumbai",
-    location: "Andheri East, Mumbai",
-    price: "₹20,000",
-    rating: "4.8",
-    badge: "1 BHK",
-    features: "Apartment • 450 sq.ft • Semi-Furnished",
-    image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80"
-  },
-  {
-    id: 2,
-    title: "Spacious 2 BHK Bedroom",
-    city: "Mumbai",
-    location: "Powai, Mumbai",
-    price: "₹35,000",
-    rating: "4.7",
-    badge: "2 BHK",
-    features: "Apartment • 780 sq.ft • Furnished",
-    image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=600&q=80"
-  },
-  {
-    id: 3,
-    title: "Minimalist 1 BHK Studio",
-    city: "Mumbai",
-    location: "Kandivali West, Mumbai",
-    price: "₹18,000",
-    rating: "4.5",
-    badge: "1 BHK",
-    features: "Studio • 380 sq.ft • Semi-Furnished",
-    image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=600&q=80"
-  },
-  {
-    id: 4,
-    title: "Vibrant 2 BHK Near Metro",
-    city: "Bangalore",
-    location: "Indiranagar, Bangalore",
-    price: "₹28,000",
-    rating: "4.9",
-    badge: "2 BHK",
-    features: "Apartment • 820 sq.ft • Furnished",
-    image: "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=600&q=80"
-  },
-  {
-    id: 5,
-    title: "Cozy 1 BHK Flat",
-    city: "Bangalore",
-    location: "Koramangala, Bangalore",
-    price: "₹19,500",
-    rating: "4.6",
-    badge: "1 BHK",
-    features: "Apartment • 480 sq.ft • Semi-Furnished",
-    image: "https://images.unsplash.com/photo-1527030280862-64139fbe04ca?auto=format&fit=crop&w=600&q=80"
-  },
-  {
-    id: 6,
-    title: "Luxury 3 BHK Penthouse",
-    city: "Bangalore",
-    location: "HSR Layout, Bangalore",
-    price: "₹48,000",
-    rating: "4.9",
-    badge: "3 BHK",
-    features: "Penthouse • 1400 sq.ft • Furnished",
-    image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=600&q=80"
-  },
-  {
-    id: 7,
-    title: "Elegant 2 BHK Society Flat",
-    city: "Pune",
-    location: "Koregaon Park, Pune",
-    price: "₹25,000",
-    rating: "4.7",
-    badge: "2 BHK",
-    features: "Apartment • 750 sq.ft • Furnished",
-    image: "https://images.unsplash.com/photo-1502672023488-70e25813eb80?auto=format&fit=crop&w=600&q=80"
-  },
-  {
-    id: 8,
-    title: "Independent Studio Unit",
-    city: "Pune",
-    location: "Viman Nagar, Pune",
-    price: "₹15,000",
-    rating: "4.6",
-    badge: "1 BHK",
-    features: "Studio • 400 sq.ft • Semi-Furnished",
-    image: "https://images.unsplash.com/photo-1536376072261-38c75010e6c9?auto=format&fit=crop&w=600&q=80"
-  }
-];
+
 
 const testimonials: TestimonialItem[] = [
   {
@@ -176,59 +85,11 @@ const LandingPage: React.FC = () => {
 
   // Modern UX States
   const [scrolled, setScrolled] = useState<boolean>(false);
-  const [selectedCity, setSelectedCity] = useState<string>('Mumbai');
   const [activeFaqIndex, setActiveFaqIndex] = useState<number | null>(null);
 
   // New States for Portal & Interactive Flow
-  const [properties, setProperties] = useState<any[]>(mockWebProperties);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
 
-  // Load live listed properties from Firestore on mount
-  useEffect(() => {
-    const loadProperties = async () => {
-      try {
-        const propertiesQuery = query(collection(db, 'properties'), limit(10));
-        const querySnapshot = await getDocs(propertiesQuery);
-        const dbProps: any[] = [];
-        querySnapshot.forEach((docSnap) => {
-          const data = docSnap.data();
-          dbProps.push({
-            id: docSnap.id,
-            title: data.title || '',
-            city: data.city || 'Mumbai',
-            location: data.location || '',
-            address: data.address || '',
-            price: typeof data.price === 'number' ? '₹' + data.price.toLocaleString('en-IN') : data.price || '',
-            rating: data.rating || '5.0',
-            badge: data.badge || data.propertyType || '1 BHK',
-            features: data.features || (data.propertyType ? `${data.propertyType} • ${data.area || 0} sq.ft • ${data.furnishing || 'Semi-Furnished'}` : ''),
-            image: data.image || (data.images && data.images.length > 0 ? data.images[0] : '') || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80',
-            createdBy: data.createdBy || '',
-            ownerName: data.ownerName || 'Verified Owner'
-          });
-        });
-        
-        // Merge Firestore properties with static mockWebProperties and limit to exactly 10 properties total
-        const combinedProps = [...dbProps, ...mockWebProperties].slice(0, 10);
-        setProperties(combinedProps);
-      } catch (err) {
-        console.error('Error fetching Firestore properties:', err);
-        setProperties(mockWebProperties.slice(0, 10));
-      }
-    };
-
-    loadProperties();
-  }, []);
-
-  // Synchronize selectedCity with loaded properties list
-  useEffect(() => {
-    if (properties.length > 0) {
-      const cities = Array.from(new Set(properties.map((p) => p.city || 'Mumbai')));
-      if (!cities.includes(selectedCity) && cities.length > 0) {
-        setSelectedCity(cities.includes('Mumbai') ? 'Mumbai' : cities[0]);
-      }
-    }
-  }, [properties, selectedCity]);
 
   
   // Dynamic Scroll Listener for glassmorphic navbar
