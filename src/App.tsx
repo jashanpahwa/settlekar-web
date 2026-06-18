@@ -8,6 +8,7 @@ import DeleteAccount from './DeleteAccount';
 import NotFound from './NotFound';
 import PropertyRedirect from './PropertyRedirect';
 import Dashboard from './Dashboard';
+import LocationPage from './LocationPage';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
             path="/property/:id"
             element={<PropertyRedirect />}
           />
+          <Route path="/:locationSlug" element={<LocationPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>

@@ -159,7 +159,80 @@ const LandingPage: React.FC = () => {
     <div className={styles.landingPage}>
       {/* React 19 Document Metadata */}
       <title>SettleKar - Discover Your Perfect Rental Home</title>
-      <meta name="description" content="Discover SettleKar's location-based rental property portal. Connect directly with verified property owners in Bangalore and other cities." />
+      <meta name="description" content="Discover SettleKar's location-based rental property portal. Connect directly with verified property owners in Bangalore, Mumbai, Pune, Delhi NCR and Hyderabad. No brokerage, 100% free for tenants." />
+      <link rel="canonical" href="https://settlekar.in/" />
+
+      {/* Open Graph */}
+      <meta property="og:type" content="website" />
+      <meta property="og:url" content="https://settlekar.in/" />
+      <meta property="og:title" content="SettleKar - Discover Your Perfect Rental Home" />
+      <meta property="og:description" content="Find verified rental properties or list your property with ease. Location-based search, real-time updates, direct owner communication. Zero brokerage." />
+      <meta property="og:image" content="https://settlekar.in/logo.png" />
+      <meta property="og:locale" content="en_IN" />
+      <meta property="og:site_name" content="SettleKar" />
+
+      {/* Twitter Card */}
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content="SettleKar - Discover Your Perfect Rental Home" />
+      <meta name="twitter:description" content="Find verified rental properties or list your property with ease. Zero brokerage, direct owner communication." />
+      <meta name="twitter:image" content="https://settlekar.in/logo.png" />
+
+      {/* JSON-LD: Organization Schema */}
+      <script type="application/ld+json">{JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "SettleKar",
+        "url": "https://settlekar.in",
+        "logo": "https://settlekar.in/logo.png",
+        "description": "SettleKar is a location-based rental property platform connecting verified property owners with tenants across India.",
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "email": "jashanphw@gmail.com",
+          "telephone": "+91-6367073699",
+          "contactType": "customer support",
+          "areaServed": "IN",
+          "availableLanguage": "English"
+        },
+        "sameAs": [
+          "https://play.google.com/store/apps/details?id=com.settlekar.settlekar"
+        ]
+      })}</script>
+
+      {/* JSON-LD: WebSite Schema */}
+      <script type="application/ld+json">{JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "SettleKar",
+        "url": "https://settlekar.in",
+        "description": "Find verified rental properties or list your property with SettleKar — India's smart rental discovery platform.",
+        "publisher": {
+          "@type": "Organization",
+          "name": "SettleKar"
+        }
+      })}</script>
+
+      {/* JSON-LD: MobileApplication Schema */}
+      <script type="application/ld+json">{JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "MobileApplication",
+        "name": "SettleKar",
+        "operatingSystem": "ANDROID",
+        "applicationCategory": "LifestyleApplication",
+        "url": "https://play.google.com/store/apps/details?id=com.settlekar.settlekar",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "INR"
+        },
+        "description": "SettleKar Android app — discover rental properties near you, connect with verified owners, and settle into your new home hassle-free.",
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.5",
+          "ratingCount": "500",
+          "bestRating": "5",
+          "worstRating": "1"
+        }
+      })}</script>
 
       {/* Header */}
       <header role="banner" className={`${styles.header} ${scrolled ? styles.scrolled : ''} ${isMobileMenuOpen ? styles.headerMobileOpen : ''}`}>
@@ -265,7 +338,7 @@ const LandingPage: React.FC = () => {
                 <div className={styles.phoneSpeaker}></div>
                 <div className={styles.phoneCamera}></div>
                 <div className={styles.phoneScreen}>
-                  <img src="/app-screenshot.jpg" alt="SettleKar Mobile App Home Page" className={styles.appScreenshot} />
+                  <img src="/app-screenshot.jpg" alt="SettleKar Mobile App Home Page" className={styles.appScreenshot} fetchPriority="high" />
                 </div>
                 <div className={styles.phoneHomeIndicator}></div>
               </div>
@@ -367,7 +440,7 @@ const LandingPage: React.FC = () => {
                 </div>
                 <p className={styles.comment}>"{t.comment}"</p>
                 <div className={styles.userProfile}>
-                  <img src={t.avatar} alt={t.name} className={styles.avatar} />
+                  <img src={t.avatar} alt={t.name} className={styles.avatar} loading="lazy" />
                   <div className={styles.userInfo}>
                     <h4>{t.name}</h4>
                     <span>{t.role}</span>

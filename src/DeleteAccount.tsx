@@ -83,6 +83,8 @@ const DeleteAccount: React.FC = () => {
         {/* React 19 Document Metadata */}
         <title>SettleKar - Account Deletion Request Submitted</title>
         <meta name="description" content="Your SettleKar account deletion request has been submitted successfully." />
+        <link rel="canonical" href="https://settlekar.in/delete-account" />
+        <meta name="robots" content="index, follow" />
 
         <div className={styles.container}>
           <div className={styles.successContainer} role="alert" aria-live="polite">
@@ -108,6 +110,21 @@ const DeleteAccount: React.FC = () => {
       {/* React 19 Document Metadata */}
       <title>SettleKar - Delete Your Account</title>
       <meta name="description" content="Request the permanent deletion of your SettleKar account and associated rental property listings." />
+      <link rel="canonical" href="https://settlekar.in/delete-account" />
+      <meta name="robots" content="index, follow" />
+
+      {/* Open Graph */}
+      <meta property="og:type" content="website" />
+      <meta property="og:url" content="https://settlekar.in/delete-account" />
+      <meta property="og:title" content="SettleKar - Delete Your Account" />
+      <meta property="og:description" content="Request the permanent deletion of your SettleKar account and associated rental property listings." />
+      <meta property="og:image" content="https://settlekar.in/logo.png" />
+      <meta property="og:site_name" content="SettleKar" />
+
+      {/* Twitter Card */}
+      <meta name="twitter:card" content="summary" />
+      <meta name="twitter:title" content="SettleKar - Delete Your Account" />
+      <meta name="twitter:description" content="Request the permanent deletion of your SettleKar account and associated rental property listings." />
 
       {/* Header */}
       <header role="banner" className={styles.header}>

@@ -8,6 +8,7 @@ const NotFound: React.FC = () => {
       {/* React 19 Document Metadata */}
       <title>SettleKar - 404 Page Not Found</title>
       <meta name="description" content="The page you are looking for does not exist on SettleKar. Navigate back to our home page to discover great rental homes." />
+      <meta name="robots" content="noindex, follow" />
 
       {/* Header */}
       <header className={styles.header}>

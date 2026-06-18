@@ -9,6 +9,21 @@ const TermsOfService = () => {
       {/* React 19 Document Metadata */}
       <title>SettleKar - Terms of Service</title>
       <meta name="description" content="Review the Terms of Service for SettleKar. Understand user registration, listing plans, property owner responsibilities, and legal agreements." />
+      <link rel="canonical" href="https://settlekar.in/terms-of-service" />
+      <meta name="robots" content="index, follow" />
+
+      {/* Open Graph */}
+      <meta property="og:type" content="website" />
+      <meta property="og:url" content="https://settlekar.in/terms-of-service" />
+      <meta property="og:title" content="SettleKar - Terms of Service" />
+      <meta property="og:description" content="Review the Terms of Service for SettleKar. Understand user registration, listing plans, property owner responsibilities, and legal agreements." />
+      <meta property="og:image" content="https://settlekar.in/logo.png" />
+      <meta property="og:site_name" content="SettleKar" />
+
+      {/* Twitter Card */}
+      <meta name="twitter:card" content="summary" />
+      <meta name="twitter:title" content="SettleKar - Terms of Service" />
+      <meta name="twitter:description" content="Review the Terms of Service for SettleKar. Understand listing plans, property owner responsibilities, and legal agreements." />
 
       {/* Header */}
       <header className={styles.header}>

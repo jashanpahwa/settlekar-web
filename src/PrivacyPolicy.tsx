@@ -9,6 +9,21 @@ const PrivacyPolicy: React.FC = () => {
       {/* React 19 Document Metadata */}
       <title>SettleKar - Privacy Policy</title>
       <meta name="description" content="Read SettleKar's Privacy Policy to understand how we collect, use, and protect your personal information and property listing data." />
+      <link rel="canonical" href="https://settlekar.in/privacy-policy" />
+      <meta name="robots" content="index, follow" />
+
+      {/* Open Graph */}
+      <meta property="og:type" content="website" />
+      <meta property="og:url" content="https://settlekar.in/privacy-policy" />
+      <meta property="og:title" content="SettleKar - Privacy Policy" />
+      <meta property="og:description" content="Read SettleKar's Privacy Policy to understand how we collect, use, and protect your personal information and property listing data." />
+      <meta property="og:image" content="https://settlekar.in/logo.png" />
+      <meta property="og:site_name" content="SettleKar" />
+
+      {/* Twitter Card */}
+      <meta name="twitter:card" content="summary" />
+      <meta name="twitter:title" content="SettleKar - Privacy Policy" />
+      <meta name="twitter:description" content="Read SettleKar's Privacy Policy to understand how we collect, use, and protect your personal information." />
 
       {/* Header */}
       <header className={styles.header}>

@@ -218,6 +218,9 @@ const Dashboard: React.FC = () => {
   if (loading) {
     return (
       <div className={styles.loadingScreen}>
+        {/* React 19 Document Metadata */}
+        <title>SettleKar - Owner Dashboard</title>
+        <meta name="robots" content="noindex, nofollow" />
         <div className={styles.spinner}></div>
         <p>Connecting to SettleKar...</p>
       </div>
@@ -228,6 +231,9 @@ const Dashboard: React.FC = () => {
   if (!user) {
     return (
       <div className={styles.signInContainer}>
+        {/* React 19 Document Metadata */}
+        <title>SettleKar - Owner Dashboard</title>
+        <meta name="robots" content="noindex, nofollow" />
         <div className={styles.signInCard}>
           <div className={styles.signInHeader}>
             <Link to="/">
@@ -281,7 +287,9 @@ const Dashboard: React.FC = () => {
   // Authenticated Portal View
   return (
     <div className={styles.dashboardLayout}>
-      {/* Side Navigation Bar */}
+      {/* React 19 Document Metadata */}
+      <title>SettleKar - Owner Dashboard</title>
+      <meta name="robots" content="noindex, nofollow" />
       <aside className={styles.sidebar}>
         <div className={styles.sidebarHeader}>
           <Link to="/" className={styles.logoLink}>

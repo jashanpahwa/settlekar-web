@@ -2,7 +2,17 @@ import fs from 'fs';
 import path from 'path';
 
 // Define the static routes that need real index.html files to return a 200 OK status code.
-const routes = ['privacy-policy', 'terms-of-service', 'delete-account', 'dashboard'];
+const routes = [
+  'privacy-policy',
+  'terms-of-service',
+  'delete-account',
+  'dashboard',
+  'flats-for-rent-in-jaipur',
+  '1-bhk-for-rent-in-vaishali-nagar-jaipur',
+  'pg-near-jaipur-airport',
+  'rental-property-in-malviya-nagar-jaipur',
+  '2-bhk-for-rent-in-jagatpura-jaipur'
+];
 const distDir = path.resolve('dist');
 
 routes.forEach((route) => {
