@@ -338,7 +338,7 @@ const LandingPage: React.FC = () => {
                 <div className={styles.phoneSpeaker}></div>
                 <div className={styles.phoneCamera}></div>
                 <div className={styles.phoneScreen}>
-                  <img src="/app-screenshot.jpg" alt="SettleKar Mobile App Home Page" className={styles.appScreenshot} fetchPriority="high" />
+                  <img src="/app-screenshot.webp" alt="SettleKar Mobile App Home Page" className={styles.appScreenshot} fetchPriority="high" width={473} height={1024} />
                 </div>
                 <div className={styles.phoneHomeIndicator}></div>
               </div>
@@ -440,9 +440,9 @@ const LandingPage: React.FC = () => {
                 </div>
                 <p className={styles.comment}>"{t.comment}"</p>
                 <div className={styles.userProfile}>
-                  <img src={t.avatar} alt={t.name} className={styles.avatar} loading="lazy" />
+                  <img src={t.avatar} alt={t.name} className={styles.avatar} loading="lazy" width={52} height={52} />
                   <div className={styles.userInfo}>
-                    <h4>{t.name}</h4>
+                    <h3 className={styles.testimonialName}>{t.name}</h3>
                     <span>{t.role}</span>
                   </div>
                 </div>

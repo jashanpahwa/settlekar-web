@@ -21,7 +21,7 @@ const normalizeProperty = (prop: any): MockProperty => {
     title: prop.title || 'Rental Property',
     location: prop.location || prop.address || 'Jaipur',
     price: prop.price || 'Contact for Price',
-    type: prop.type || '',
+    type: prop.propertyType || '',
     features: featuresArray,
     image: prop.image || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&h=400&q=80',
     rating: prop.rating || '4.5',
@@ -128,29 +128,88 @@ const LocationPage: React.FC = () => {
           
           const slug = pageData.slug;
 
-          if (slug === '1-bhk-for-rent-in-vaishali-nagar-jaipur') {
-            const isVaishali = locationVal.includes('vaishali');
-            const is1BHK = propertyType === '1 bhk' || propertyType === '1 rk' || propertyType === 'studio' || title.includes('1 bhk') || title.includes('1bhk');
-            return isVaishali && is1BHK;
+          // 1. Locality Filter Check
+          let matchesLocality = true;
+          if (slug.includes('vaishali-nagar')) {
+            matchesLocality = locationVal.includes('vaishali');
+          } else if (slug.includes('malviya-nagar')) {
+            matchesLocality = locationVal.includes('malviya');
+          } else if (slug.includes('jagatpura')) {
+            matchesLocality = locationVal.includes('jagatpura');
+          } else if (slug.includes('bani-park')) {
+            matchesLocality = locationVal.includes('bani park') || locationVal.includes('banipark');
+          } else if (slug.includes('c-scheme')) {
+            matchesLocality = locationVal.includes('c-scheme') || locationVal.includes('c scheme') || locationVal.includes('cscheme');
+          } else if (slug.includes('mansarovar')) {
+            matchesLocality = locationVal.includes('mansarovar');
+          } else if (slug.includes('jhotwara')) {
+            matchesLocality = locationVal.includes('jhotwara');
+          } else if (slug.includes('sanganer')) {
+            matchesLocality = locationVal.includes('sanganer');
+          } else if (slug.includes('amer')) {
+            matchesLocality = locationVal.includes('amer');
+          } else if (slug.includes('pink-city')) {
+            matchesLocality = locationVal.includes('pink city') || locationVal.includes('pinkcity') || locationVal.includes('c-scheme');
+          } else if (slug.includes('sitapura')) {
+            matchesLocality = locationVal.includes('sitapura');
+          } else if (slug.includes('airport')) {
+            matchesLocality = locationVal.includes('airport') || locationVal.includes('sanganer') || locationVal.includes('siddharth') || locationVal.includes('jawahar circle');
           }
 
-          if (slug === 'pg-near-jaipur-airport') {
-            const isPG = propertyType === 'pg' || title.includes('pg') || title.includes('paying guest') || title.includes('hostel') || description.includes('pg');
-            const isAirport = locationVal.includes('airport') || locationVal.includes('sanganer') || locationVal.includes('siddharth') || locationVal.includes('jawahar circle');
-            return isPG && isAirport;
+          if (!matchesLocality) return false;
+
+          // 2. Configuration & Category Filter Check
+          if (slug.includes('1-bhk')) {
+            return propertyType === '1 bhk' || propertyType === '1 rk' || propertyType === 'studio' || title.includes('1 bhk') || title.includes('1bhk');
+          }
+          if (slug.includes('2-bhk')) {
+            return propertyType === '2 bhk' || title.includes('2 bhk') || title.includes('2bhk');
+          }
+          if (slug.includes('3-bhk')) {
+            return propertyType === '3 bhk' || title.includes('3 bhk') || title.includes('3bhk');
+          }
+          if (slug.includes('pg-for-girls')) {
+            const isGirls = title.includes('girl') || title.includes('female') || title.includes('women') || description.includes('girl') || description.includes('female') || description.includes('women');
+            return propertyType === 'pg' && isGirls;
+          }
+          if (slug.includes('pg-for-boys')) {
+            const isBoys = title.includes('boy') || title.includes('male') || title.includes('men') || description.includes('boy') || description.includes('male') || description.includes('men');
+            return propertyType === 'pg' && isBoys;
+          }
+          if (slug.includes('pg-near') || slug.includes('pg-for')) {
+            return propertyType === 'pg' || title.includes('pg') || title.includes('paying guest') || title.includes('hostel');
+          }
+          if (slug.includes('independent-house')) {
+            return propertyType === 'villa' || title.includes('house') || title.includes('independent house') || description.includes('house');
+          }
+          if (slug.includes('semi-furnished')) {
+            return (title.includes('semi') || description.includes('semi') || title.includes('semi-furnished') || description.includes('semi-furnished')) && (propertyType !== 'shop' && propertyType !== 'pg');
+          }
+          if (slug.includes('fully-furnished')) {
+            return (title.includes('fully') || description.includes('fully') || title.includes('furnished') || description.includes('furnished')) && (propertyType !== 'shop' && propertyType !== 'pg');
+          }
+          if (slug.includes('builder-floor')) {
+            return title.includes('builder') || description.includes('builder') || title.includes('floor') || description.includes('floor');
+          }
+          if (slug.includes('studio-apartment')) {
+            return propertyType === 'studio' || title.includes('studio');
+          }
+          if (slug.includes('student')) {
+            return propertyType === 'pg' || propertyType === 'studio' || propertyType === '1 bhk' || propertyType === '1 rk' || title.includes('student') || description.includes('student');
+          }
+          if (slug.includes('family')) {
+            return propertyType === '2 bhk' || propertyType === '3 bhk' || propertyType === '4 bhk' || propertyType === 'villa';
+          }
+          if (slug.includes('budget')) {
+            const priceVal = parseFloat(prop.price?.replace(/[^0-9.]/g, '') || '0');
+            return (propertyType !== 'shop' && propertyType !== 'pg') && (priceVal > 0 && priceVal < 12000);
+          }
+          if (slug.includes('luxury')) {
+            const priceVal = parseFloat(prop.price?.replace(/[^0-9.]/g, '') || '0');
+            return (propertyType !== 'shop' && propertyType !== 'pg') && (priceVal >= 20000 || title.includes('luxury') || description.includes('luxury') || title.includes('premium'));
           }
 
-          if (slug === 'rental-property-in-malviya-nagar-jaipur') {
-            return locationVal.includes('malviya');
-          }
-
-          if (slug === '2-bhk-for-rent-in-jagatpura-jaipur') {
-            const isJagatpura = locationVal.includes('jagatpura');
-            const is2BHK = propertyType === '2 bhk' || title.includes('2 bhk') || title.includes('2bhk');
-            return isJagatpura && is2BHK;
-          }
-
-          // flats-for-rent-in-jaipur: fits all apartments, BHKs, and studios in the city (excludes shops and PGs)
+          // Default fallback: flats/apartments (excludes shops and PGs)
           const isFlatOrApartment = propertyType !== 'shop' && propertyType !== 'pg';
           return isFlatOrApartment;
         });
@@ -387,9 +446,8 @@ const LocationPage: React.FC = () => {
               properties.map((property) => (
   <div key={property.id} className={styles.propertyCard}>
     <div className={styles.imageWrapper}>
-      <img src={property.image} alt={property.title} className={styles.propertyImage}  />
+      <img src={property.image} alt={property.title} className={styles.propertyImage} width={600} height={400} />
       {property.badge && <span className={styles.badge}>{property.type}</span>}
-     
     </div>
     <div className={styles.cardContent}>
       <h3>{property.title}</h3>

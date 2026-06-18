@@ -237,7 +237,7 @@ const Dashboard: React.FC = () => {
         <div className={styles.signInCard}>
           <div className={styles.signInHeader}>
             <Link to="/">
-              <img src={logoImage} alt="SettleKar" className={styles.signInLogo} />
+              <img src={logoImage} alt="SettleKar" className={styles.signInLogo} width={500} height={125} />
             </Link>
             <span className={styles.signInBadge}>Owner Portal</span>
           </div>
@@ -293,7 +293,7 @@ const Dashboard: React.FC = () => {
       <aside className={styles.sidebar}>
         <div className={styles.sidebarHeader}>
           <Link to="/" className={styles.logoLink}>
-            <img src={logoImage} alt="SettleKar" className={styles.logoImage} />
+            <img src={logoImage} alt="SettleKar" className={styles.logoImage}  />
           </Link>
           <span className={styles.portalBadge}>Owner Portal</span>
         </div>
@@ -347,7 +347,7 @@ const Dashboard: React.FC = () => {
           </div>
           <div className={styles.ownerProfile}>
             {user.photoURL ? (
-              <img src={user.photoURL} alt={user.displayName || 'Profile'} className={styles.profileAvatarImg} />
+              <img src={user.photoURL} alt={user.displayName || 'Profile'} className={styles.profileAvatarImg} width={40} height={40} />
             ) : (
               <div className={styles.profileAvatar}>
                 {user.displayName ? user.displayName.substring(0, 2).toUpperCase() : 'SK'}
