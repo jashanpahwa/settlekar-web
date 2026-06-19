@@ -93,7 +93,7 @@ const FaqSection: React.FC = () => {
   };
 
   return (
-    <section className="relative w-full bg-[#0A0A0B] py-24 px-6 md:px-12 flex flex-col items-center justify-center font-sans overflow-hidden border-t border-white/5">
+    <section id="faq" className="relative w-full bg-[#0A0A0B] py-24 px-6 md:px-12 flex flex-col items-center justify-center font-sans overflow-hidden border-t border-white/5">
      
       <div className="relative z-10 w-full max-w-[1200px]">
         {/* Top Header Row */}

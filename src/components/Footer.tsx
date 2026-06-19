@@ -1,7 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './Footer.module.css';
 import logoImage from '/logo.png';
+import ContactModal from './ContactModal';
 
 const GOOGLE_PLAY_URL =
   'https://play.google.com/store/apps/details?id=com.settlekar.settlekar';
@@ -9,6 +10,7 @@ const GOOGLE_PLAY_URL =
 const Footer: React.FC = () => {
   const svgRef = useRef<SVGSVGElement>(null);
   const textRef = useRef<SVGTextElement>(null);
+  const [isContactOpen, setIsContactOpen] = useState(false);
 
   const fitWatermark = () => {
     const svg = svgRef.current;
@@ -34,8 +36,10 @@ const Footer: React.FC = () => {
   }, []);
 
   const handleScrollTo = (id: string, e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    if (window.location.pathname === '/') {
+      e.preventDefault();
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   return (
@@ -172,11 +176,11 @@ const Footer: React.FC = () => {
               {/* Navigation column */}
               <div className={styles.footerCol}>
                 <p className={styles.footerColTitle}>Navigation</p>
-                <a href="#features" onClick={(e) => handleScrollTo('features', e)}>How It Works</a>
-                <a href="#features" onClick={(e) => handleScrollTo('features', e)}>Features</a>
-                <a href="#download" onClick={(e) => handleScrollTo('download', e)}>Download App</a>
-                <a href="#how-it-works" onClick={(e) => handleScrollTo('how-it-works', e)}>For Owners</a>
-                <a href="#how-it-works" onClick={(e) => handleScrollTo('how-it-works', e)}>FAQ</a>
+                <a href="/#how-it-works" onClick={(e) => handleScrollTo('how-it-works', e)}>How It Works</a>
+                <a href="/#features" onClick={(e) => handleScrollTo('features', e)}>Features</a>
+                <a href="/#download" onClick={(e) => handleScrollTo('download', e)}>Download App</a>
+                <Link to="/guides">Guides & Blogs</Link>
+                <a href="/#faq" onClick={(e) => handleScrollTo('faq', e)}>FAQ</a>
               </div>
               {/* Company column */}
               <div className={styles.footerCol}>
@@ -185,7 +189,13 @@ const Footer: React.FC = () => {
                 <Link to="/privacy-policy">Privacy Policy</Link>
                 <Link to="/terms-of-service">Terms of Service</Link>
                 <Link to="/delete-account">Delete Account</Link>
-                <a href="mailto:jashanphw@gmail.com">Contact Us</a>
+                <button
+                  type="button"
+                  onClick={() => setIsContactOpen(true)}
+                  className={styles.footerColBtn}
+                >
+                  Contact Us
+                </button>
               </div>
             </div>
           </div>
@@ -246,6 +256,8 @@ const Footer: React.FC = () => {
           </text>
         </svg>
       </div>
+      {/* Contact Form Modal */}
+      <ContactModal isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />
     </section>
   );
 };

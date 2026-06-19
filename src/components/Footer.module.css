@@ -350,6 +350,26 @@
   color: #1e4fc0;
 }
 
+.footerColBtn {
+  display: block;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 14px;
+  text-decoration: none;
+  background: transparent;
+  border: none;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.footerColBtn:hover {
+  color: #1e4fc0;
+}
+
 /* ---- Bottom row ---- */
 .footerBottom {
   display: flex;

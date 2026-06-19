@@ -16,7 +16,7 @@
 
 /* Header */
 .header {
-  background: rgba(10, 37, 64, 0.75);
+  background: rgba(10, 37, 64, 0.9);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -288,16 +288,6 @@
   color: #2563EB;
 }
 
-.excerpt {
-  color: #64748B;
-  font-size: 0.9rem;
-  line-height: 1.5;
-  margin-bottom: 1.5rem;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
 
 .readMoreLink {
   color: #2563EB;
