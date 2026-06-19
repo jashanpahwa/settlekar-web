@@ -39,7 +39,16 @@ const routes = [
   'guides/how-to-rent-flat-without-broker-jaipur',
   'guides/cost-of-living-in-jaipur',
   'guides/pg-vs-flat-comparison-jaipur',
-  'guides/moving-to-jaipur-relocation-guide'
+  'guides/moving-to-jaipur-relocation-guide',
+  'guides/premium-suburbs-to-rent-mumbai',
+  'guides/bengaluru-rental-market-guide',
+  'guides/gurugram-renting-sectors-guide',
+  'guides/pune-rental-localities-working-professionals',
+  'guides/understanding-rental-agreements-tenants-checklist',
+  'guides/hidden-costs-of-renting-apartments',
+  'guides/furnished-vs-unfurnished-flats-rental-guide',
+  'guides/relocation-packing-checklist-working-professionals',
+  'guides/top-residential-hubs-for-techies-chennai'
 ];
 const distDir = path.resolve('dist');
 

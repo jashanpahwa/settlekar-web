@@ -15,9 +15,12 @@ const LocationPage = lazy(() => import('./LocationPage'));
 const GuidesIndex = lazy(() => import('./GuidesIndex'));
 const ArticlePage = lazy(() => import('./ArticlePage'));
 
+import ScrollToTop from './components/ScrollToTop';
+
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <div className="App">
         <Suspense fallback={null}>
           <Routes>

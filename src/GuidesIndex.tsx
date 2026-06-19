@@ -20,7 +20,16 @@ const articleImages: Record<string, string> = {
   'how-to-rent-flat-without-broker-jaipur': 'https://images.pexels.com/photos/2559941/pexels-photo-2559941.jpeg?auto=compress&cs=tinysrgb&w=800',
   'cost-of-living-in-jaipur': 'https://images.pexels.com/photos/5428003/pexels-photo-5428003.jpeg?auto=compress&cs=tinysrgb&w=800',
   'pg-vs-flat-comparison-jaipur': 'https://images.pexels.com/photos/2800832/pexels-photo-2800832.jpeg?auto=compress&cs=tinysrgb&w=800',
-  'moving-to-jaipur-relocation-guide': 'https://images.pexels.com/photos/3797503/pexels-photo-3797503.jpeg?auto=compress&cs=tinysrgb&w=800'
+  'moving-to-jaipur-relocation-guide': 'https://images.pexels.com/photos/3797503/pexels-photo-3797503.jpeg?auto=compress&cs=tinysrgb&w=800',
+  'premium-suburbs-to-rent-mumbai': 'https://images.pexels.com/photos/14840134/pexels-photo-14840134.jpeg?auto=compress&cs=tinysrgb&w=800',
+  'bengaluru-rental-market-guide': 'https://images.pexels.com/photos/10070659/pexels-photo-10070659.jpeg?auto=compress&cs=tinysrgb&w=800',
+  'gurugram-renting-sectors-guide': 'https://images.pexels.com/photos/18251717/pexels-photo-18251717.jpeg?auto=compress&cs=tinysrgb&w=800',
+  'pune-rental-localities-working-professionals': 'https://images.pexels.com/photos/18883652/pexels-photo-18883652.jpeg?auto=compress&cs=tinysrgb&w=800',
+  'understanding-rental-agreements-tenants-checklist': 'https://images.pexels.com/photos/4814061/pexels-photo-4814061.jpeg?auto=compress&cs=tinysrgb&w=800',
+  'hidden-costs-of-renting-apartments': 'https://images.pexels.com/photos/4386442/pexels-photo-4386442.jpeg?auto=compress&cs=tinysrgb&w=800',
+  'furnished-vs-unfurnished-flats-rental-guide': 'https://images.pexels.com/photos/276517/pexels-photo-276517.jpeg?auto=compress&cs=tinysrgb&w=800',
+  'relocation-packing-checklist-working-professionals': 'https://images.pexels.com/photos/5025662/pexels-photo-5025662.jpeg?auto=compress&cs=tinysrgb&w=800',
+  'top-residential-hubs-for-techies-chennai': 'https://images.pexels.com/photos/10070659/pexels-photo-10070659.jpeg?auto=compress&cs=tinysrgb&w=800'
 };
 
 // Custom magnetic squares layout per article
@@ -39,6 +48,33 @@ const articleSquares: Record<string, [number, number, number][]> = {
   ],
   'moving-to-jaipur-relocation-guide': [
     [5, 15, 12], [12, 24, 10], [6, 32, 6], [82, 75, 14], [86, 85, 8]
+  ],
+  'premium-suburbs-to-rent-mumbai': [
+    [4, 15, 12], [85, 75, 14], [86, 85, 8], [9, 27, 8]
+  ],
+  'bengaluru-rental-market-guide': [
+    [82, 20, 15], [88, 32, 9], [79, 40, 6], [5, 45, 10]
+  ],
+  'gurugram-renting-sectors-guide': [
+    [6, 25, 14], [12, 35, 8], [84, 80, 12], [88, 68, 6]
+  ],
+  'pune-rental-localities-working-professionals': [
+    [82, 60, 16], [88, 72, 10], [79, 78, 6], [4, 18, 12]
+  ],
+  'understanding-rental-agreements-tenants-checklist': [
+    [5, 20, 14], [12, 30, 8], [85, 70, 12], [88, 58, 6]
+  ],
+  'hidden-costs-of-renting-apartments': [
+    [82, 18, 16], [88, 28, 10], [79, 36, 6], [4, 40, 12]
+  ],
+  'furnished-vs-unfurnished-flats-rental-guide': [
+    [6, 15, 12], [84, 75, 14], [88, 62, 8], [8, 25, 8]
+  ],
+  'relocation-packing-checklist-working-professionals': [
+    [82, 55, 15], [88, 65, 9], [79, 72, 6], [5, 78, 10]
+  ],
+  'top-residential-hubs-for-techies-chennai': [
+    [5, 25, 14], [12, 35, 8], [85, 82, 12], [88, 70, 6]
   ]
 };
 
@@ -214,10 +250,15 @@ const GuidesIndex: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Stable pool of exactly 10 random articles selected on mount
+  const [randomArticles] = useState<ArticleData[]>(() => {
+    return [...articlesData].sort(() => 0.5 - Math.random()).slice(0, 10);
+  });
+
   // Filter articles
   const filteredArticles = selectedPillar === 'all'
-    ? articlesData
-    : articlesData.filter((art) => art.pillar === selectedPillar);
+    ? randomArticles
+    : randomArticles.filter((art) => art.pillar === selectedPillar);
 
   return (
     <div className={styles.guidesPage}>
