@@ -8,6 +8,7 @@ import styles from '../../Dashboard.module.css';
 
 interface ListPropertyTabProps {
   user: User;
+  userRole: 'broker' | 'owner' | 'tenant';
   editingProperty: PropertyItem | null;
   onSaveSuccess: (updatedOrNewProp: PropertyItem, isEdit: boolean) => void;
   onCancel: () => void;
@@ -15,10 +16,29 @@ interface ListPropertyTabProps {
 
 const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
   user,
+  userRole,
   editingProperty,
   onSaveSuccess,
   onCancel,
 }) => {
+  // Check if tenant
+  if (userRole === 'tenant') {
+    return (
+      <div className={styles.tabContent}>
+        <div className={styles.emptyState} style={{ padding: '60px 20px', textAlign: 'center' }}>
+          <div className={styles.emptyIcon} style={{ fontSize: '3rem', marginBottom: '20px' }}>⚠️</div>
+          <h2 style={{ fontSize: '1.75rem', fontWeight: 700, color: '#ffffff', marginBottom: '12px' }}>Tenant Accounts Cannot List Properties</h2>
+          <p style={{ color: '#94a3b8', maxWidth: '500px', margin: '0 auto 24px auto', lineHeight: 1.6 }}>
+            You are registered as a tenant. If you are a property owner or a broker, please change your profile type in the top right profile dropdown or settings to list properties.
+          </p>
+          <button className={styles.emptyStateBtn} onClick={onCancel}>
+            Go Back
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   // Form States (Aligned with SettleKar Mobile App list-property.js)
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -40,6 +60,11 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
   const [outdoorFiles, setOutdoorFiles] = useState<File[]>([]);
   const [outdoorPreviews, setOutdoorPreviews] = useState<string[]>([]);
   const [uploadProgress, setUploadProgress] = useState(false);
+  
+  // New role-based financial fields
+  const [securityFees, setSecurityFees] = useState('');
+  const [advanceRentMonths, setAdvanceRentMonths] = useState<number>(1);
+  const [brokerage, setBrokerage] = useState('');
   
   // Leaflet Map Picker States
   const [coords, setCoords] = useState<{lat: number, lng: number} | null>(null);
@@ -243,6 +268,11 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
       setOutdoorPreviews(editingProperty.outdoorImages || []);
       setIndoorFiles([]);
       setOutdoorFiles([]);
+
+      // Populate financial fields
+      setSecurityFees(editingProperty.securityFees !== undefined ? editingProperty.securityFees.toString() : '');
+      setAdvanceRentMonths(editingProperty.advanceRentMonths !== undefined ? editingProperty.advanceRentMonths : 1);
+      setBrokerage(editingProperty.brokerage !== undefined ? editingProperty.brokerage.toString() : '');
     } else {
       // Clear form fields
       setTitle('');
@@ -260,6 +290,11 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
       setIndoorPreviews([]);
       setOutdoorFiles([]);
       setOutdoorPreviews([]);
+
+      // Reset financial fields
+      setSecurityFees('');
+      setAdvanceRentMonths(1);
+      setBrokerage('');
     }
   }, [editingProperty]);
 
@@ -424,6 +459,11 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
       const parsedPrice = parseFloat(price.replace(/[^\d.]/g, '')) || 0;
       let displayPriceString = `₹${parsedPrice.toLocaleString('en-IN')}`;
 
+      // Financial calculations
+      const parsedSecurity = parseFloat(securityFees.replace(/[^\d.]/g, '')) || 0;
+      const parsedBrokerage = userRole === 'broker' ? (parseFloat(brokerage.replace(/[^\d.]/g, '')) || 0) : 0;
+      const calculatedTotalAdvance = (advanceRentMonths * parsedPrice) + parsedSecurity + parsedBrokerage;
+
       // Generate property features string
       const featuresStr = `${propertyType} • ${sqft} sq.ft • ${furnishing}`;
 
@@ -460,6 +500,11 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
         badge: propertyType,
         features: featuresStr,
         rating: '5.0',
+        securityFees: parsedSecurity,
+        advanceRentMonths,
+        brokerage: parsedBrokerage,
+        totalAdvance: calculatedTotalAdvance,
+        listedByRole: userRole,
         keywords: [
           title.toLowerCase(),
           propertyType.toLowerCase(),
@@ -527,7 +572,12 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
           outdoorImages: finalOutdoorUrls,
           city,
           badge: propertyType,
-          features: featuresStr
+          features: featuresStr,
+          securityFees: parsedSecurity,
+          advanceRentMonths,
+          brokerage: parsedBrokerage,
+          totalAdvance: calculatedTotalAdvance,
+          listedByRole: userRole
         };
 
         // Update Firestore document
@@ -546,7 +596,13 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
           image: finalImageUrl,
           indoorImages: finalIndoorUrls,
           outdoorImages: finalOutdoorUrls,
-          isUserAdded: true
+          isUserAdded: true,
+          securityFees: parsedSecurity,
+          advanceRentMonths,
+          brokerage: parsedBrokerage,
+          totalAdvance: calculatedTotalAdvance,
+          listedByRole: userRole,
+          description: updatePayload.description
         };
 
         onSaveSuccess(updatedPropItem, true);
@@ -604,7 +660,13 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
           image: finalImageUrl,
           isUserAdded: true,
           indoorImages: finalIndoorUrls,
-          outdoorImages: finalOutdoorUrls
+          outdoorImages: finalOutdoorUrls,
+          securityFees: parsedSecurity,
+          advanceRentMonths,
+          brokerage: parsedBrokerage,
+          totalAdvance: calculatedTotalAdvance,
+          listedByRole: userRole,
+          description: finalPropertyPayload.description
         };
 
         onSaveSuccess(newPropItem, false);
@@ -642,6 +704,12 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
       setUploadProgress(false);
     }
   };
+
+  // Derive numeric values for calculations
+  const parsedPrice = parseFloat(price.replace(/[^\d.]/g, '')) || 0;
+  const parsedSecurity = parseFloat(securityFees.replace(/[^\d.]/g, '')) || 0;
+  const parsedBrokerage = userRole === 'broker' ? (parseFloat(brokerage.replace(/[^\d.]/g, '')) || 0) : 0;
+  const calculatedTotalAdvance = (advanceRentMonths * parsedPrice) + parsedSecurity + parsedBrokerage;
 
   return (
     <div className={styles.tabContent}>
@@ -719,6 +787,68 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
                 value={sqft}
                 onChange={(e) => setSqft(e.target.value)}
               />
+            </div>
+          </div>
+        </div>
+
+        {/* CARD 1.5: Financial Details */}
+        <div className={styles.appCard}>
+          <div className={styles.appCardHeader}>
+            <span className={styles.appCardIcon}>💰</span>
+            <h3 className={styles.appCardTitle}>Financial Details ({userRole === 'broker' ? 'Broker' : 'Owner'})</h3>
+          </div>
+
+          <div className={styles.formRow}>
+            <div className={styles.formGroup}>
+              <label htmlFor="prop-security">Security Deposit / Fees (₹) *</label>
+              <input
+                id="prop-security"
+                type="text"
+                placeholder="e.g. 40000"
+                value={securityFees}
+                onChange={(e) => setSecurityFees(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label htmlFor="prop-advance-months">Advance Rent (Months) *</label>
+              <select
+                id="prop-advance-months"
+                value={advanceRentMonths}
+                onChange={(e) => setAdvanceRentMonths(parseInt(e.target.value))}
+                required
+              >
+                <option value={1}>1 Month Rent</option>
+                <option value={2}>2 Months Rent</option>
+              </select>
+            </div>
+          </div>
+
+          {userRole === 'broker' && (
+            <div className={styles.formRow}>
+              <div className={styles.formGroup}>
+                <label htmlFor="prop-brokerage">Brokerage Fees (₹) *</label>
+                <input
+                  id="prop-brokerage"
+                  type="text"
+                  placeholder="e.g. 10000"
+                  value={brokerage}
+                  onChange={(e) => setBrokerage(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Real-time Calculated Total Advance Panel */}
+          <div className={styles.financialSummaryCard}>
+            <div className={styles.financialSummaryHeader}>
+              <span>Calculated Total Advance</span>
+              <strong>₹{calculatedTotalAdvance.toLocaleString('en-IN')}</strong>
+            </div>
+            <div className={styles.financialSummaryFormula}>
+              Formula: ({advanceRentMonths} × Rent [₹{(parsedPrice || 0).toLocaleString('en-IN')}]) + Security [₹{(parsedSecurity || 0).toLocaleString('en-IN')}] {userRole === 'broker' ? `+ Brokerage [₹${(parsedBrokerage || 0).toLocaleString('en-IN')}]` : ''}
             </div>
           </div>
         </div>

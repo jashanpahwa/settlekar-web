@@ -12,6 +12,12 @@ export interface PropertyItem {
   isUserAdded?: boolean;
   indoorImages?: string[];
   outdoorImages?: string[];
+  securityFees?: number;
+  advanceRentMonths?: number;
+  brokerage?: number;
+  totalAdvance?: number;
+  listedByRole?: 'owner' | 'broker';
+  description?: string;
 }
 
 export interface InquiryItem {

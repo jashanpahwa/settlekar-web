@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { auth, db, googleProvider } from './firebase';
 import { signInWithPopup, signOut, onAuthStateChanged, User } from 'firebase/auth';
-import { collection, doc, deleteDoc, getDocs, query, where } from 'firebase/firestore';
+import { collection, doc, deleteDoc, getDocs, getDoc, setDoc, query, where, serverTimestamp } from 'firebase/firestore';
 import styles from './Dashboard.module.css';
 import logoImage from '/logo.png';
 
@@ -27,10 +27,35 @@ const Dashboard: React.FC = () => {
   const [inquiries, setInquiries] = useState<InquiryItem[]>([]);
   const [editingProperty, setEditingProperty] = useState<PropertyItem | null>(null);
 
+  const [userRole, setUserRole] = useState<'broker' | 'owner' | 'tenant' | null>(null);
+  const [roleLoading, setRoleLoading] = useState(false);
+  const [selectedRegRole, setSelectedRegRole] = useState<'owner' | 'broker' | 'tenant' | null>(null);
+  const [registering, setRegistering] = useState(false);
+
   // 1. Listen to Authentication State
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setUser(firebaseUser);
+      if (firebaseUser) {
+        setRoleLoading(true);
+        try {
+          const userDocRef = doc(db, 'users', firebaseUser.uid);
+          const userDocSnap = await getDoc(userDocRef);
+          if (userDocSnap.exists()) {
+            setUserRole(userDocSnap.data().role || null);
+          } else {
+            setUserRole(null);
+          }
+        } catch (err) {
+          console.error("Error loading user role:", err);
+          setUserRole(null);
+        } finally {
+          setRoleLoading(false);
+        }
+      } else {
+        setUserRole(null);
+        setRoleLoading(false);
+      }
       setLoading(false);
     });
     return () => unsubscribe();
@@ -63,7 +88,13 @@ const Dashboard: React.FC = () => {
             image: data.image || (data.images && data.images.length > 0 ? data.images[0] : '') || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80',
             isUserAdded: true,
             indoorImages: data.indoorImages || [],
-            outdoorImages: data.outdoorImages || []
+            outdoorImages: data.outdoorImages || [],
+            securityFees: data.securityFees,
+            advanceRentMonths: data.advanceRentMonths,
+            brokerage: data.brokerage,
+            totalAdvance: data.totalAdvance,
+            listedByRole: data.listedByRole,
+            description: data.description || ''
           });
         });
         setProperties(loadedProps);
@@ -126,6 +157,34 @@ const Dashboard: React.FC = () => {
       setActiveTab('overview');
     } catch (err) {
       console.error('Error signing out:', err);
+    }
+  };
+
+  const handleRegisterRole = async () => {
+    if (!user || !selectedRegRole) return;
+    setRegistering(true);
+    try {
+      const userDocRef = doc(db, 'users', user.uid);
+      await setDoc(userDocRef, {
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName || 'Verified User',
+        role: selectedRegRole,
+        registeredAt: serverTimestamp()
+      });
+      setUserRole(selectedRegRole);
+    } catch (err) {
+      console.error("Error saving user role:", err);
+      alert("Failed to register role. Please check connection and try again.");
+    } finally {
+      setRegistering(false);
+    }
+  };
+
+  const handleSwitchRole = () => {
+    if (window.confirm("Are you sure you want to change your account type? This will let you choose a new role (Owner, Broker, or Tenant).")) {
+      setSelectedRegRole(userRole);
+      setUserRole(null);
     }
   };
 
@@ -215,11 +274,11 @@ const Dashboard: React.FC = () => {
   };
 
   // Loading Splash Screen
-  if (loading) {
+  if (loading || roleLoading) {
     return (
       <div className={styles.loadingScreen}>
         {/* React 19 Document Metadata */}
-        <title>SettleKar - Owner Dashboard</title>
+        <title>SettleKar - Dashboard</title>
         <meta name="robots" content="noindex, nofollow" />
         <div className={styles.spinner}></div>
         <p>Connecting to SettleKar...</p>
@@ -239,7 +298,7 @@ const Dashboard: React.FC = () => {
             <Link to="/">
               <img src={logoImage} alt="SettleKar" className={styles.signInLogo} width={500} height={125} />
             </Link>
-            <span className={styles.signInBadge}>Owner Portal</span>
+            <span className={styles.signInBadge}>Dashboard Portal</span>
           </div>
           
           <h2>Manage Your Listings Hassle-Free</h2>
@@ -284,18 +343,98 @@ const Dashboard: React.FC = () => {
     );
   }
 
+  // Role Selection Gate
+  if (!userRole) {
+    return (
+      <div className={styles.signInContainer}>
+        <title>SettleKar - Setup Profile</title>
+        <meta name="robots" content="noindex, nofollow" />
+        <div className={styles.signInCard} style={{ maxWidth: '600px' }}>
+          <div className={styles.signInHeader}>
+            <Link to="/">
+              <img src={logoImage} alt="SettleKar" className={styles.signInLogo} width={500} height={125} />
+            </Link>
+            <span className={styles.signInBadge}>Account setup</span>
+          </div>
+
+          <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: '#ffffff', marginBottom: '8px' }}>Select your account type</h2>
+          <p style={{ color: '#94a3b8', fontSize: '0.925rem', marginBottom: '24px' }}>
+            Before listing a property or managing inquiries, please specify if you are an Owner, Broker, or Tenant.
+          </p>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '32px' }}>
+            {/* Owner Option */}
+            <div 
+              onClick={() => setSelectedRegRole('owner')}
+              className={`${styles.roleOptionCard} ${selectedRegRole === 'owner' ? styles.roleOptionCardActive : ''}`}
+            >
+              <div className={styles.roleOptionIcon}>🏠</div>
+              <div className={styles.roleOptionDetails}>
+                <h4>Property Owner</h4>
+                <p>I own the apartment or house and want to list it directly with no brokerage.</p>
+              </div>
+            </div>
+
+            {/* Broker Option */}
+            <div 
+              onClick={() => setSelectedRegRole('broker')}
+              className={`${styles.roleOptionCard} ${selectedRegRole === 'broker' ? styles.roleOptionCardActive : ''}`}
+            >
+              <div className={styles.roleOptionIcon}>🏢</div>
+              <div className={styles.roleOptionDetails}>
+                <h4>Real Estate Broker</h4>
+                <p>I am a broker listing properties on behalf of landlords and want to specify brokerage fees.</p>
+              </div>
+            </div>
+
+            {/* Tenant Option */}
+            <div 
+              onClick={() => setSelectedRegRole('tenant')}
+              className={`${styles.roleOptionCard} ${selectedRegRole === 'tenant' ? styles.roleOptionCardActive : ''}`}
+            >
+              <div className={styles.roleOptionIcon}>👤</div>
+              <div className={styles.roleOptionDetails}>
+                <h4>Tenant / House Hunter</h4>
+                <p>I want to browse verified properties and find roommates or apartments to rent.</p>
+              </div>
+            </div>
+          </div>
+
+          <button 
+            onClick={handleRegisterRole} 
+            className={styles.googleSignInBtn} 
+            disabled={!selectedRegRole || registering}
+            style={{ background: '#2563eb', color: '#ffffff', fontWeight: 700 }}
+          >
+            {registering ? 'Setting up Profile...' : 'Confirm Account Selection'}
+          </button>
+
+          <button 
+            onClick={handleSignOut} 
+            className={styles.backHomeLink}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', width: '100%', marginTop: '10px' }}
+          >
+            ← Sign Out
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   // Authenticated Portal View
   return (
     <div className={styles.dashboardLayout}>
       {/* React 19 Document Metadata */}
-      <title>SettleKar - Owner Dashboard</title>
+      <title>SettleKar - Dashboard</title>
       <meta name="robots" content="noindex, nofollow" />
       <aside className={styles.sidebar}>
         <div className={styles.sidebarHeader}>
           <Link to="/" className={styles.logoLink}>
             <img src={logoImage} alt="SettleKar" className={styles.logoImage}  />
           </Link>
-          <span className={styles.portalBadge}>Owner Portal</span>
+          <span className={styles.portalBadge}>
+            {userRole === 'broker' ? 'Broker Portal' : userRole === 'tenant' ? 'Tenant Portal' : 'Owner Portal'}
+          </span>
         </div>
         
         <nav className={styles.menu}>
@@ -305,32 +444,44 @@ const Dashboard: React.FC = () => {
           >
             <span className={styles.icon}>📊</span> Overview
           </button>
-          <button
-            className={`${styles.menuItem} ${activeTab === 'list' ? styles.activeMenu : ''}`}
-            onClick={() => {
-              setEditingProperty(null);
-              setActiveTab('list');
-            }}
-          >
-            <span className={styles.icon}>➕</span> List Property
-          </button>
-          <button
-            className={`${styles.menuItem} ${activeTab === 'properties' ? styles.activeMenu : ''}`}
-            onClick={() => setActiveTab('properties')}
-          >
-            <span className={styles.icon}>🏠</span> My Properties
-            {properties.length > 0 && <span className={styles.badgeCount}>{properties.length}</span>}
-          </button>
-          <button
-            className={`${styles.menuItem} ${activeTab === 'inquiries' ? styles.activeMenu : ''}`}
-            onClick={() => setActiveTab('inquiries')}
-          >
-            <span className={styles.icon}>✉️</span> Inquiries
-            {inquiries.length > 0 && <span className={styles.badgeCountBlue}>{inquiries.length}</span>}
-          </button>
+          
+          {userRole !== 'tenant' && (
+            <>
+              <button
+                className={`${styles.menuItem} ${activeTab === 'list' ? styles.activeMenu : ''}`}
+                onClick={() => {
+                  setEditingProperty(null);
+                  setActiveTab('list');
+                }}
+              >
+                <span className={styles.icon}>➕</span> List Property
+              </button>
+              <button
+                className={`${styles.menuItem} ${activeTab === 'properties' ? styles.activeMenu : ''}`}
+                onClick={() => setActiveTab('properties')}
+              >
+                <span className={styles.icon}>🏠</span> My Properties
+                {properties.length > 0 && <span className={styles.badgeCount}>{properties.length}</span>}
+              </button>
+              <button
+                className={`${styles.menuItem} ${activeTab === 'inquiries' ? styles.activeMenu : ''}`}
+                onClick={() => setActiveTab('inquiries')}
+              >
+                <span className={styles.icon}>✉️</span> Inquiries
+                {inquiries.length > 0 && <span className={styles.badgeCountBlue}>{inquiries.length}</span>}
+              </button>
+            </>
+          )}
         </nav>
         
         <div className={styles.sidebarFooter}>
+          <button 
+            onClick={handleSwitchRole} 
+            className={styles.backHomeBtn} 
+            style={{ marginBottom: '10px', background: 'rgba(59, 130, 246, 0.1)', color: '#38bdf8', border: '1px solid rgba(59, 130, 246, 0.2)' }}
+          >
+            🔄 Switch Account Role
+          </button>
           <button onClick={handleSignOut} className={styles.backHomeBtn}>
             🚪 Sign Out
           </button>
@@ -342,8 +493,8 @@ const Dashboard: React.FC = () => {
         {/* Top bar header */}
         <header className={styles.topHeader}>
           <div className={styles.headerInfo}>
-            <h1>Welcome Back, {user.displayName ? user.displayName.split(' ')[0] : 'Landlord'}!</h1>
-            <p>Manage your properties, handle direct inquiries, and see coverage growth.</p>
+            <h1>Welcome Back, {user.displayName ? user.displayName.split(' ')[0] : 'User'}!</h1>
+            <p>Logged in as {userRole === 'broker' ? 'Real Estate Broker' : userRole === 'tenant' ? 'Tenant' : 'Property Owner'}.</p>
           </div>
           <div className={styles.ownerProfile}>
             {user.photoURL ? (
@@ -354,7 +505,7 @@ const Dashboard: React.FC = () => {
               </div>
             )}
             <div className={styles.profileDetails}>
-              <h4>{user.displayName || 'SettleKar Owner'}</h4>
+              <h4>{user.displayName || 'SettleKar User'}</h4>
               <span>Google Verified</span>
             </div>
           </div>
@@ -364,6 +515,7 @@ const Dashboard: React.FC = () => {
         <div className={styles.container}>
           {activeTab === 'overview' && (
             <OverviewTab
+              userRole={userRole!}
               properties={properties}
               inquiries={inquiries}
               setActiveTab={setActiveTab}
@@ -374,6 +526,7 @@ const Dashboard: React.FC = () => {
           {activeTab === 'list' && (
             <ListPropertyTab
               user={user}
+              userRole={userRole!}
               editingProperty={editingProperty}
               onSaveSuccess={handleSaveSuccess}
               onCancel={handleCancelEdit}

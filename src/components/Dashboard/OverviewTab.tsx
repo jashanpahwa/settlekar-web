@@ -3,6 +3,7 @@ import { PropertyItem, InquiryItem } from './types';
 import styles from '../../Dashboard.module.css';
 
 interface OverviewTabProps {
+  userRole: 'broker' | 'owner' | 'tenant';
   properties: PropertyItem[];
   inquiries: InquiryItem[];
   setActiveTab: (tab: 'overview' | 'list' | 'properties' | 'inquiries') => void;
@@ -10,11 +11,45 @@ interface OverviewTabProps {
 }
 
 const OverviewTab: React.FC<OverviewTabProps> = ({
+  userRole,
   properties,
   inquiries,
   setActiveTab,
   formatDate,
 }) => {
+  if (userRole === 'tenant') {
+    return (
+      <div className={styles.tabContent}>
+        {/* Welcome Section for Tenant */}
+        <div className={styles.overviewHero}>
+          <div className={styles.overviewHeroText}>
+            <h2>Find Your Next Home on SettleKar</h2>
+            <p>
+              You are registered as a Tenant. Search for verified listings, connect directly with property owners, and settle down without middle-men.
+            </p>
+            <a href="/" className={styles.listPromoBtn} style={{ display: 'inline-block', textDecoration: 'none', textAlign: 'center' }}>
+              🔍 Browse Listings on Home Page
+            </a>
+          </div>
+          <div className={styles.overviewHeroGraphic}>🏠</div>
+        </div>
+
+        <div className={styles.recentActivity}>
+          <div className={styles.sectionHeader}>
+            <h2>Mobile App Access</h2>
+          </div>
+          <div className={styles.emptyCard} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px', padding: '40px 20px', textAlign: 'center' }}>
+            <div style={{ fontSize: '2.5rem' }}>📱</div>
+            <h3 style={{ color: '#ffffff', fontWeight: 600 }}>Download SettleKar Mobile App</h3>
+            <p style={{ maxWidth: '500px', margin: '0 auto', color: '#94a3b8' }}>
+              Get instant notifications, chat in real-time, and complete your rental agreements directly using the SettleKar mobile app available on Android and iOS.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.tabContent}>
       <div className={styles.gridStats}>
