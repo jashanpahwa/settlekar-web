@@ -149,7 +149,7 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
                     </label>
                     <input
                       type="text"
-                      placeholder="Are you an Owner, Tenant, or Broker?"
+                      placeholder="Are you an Owner, Tenant, Broker, or Firm?"
                       value={role}
                       onChange={(e) => setRole(e.target.value)}
                       className="w-full bg-transparent border-b border-black/10 py-2.5 text-black placeholder:text-black/35 focus:outline-none focus:border-black transition-colors text-sm font-medium"

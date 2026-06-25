@@ -16,7 +16,7 @@ export interface PropertyItem {
   advanceRentMonths?: number;
   brokerage?: number;
   totalAdvance?: number;
-  listedByRole?: 'owner' | 'broker';
+  listedByRole?: 'owner' | 'broker' | 'firm';
   description?: string;
 }
 

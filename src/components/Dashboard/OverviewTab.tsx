@@ -3,7 +3,7 @@ import { PropertyItem, InquiryItem } from './types';
 import styles from '../../Dashboard.module.css';
 
 interface OverviewTabProps {
-  userRole: 'broker' | 'owner' | 'tenant';
+  userRole: 'broker' | 'owner' | 'firm' | 'tenant';
   properties: PropertyItem[];
   inquiries: InquiryItem[];
   setActiveTab: (tab: 'overview' | 'list' | 'properties' | 'inquiries') => void;
@@ -73,9 +73,19 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
       {/* Welcome Section */}
       <div className={styles.overviewHero}>
         <div className={styles.overviewHeroText}>
-          <h2>List your properties directly. Skip the broker completely.</h2>
+          <h2>
+            {userRole === 'owner' 
+              ? 'List your properties directly. Skip the broker completely.' 
+              : userRole === 'broker' 
+              ? 'Manage client properties and brokerage fees transparently.' 
+              : 'List your real estate development projects or commercial listings.'}
+          </h2>
           <p>
-            With SettleKar, you connect directly with verified tenants. Post your BHK apartments or studio rooms, receive direct inquiries, and finalize agreements completely hassle-free.
+            {userRole === 'owner' 
+              ? 'With SettleKar, you connect directly with verified tenants. Post your BHK apartments or studio rooms, receive direct inquiries, and finalize agreements completely hassle-free.'
+              : userRole === 'broker'
+              ? 'Post rental apartments or homes on behalf of landlords, specify brokerage transparently, and track incoming inquiries in real-time.'
+              : 'Manage and market your projects, housing societies, or corporate co-living setups directly to verified renters and professionals.'}
           </p>
           <button className={styles.listPromoBtn} onClick={() => setActiveTab('list')}>
             ➕ List a New Property

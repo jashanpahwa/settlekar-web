@@ -8,7 +8,7 @@ import styles from '../../Dashboard.module.css';
 
 interface ListPropertyTabProps {
   user: User;
-  userRole: 'broker' | 'owner' | 'tenant';
+  userRole: 'broker' | 'owner' | 'firm' | 'tenant';
   editingProperty: PropertyItem | null;
   onSaveSuccess: (updatedOrNewProp: PropertyItem, isEdit: boolean) => void;
   onCancel: () => void;
@@ -795,7 +795,7 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
         <div className={styles.appCard}>
           <div className={styles.appCardHeader}>
             <span className={styles.appCardIcon}>💰</span>
-            <h3 className={styles.appCardTitle}>Financial Details ({userRole === 'broker' ? 'Broker' : 'Owner'})</h3>
+            <h3 className={styles.appCardTitle}>Financial Details ({userRole === 'broker' ? 'Broker' : userRole === 'firm' ? 'Firm' : 'Owner'})</h3>
           </div>
 
           <div className={styles.formRow}>
