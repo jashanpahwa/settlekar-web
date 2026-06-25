@@ -402,7 +402,7 @@
   .nav {
     position: fixed;
     top: 0;
-    right: -100%;
+    right: -300px;
     width: 280px;
     height: 100vh;
     background: #0A2540;
@@ -410,13 +410,15 @@
     flex-direction: column;
     justify-content: flex-start;
     padding: 100px 24px 40px;
-    transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     gap: 1.5rem;
     z-index: 1005;
+    visibility: hidden;
   }
 
   .navOpen {
     right: 0;
+    visibility: visible;
   }
 
   .navLink {
