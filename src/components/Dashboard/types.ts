@@ -18,6 +18,10 @@ export interface PropertyItem {
   totalAdvance?: number;
   listedByRole?: 'owner' | 'broker' | 'firm';
   description?: string;
+  overallscore?: number;
+  pillars?: any;
+  meta?: any;
+  confidence?: number;
 }
 
 export interface InquiryItem {

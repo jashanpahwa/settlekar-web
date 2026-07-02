@@ -30,6 +30,10 @@ export interface MockProperty {
   rating: string;
   badge?: string;
   description?: string; // Optional description for the property
+  overallscore?: number;
+  pillars?: any;
+  meta?: any;
+  confidence?: number;
 }
 
 export interface LocationPageData {

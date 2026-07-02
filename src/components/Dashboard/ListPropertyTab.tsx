@@ -71,6 +71,57 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
   const mapRef = useRef<any>(null);
   const markerRef = useRef<any>(null);
 
+  // Neighborhood score States
+  const [neighborhoodScore, setNeighborhoodScore] = useState<number | null>(null);
+  const [neighborhoodPillars, setNeighborhoodPillars] = useState<any | null>(null);
+  const [neighborhoodMeta, setNeighborhoodMeta] = useState<any | null>(null);
+  const [neighborhoodConfidence, setNeighborhoodConfidence] = useState<any | null>(null);
+  const [fetchingScore, setFetchingScore] = useState(false);
+  const [isScoreFetched, setIsScoreFetched] = useState(false);
+  const [scoreError, setScoreError] = useState('');
+
+  const fetchNeighborhoodScore = async () => {
+    if (!coords) {
+      setScoreError('Please pin a location on the map first.');
+      return;
+    }
+    setFetchingScore(true);
+    setScoreError('');
+    try {
+      const apiKey = import.meta.env.VITE_LIVABLE_INDIA_API_KEY ;
+      const url = `https://us-central1-liveableindia-314ce.cloudfunctions.net/getNeighborhoodScore?lat=${coords.lat}&lng=${coords.lng}&mode=sandbox`;
+      
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'x-api-key': apiKey,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`API returned status ${response.status}`);
+      }
+      
+      const data = await response.json();
+      if (data && data.overallScore !== undefined) {
+        setNeighborhoodScore(data.overallScore);
+        setNeighborhoodPillars(data.pillars);
+        setNeighborhoodMeta(data.meta);
+        setNeighborhoodConfidence(data.config || null);
+        setIsScoreFetched(true);
+      } else {
+        throw new Error('Invalid response payload from neighborhood score API');
+      }
+    } catch (err: any) {
+      console.error('Error fetching neighborhood score:', err);
+      setScoreError(err.message || 'Failed to fetch neighborhood score. Please try again.');
+      setIsScoreFetched(false);
+    } finally {
+      setFetchingScore(false);
+    }
+  };
+
   // Feedback States
   const [formSuccess, setFormSuccess] = useState(false);
   const [formError, setFormError] = useState('');
@@ -140,6 +191,12 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
       map.on('click', async (e: any) => {
         const { lat, lng } = e.latlng;
         setCoords({ lat, lng });
+        setIsScoreFetched(false);
+        setNeighborhoodScore(null);
+        setNeighborhoodPillars(null);
+        setNeighborhoodMeta(null);
+        setNeighborhoodConfidence(null);
+        setScoreError('');
         setLocationWarning('');
 
         if (markerRef.current) {
@@ -273,6 +330,19 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
       setSecurityFees(editingProperty.securityFees !== undefined ? editingProperty.securityFees.toString() : '');
       setAdvanceRentMonths(editingProperty.advanceRentMonths !== undefined ? editingProperty.advanceRentMonths : 1);
       setBrokerage(editingProperty.brokerage !== undefined ? editingProperty.brokerage.toString() : '');
+
+      // Populate neighborhood score fields
+      const dbScore = editingProperty.overallscore ;
+      const dbPillars = editingProperty.pillars;
+      const dbMeta = editingProperty.meta ;
+      const dbConfidence = editingProperty.confidence ;
+
+      setNeighborhoodScore(dbScore !== undefined ? dbScore : null);
+      setNeighborhoodPillars(dbPillars);
+      setNeighborhoodMeta(dbMeta);
+      setNeighborhoodConfidence(dbConfidence);
+      setIsScoreFetched(dbScore !== undefined && dbScore !== null);
+      setScoreError('');
     } else {
       // Clear form fields
       setTitle('');
@@ -295,6 +365,14 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
       setSecurityFees('');
       setAdvanceRentMonths(1);
       setBrokerage('');
+
+      // Reset neighborhood score fields
+      setNeighborhoodScore(null);
+      setNeighborhoodPillars(null);
+      setNeighborhoodMeta(null);
+      setNeighborhoodConfidence(null);
+      setIsScoreFetched(false);
+      setScoreError('');
     }
   }, [editingProperty]);
 
@@ -309,6 +387,11 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
       async (position) => {
         const { latitude, longitude } = position.coords;
         setCoords({ lat: latitude, lng: longitude });
+        setIsScoreFetched(false);
+        setNeighborhoodScore(null);
+        setNeighborhoodPillars(null);
+        setNeighborhoodMeta(null);
+        setScoreError('');
         setLocationWarning('');
 
         const L = (window as any).L;
@@ -370,6 +453,12 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
         const longitude = parseFloat(lon);
         
         setCoords({ lat: latitude, lng: longitude });
+        setIsScoreFetched(false);
+        setNeighborhoodScore(null);
+        setNeighborhoodPillars(null);
+        setNeighborhoodMeta(null);
+        setNeighborhoodConfidence(null);
+        setScoreError('');
 
         const L = (window as any).L;
         if (L && mapRef.current) {
@@ -450,6 +539,11 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
       return;
     }
 
+    if (coords && !isScoreFetched) {
+      setFormError('Please fetch the neighborhood score for the pinned location first.');
+      return;
+    }
+
     setFormError('');
     setFormSuccess(false);
     setUploadProgress(false);
@@ -505,6 +599,10 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
         brokerage: parsedBrokerage,
         totalAdvance: calculatedTotalAdvance,
         listedByRole: userRole,
+        overallscore: neighborhoodScore !== null ? neighborhoodScore : null,
+        pillars: neighborhoodPillars || null,
+        meta: neighborhoodMeta || null,
+        confidence: neighborhoodConfidence || null,
         keywords: [
           title.toLowerCase(),
           propertyType.toLowerCase(),
@@ -577,7 +675,11 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
           advanceRentMonths,
           brokerage: parsedBrokerage,
           totalAdvance: calculatedTotalAdvance,
-          listedByRole: userRole
+          listedByRole: userRole,
+          overallscore: neighborhoodScore !== null ? neighborhoodScore : null,
+          pillars: neighborhoodPillars || null,
+          meta: neighborhoodMeta || null,
+          confidence: neighborhoodConfidence || null
         };
 
         // Update Firestore document
@@ -602,7 +704,11 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
           brokerage: parsedBrokerage,
           totalAdvance: calculatedTotalAdvance,
           listedByRole: userRole,
-          description: updatePayload.description
+          description: updatePayload.description,
+          overallscore: neighborhoodScore !== null ? neighborhoodScore : undefined,
+          pillars: neighborhoodPillars || undefined,
+          meta: neighborhoodMeta || undefined,
+          confidence: neighborhoodConfidence || undefined
         };
 
         onSaveSuccess(updatedPropItem, true);
@@ -666,7 +772,11 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
           brokerage: parsedBrokerage,
           totalAdvance: calculatedTotalAdvance,
           listedByRole: userRole,
-          description: finalPropertyPayload.description
+          description: finalPropertyPayload.description,
+          overallscore: neighborhoodScore !== null ? neighborhoodScore : undefined,
+          pillars: neighborhoodPillars || undefined,
+          meta: neighborhoodMeta || undefined,
+          confidence: neighborhoodConfidence || undefined
         };
 
         onSaveSuccess(newPropItem, false);
@@ -1061,6 +1171,118 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
             <span className={styles.uploadSubtitle} style={{ marginTop: '8px', display: 'block', fontStyle: 'italic' }}>
               💡 Search above or click on the map to pin your property. SettleKar will reverse-geocode your pin and auto-fill the search bar!
             </span>
+
+            {/* Neighborhood Score Section */}
+            <div style={{ marginTop: '20px', borderTop: '1px dashed rgba(255,255,255,0.08)', paddingTop: '15px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+                <span className={styles.uploadSubtitle}>
+                  {isScoreFetched 
+                    ? '✅ Neighborhood rating successfully loaded.' 
+                    : coords 
+                      ? '⚠️ Neighborhood score not fetched yet.' 
+                      : '📍 Select coordinates on the map first.'}
+                </span>
+                <button
+                  type="button"
+                  className={`${styles.scoreFetchBtn} ${isScoreFetched ? styles.scoreFetchBtnSuccess : ''}`}
+                  onClick={fetchNeighborhoodScore}
+                  disabled={!coords || fetchingScore}
+                >
+                  {fetchingScore 
+                    ? '⚡ Fetching Score...' 
+                    : isScoreFetched 
+                      ? '🔄 Refresh Neighborhood Score' 
+                      : '🔍 Fetch Neighborhood Score'}
+                </button>
+              </div>
+
+              {scoreError && (
+                <div style={{
+                  background: 'rgba(239, 68, 68, 0.08)',
+                  border: '1px solid rgba(239, 68, 68, 0.15)',
+                  color: '#ef4444',
+                  padding: '10px 14px',
+                  borderRadius: '8px',
+                  fontSize: '0.85rem',
+                  fontWeight: 600,
+                  marginTop: '12px'
+                }}>
+                  ❌ {scoreError}
+                </div>
+              )}
+
+              {fetchingScore && (
+                <div style={{ textAlign: 'center', padding: '30px 20px', color: '#94a3b8' }}>
+                  <div style={{ display: 'inline-block', width: '30px', height: '30px', border: '3px solid rgba(255,255,255,0.1)', borderTopColor: '#3b82f6', borderRadius: '50%', animation: 'spin 1s linear infinite', marginBottom: '12px' }}></div>
+                  <p style={{ fontSize: '0.9rem', margin: 0 }}>Querying LivableIndia APIs and mapping compound neighborhood pillars...</p>
+                  <style dangerouslySetInnerHTML={{__html: `
+                    @keyframes spin { to { transform: rotate(360deg); } }
+                  `}} />
+                </div>
+              )}
+
+              {!fetchingScore && isScoreFetched && neighborhoodScore !== null && (
+                <div className={styles.scoreCard}>
+                  <div className={styles.scoreHeader}>
+                    <div className={styles.scoreBadgeContainer}>
+                      <span className={styles.overallScoreLabel}>LIVABILITY SCORE</span>
+                      <span className={styles.overallScoreValue}>{neighborhoodScore}/100</span>
+                      <span className={`${styles.scoreIndicatorBadge} ${
+                        neighborhoodScore >= 80 
+                          ? styles.scoreBadgeHigh 
+                          : neighborhoodScore >= 60 
+                            ? styles.scoreBadgeMedium 
+                            : styles.scoreBadgeLow
+                      }`}>
+                        {neighborhoodScore >= 80 ? '🟢 Excellent' : neighborhoodScore >= 60 ? '🟡 Moderate' : '🔴 Poor'} Livability
+                      </span>
+                    </div>
+                    <div style={{ textAlign: 'right', fontSize: '0.8rem', color: '#64748b' }}>
+                      Data source: <strong>LivableIndia API</strong>
+                    </div>
+                  </div>
+
+                  {neighborhoodPillars && (
+                    <div className={styles.scorePillarsGrid}>
+                      {Object.entries(neighborhoodPillars).map(([key, value]: [string, any]) => {
+                        const emojis: Record<string, string> = {
+                          water: '💧',
+                          power: '⚡',
+                          safety: '🛡️',
+                          sanitation: '🧹',
+                          climate: '☁️',
+                          healthcare: '🏥',
+                          air: '💨',
+                          transit: '🚇',
+                          greenery: '🌲',
+                          grocery: '🛒',
+                          dining: '🍔'
+                        };
+                        const scoreColorClass = value.score >= 80 
+                          ? styles.scoreTextGreen 
+                          : value.score >= 60 
+                            ? styles.scoreTextOrange 
+                            : styles.scoreTextRed;
+                        return (
+                          <div key={key} className={styles.scorePillarCard}>
+                            <div className={styles.pillarHeader}>
+                              <span className={styles.pillarName}>
+                                {emojis[key] || '📍'} {key.charAt(0).toUpperCase() + key.slice(1)}
+                              </span>
+                              <span className={`${styles.pillarScore} ${scoreColorClass}`}>
+                                {value.score}
+                              </span>
+                            </div>
+                            <div className={styles.pillarCategory}>{value.category}</div>
+                            <div className={styles.pillarDesc}>{value.description}</div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -1203,8 +1425,19 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
           </div>
         </div>
 
+        {coords && !isScoreFetched && (
+          <div className={styles.scoreValidationWarning}>
+            ⚠️ <strong>Action Required:</strong> Please click "Fetch Neighborhood Score" in the Location Details card above before publishing.
+          </div>
+        )}
+
         <div style={{ display: 'flex', gap: '15px', marginTop: '10px' }}>
-          <button type="submit" className={styles.submitFormBtn} disabled={formSuccess || uploadProgress} style={{ flex: 1 }}>
+          <button 
+            type="submit" 
+            className={styles.submitFormBtn} 
+            disabled={formSuccess || uploadProgress || (coords !== null && !isScoreFetched)} 
+            style={{ flex: 1 }}
+          >
             {uploadProgress 
               ? '📤 Uploading Images to Storage...' 
               : (formSuccess 

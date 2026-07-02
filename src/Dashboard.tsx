@@ -120,7 +120,11 @@ const Dashboard: React.FC = () => {
             brokerage: data.brokerage,
             totalAdvance: data.totalAdvance,
             listedByRole: data.listedByRole,
-            description: data.description || ''
+            description: data.description || '',
+            overallscore: data.overallscore !== undefined ? data.overallscore : data.overallScore,
+            pillars: data.pillars || data.neighborhoodPillars || null,
+            meta: data.meta || null,
+            confidence: data.confidence !== undefined ? data.confidence : data.neighborhoodConfidence || null
           });
         });
         setProperties(loadedProps);

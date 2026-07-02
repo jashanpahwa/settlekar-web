@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Copy, Check } from 'lucide-react';
 import { PropertyItem } from './types';
 import styles from '../../Dashboard.module.css';
 
@@ -15,6 +16,15 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
   handleDeleteProperty,
   setActiveTab,
 }) => {
+  const [copiedId, setCopiedId] = useState<string | number | null>(null);
+
+  const handleCopyUid = (id: string | number) => {
+    navigator.clipboard.writeText(id.toString());
+    setCopiedId(id);
+    setTimeout(() => {
+      setCopiedId(null);
+    }, 1500);
+  };
   return (
     <div className={styles.tabContent}>
       <div className={styles.sectionHeader}>
@@ -57,6 +67,29 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
                   </h3>
                   <span className={styles.listedCardBadge}>{prop.badge}</span>
                 </div>
+                <div className={styles.listedCardUid}>
+                  <span className={styles.uidLabel}>UID:</span>
+                  <span className={styles.uidValue}>{prop.id}</span>
+                  <button 
+                    type="button" 
+                    className={styles.copyUidBtn} 
+                    onClick={() => handleCopyUid(prop.id)}
+                    title="Copy Property UID"
+                    aria-label="Copy Property UID"
+                  >
+                    {copiedId === prop.id ? (
+                      <>
+                        <Check size={12} className={styles.copyIcon} />
+                        <span>Copied</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy size={12} className={styles.copyIcon} />
+                        <span>Copy</span>
+                      </>
+                    )}
+                  </button>
+                </div>
                 <p className={styles.listedCardAddr}>
                   📍 {prop.address || (prop.location && !prop.location.startsWith('http') ? prop.location : '') || prop.city}
                   {prop.location && prop.location.startsWith('http') && (
@@ -71,6 +104,35 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
                     </a>
                   )}
                 </p>
+                {prop.overallscore !== undefined && prop.overallscore !== null && (
+                  <div style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '4px 10px',
+                    borderRadius: '8px',
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                    marginBottom: '10px',
+                    background: prop.overallscore >= 80 
+                      ? 'rgba(16, 185, 129, 0.1)' 
+                      : prop.overallscore >= 60 
+                        ? 'rgba(245, 158, 11, 0.1)' 
+                        : 'rgba(239, 68, 68, 0.1)',
+                    color: prop.overallscore >= 80 
+                      ? '#34d399' 
+                      : prop.overallscore >= 60 
+                        ? '#fb923c' 
+                        : '#f87171',
+                    border: prop.overallscore >= 80 
+                      ? '1px solid rgba(16, 185, 129, 0.2)' 
+                      : prop.overallscore >= 60 
+                        ? '1px solid rgba(245, 158, 11, 0.2)' 
+                        : '1px solid rgba(239, 68, 68, 0.2)',
+                  }}>
+                    🛡️ Livability Score: <strong>{prop.overallscore}/100</strong>
+                  </div>
+                )}
                 <p className={styles.listedCardFeat}>{prop.features}</p>
                 <div className={styles.listedCardFooter}>
                   <span className={styles.listedCardPrice}>{prop.price}</span>

@@ -27,6 +27,10 @@ const normalizeProperty = (prop: any): MockProperty => {
     rating: prop.rating || '4.5',
     badge: prop.badge || 'Verified Owner',
     description: prop.description || '• 5th floor • Bachelor friendly • 1+1 Brokerage • Fully Independent',
+    overallscore: prop.overallscore !== undefined ? prop.overallscore : (prop.overallscore !== undefined ? prop.overallscore : undefined),
+    pillars: prop.pillars ,
+    confidence: prop.confidence ,
+    meta: prop.meta || undefined,
   };
 };
 
@@ -465,6 +469,37 @@ const LocationPage: React.FC = () => {
           {property.description }
         </p>
       </div>
+
+      {/* Neighborhood Score Badge */}
+      {property.overallscore !== undefined && property.overallscore !== null && (
+        <div style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '6px',
+          padding: '4px 10px',
+          borderRadius: '8px',
+          fontSize: '0.75rem',
+          fontWeight: 700,
+          marginBottom: '14px',
+          background: property.overallscore >= 80 
+            ? 'rgba(16, 185, 129, 0.1)' 
+            : property.overallscore >= 60 
+              ? 'rgba(245, 158, 11, 0.1)' 
+              : 'rgba(239, 68, 68, 0.1)',
+          color: property.overallscore >= 80 
+            ? '#34d399' 
+            : property.overallscore >= 60 
+              ? '#fb923c' 
+              : '#f87171',
+          border: property.overallscore >= 80 
+            ? '1px solid rgba(16, 185, 129, 0.2)' 
+            : property.overallscore >= 60 
+              ? '1px solid rgba(245, 158, 11, 0.2)' 
+              : '1px solid rgba(239, 68, 68, 0.2)',
+        }}>
+          🛡️ Livability Score: <strong>{property.overallscore}/100</strong>
+        </div>
+      )}
       
       {/* Features tags (keeping for additional info) */}
       <div className={styles.featuresList}>
