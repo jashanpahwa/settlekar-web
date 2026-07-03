@@ -89,7 +89,7 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
     setScoreError('');
     try {
       const apiKey = import.meta.env.VITE_LIVABLE_INDIA_API_KEY ;
-      const url = `https://us-central1-liveableindia-314ce.cloudfunctions.net/getNeighborhoodScore?lat=${coords.lat}&lng=${coords.lng}&mode=sandbox`;
+      const url = `https://us-central1-liveableindia-314ce.cloudfunctions.net/getNeighborhoodScore?lat=${coords.lat}&lng=${coords.lng}`;
       
       const response = await fetch(url, {
         method: 'GET',
@@ -1274,6 +1274,7 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
                               </span>
                             </div>
                             <div className={styles.pillarCategory}>{value.category}</div>
+                            <div className={styles.pillarCategory}>{value.geography}</div>
                             <div className={styles.pillarDesc}>{value.description}</div>
                           </div>
                         );
