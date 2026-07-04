@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { User } from 'firebase/auth';
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from '../../firebase';
-import styles from '../../Dashboard.module.css';
+import styles from '../../styles/Dashboard.module.css';
 import logoImage from '/logo.png';
+import { ownerBrokerService } from '../../services/ownerBrokerService';
+import { userCollectionService } from '../../services/userCollectionService';
 
 // Interfaces for typing registration payload
 export interface OwnerProfile {
@@ -82,14 +82,13 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
     if (selectedRegRole === 'tenant') {
       setRegistering(true);
       try {
-        const userDocRef = doc(db, 'users', user.uid);
-        await setDoc(userDocRef, {
-          uid: user.uid,
-          email: user.email,
-          displayName: user.displayName || 'Verified User',
+        await userCollectionService.createOrUpdateUser({
+          userId: user.uid,
+          username: user.displayName || 'Verified User',
+          userEmail: user.email || '',
           role: 'tenant',
-          updatedAt: serverTimestamp()
-        }, { merge: true });
+          provider: 'google'
+        });
         onRegisterSuccess('tenant', null);
       } catch (err) {
         console.error("Error registering tenant:", err);
@@ -122,36 +121,28 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
 
       // 1. Create entry in corresponding Firebase collection
       if (selectedRegRole === 'owner') {
-        const ownerDocRef = doc(db, 'owners', user.uid);
         profileData = {
-          userId: user.uid,
           fullName: fullName.trim(),
           phone: phone.trim(),
           city: city.trim(),
           govtIdType: govtIdNumber.trim() ? govtIdType : null,
-          govtIdNumber: govtIdNumber.trim() || null,
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp()
-        } as OwnerProfile;
-        await setDoc(ownerDocRef, profileData);
+          govtIdNumber: govtIdNumber.trim() || null
+        };
+        await ownerBrokerService.createOwnerProfile(user.uid, profileData);
+        profileData.userId = user.uid;
       } else if (selectedRegRole === 'broker') {
-        const brokerDocRef = doc(db, 'brokers', user.uid);
         profileData = {
-          userId: user.uid,
           fullName: fullName.trim(),
           phone: phone.trim(),
           reraNumber: reraNumber.trim().toUpperCase(),
           city: city.trim(),
           agencyName: agencyName.trim() || null,
-          experience: experience.trim() ? parseInt(experience.trim(), 10) : null,
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp()
-        } as BrokerProfile;
-        await setDoc(brokerDocRef, profileData);
+          experience: experience.trim() ? parseInt(experience.trim(), 10) : null
+        };
+        await ownerBrokerService.createBrokerProfile(user.uid, profileData);
+        profileData.userId = user.uid;
       } else if (selectedRegRole === 'firm') {
-        const firmDocRef = doc(db, 'firms', user.uid);
         profileData = {
-          userId: user.uid,
           firmName: firmName.trim(),
           reraNumber: reraNumber.trim().toUpperCase(),
           contactPersonName: fullName.trim(),
@@ -160,20 +151,20 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
           city: city.trim(),
           gstNumber: gstNumber.trim().toUpperCase() || null,
           totalAgents: totalAgents.trim() ? parseInt(totalAgents.trim(), 10) : null,
-          website: website.trim() || null,
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp()
-        } as FirmProfile;
-        await setDoc(firmDocRef, profileData);
+          website: website.trim() || null
+        };
+        await ownerBrokerService.createFirmProfile(user.uid, profileData);
+        profileData.userId = user.uid;
       }
 
-      // 2. Set role in users collection to lock the profile
-      const userDocRef = doc(db, 'users', user.uid);
-      await setDoc(userDocRef, {
+      // 2. Set role & username in users collection to lock the profile
+      await userCollectionService.createOrUpdateUser({
+        userId: user.uid,
+        username: selectedRegRole === 'firm' ? firmName.trim() : fullName.trim(),
+        userEmail: user.email || '',
         role: selectedRegRole,
-        displayName: selectedRegRole === 'firm' ? firmName.trim() : fullName.trim(),
-        updatedAt: serverTimestamp()
-      }, { merge: true });
+        provider: 'google'
+      });
 
       onRegisterSuccess(selectedRegRole, profileData);
     } catch (err) {

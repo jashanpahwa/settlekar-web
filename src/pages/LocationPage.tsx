@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
-import styles from './LocationPage.module.css';
-import { locationPages, MockProperty } from './locationPages';
+import styles from '../styles/LocationPage.module.css';
+import { locationPages, MockProperty } from '../utils/locationPages';
 import logoImage from '/logo.png';
 import NotFound from './NotFound';
-import { collection, query, where, getDocs } from 'firebase/firestore';
-import { db } from './firebase';
+import { propertyService } from '../services/propertyService';
 
 // Helper to safely normalize dynamic Firestore properties to the MockProperty layout
 const normalizeProperty = (prop: any): MockProperty => {
@@ -112,16 +111,8 @@ const LocationPage: React.FC = () => {
 
     const fetchLiveProperties = async () => {
       try {
-        // Query firebase matching city
-        const q = query(
-          collection(db, 'properties'),
-          where('city', '==', pageData.city)
-        );
-        const querySnapshot = await getDocs(q);
-        const liveProps: any[] = [];
-        querySnapshot.forEach((doc) => {
-          liveProps.push({ id: doc.id, ...doc.data() });
-        });
+        // Query firebase matching city using propertyService
+        const liveProps = await propertyService.getPropertiesByCity(pageData.city);
 
         // Filter listings client-side to fit specific programmatic SEO target intents
         const filteredProps = liveProps.filter((prop) => {

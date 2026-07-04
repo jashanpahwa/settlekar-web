@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useScroll, useTransform, useSpring, useMotionValue } from 'motion/react';
-import styles from './GuidesIndex.module.css';
-import { articlesData, ArticleData } from './articlesData';
+import styles from '../styles/GuidesIndex.module.css';
+import { articlesData, ArticleData } from '../utils/articlesData';
 import logoImage from '/logo.png';
 
 // Pillar Labels mapping

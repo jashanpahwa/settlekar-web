@@ -1,6 +1,6 @@
 import React, { useState, useTransition } from 'react';
 import { Link } from 'react-router-dom';
-import styles from './DeleteAccount.module.css';
+import styles from '../styles/DeleteAccount.module.css';
 import logoImage from '/logo.png';
 
 interface DeleteAccountFormData {

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import styles from './PrivacyPolicy.module.css';
+import styles from '../styles/PrivacyPolicy.module.css';
 import logoImage from '/logo.png';
 
 const PrivacyPolicy: React.FC = () => {

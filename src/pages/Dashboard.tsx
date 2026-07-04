@@ -1,21 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { auth, db, googleProvider } from './firebase';
-import { signInWithPopup, signOut, onAuthStateChanged, User } from 'firebase/auth';
-import { collection, doc, deleteDoc, getDocs, getDoc, query, where } from 'firebase/firestore';
-import styles from './Dashboard.module.css';
+import { auth } from '../firebase';
+import { onAuthStateChanged, User } from 'firebase/auth';
+import { userService } from '../services/userService';
+import { userCollectionService } from '../services/userCollectionService';
+import { ownerBrokerService } from '../services/ownerBrokerService';
+import { propertyService } from '../services/propertyService';
+import { inquiryService } from '../services/inquiryService';
+import styles from '../styles/Dashboard.module.css';
 
 // Import refactored modules
-import { PropertyItem, InquiryItem } from './components/Dashboard/types';
-import OverviewTab from './components/Dashboard/OverviewTab';
-import PropertiesTab from './components/Dashboard/PropertiesTab';
-import InquiriesTab from './components/Dashboard/InquiriesTab';
-import ListPropertyTab from './components/Dashboard/ListPropertyTab';
-import SwitchRoleTab from './components/Dashboard/SwitchRoleTab';
-import WishlistTab from './components/Dashboard/WishlistTab';
-import LoginView from './components/Dashboard/LoginView';
-import RegistrationGate, { OwnerProfile, BrokerProfile, FirmProfile } from './components/Dashboard/RegistrationGate';
-import Sidebar from './components/Dashboard/Sidebar';
-import Header from './components/Dashboard/Header';
+import { PropertyItem, InquiryItem } from '../components/Dashboard/types';
+import OverviewTab from '../components/Dashboard/OverviewTab';
+import PropertiesTab from '../components/Dashboard/PropertiesTab';
+import InquiriesTab from '../components/Dashboard/InquiriesTab';
+import ListPropertyTab from '../components/Dashboard/ListPropertyTab';
+import SwitchRoleTab from '../components/Dashboard/SwitchRoleTab';
+import WishlistTab from '../components/Dashboard/WishlistTab';
+import LoginView from '../components/Dashboard/LoginView';
+import RegistrationGate, { OwnerProfile, BrokerProfile, FirmProfile } from '../components/Dashboard/RegistrationGate';
+import Sidebar from '../components/Dashboard/Sidebar';
+import Header from '../components/Dashboard/Header';
 
 export type { OwnerProfile, BrokerProfile, FirmProfile };
 
@@ -45,25 +49,16 @@ const Dashboard: React.FC = () => {
       if (firebaseUser) {
         setRoleLoading(true);
         try {
-          const userDocRef = doc(db, 'users', firebaseUser.uid);
-          const userDocSnap = await getDoc(userDocRef);
-          if (userDocSnap.exists()) {
-            const role = userDocSnap.data().role || null;
+          const userDoc = await userCollectionService.getUserById(firebaseUser.uid);
+          if (userDoc) {
+            const role = userDoc.role || null;
             setUserRole(role);
 
             // Fetch detailed profile based on role
             if (role && role !== 'tenant') {
-              let profileCollection = '';
-              if (role === 'owner') profileCollection = 'owners';
-              else if (role === 'broker') profileCollection = 'brokers';
-              else if (role === 'firm') profileCollection = 'firms';
-
-              if (profileCollection) {
-                const profileDocRef = doc(db, profileCollection, firebaseUser.uid);
-                const profileDocSnap = await getDoc(profileDocRef);
-                if (profileDocSnap.exists()) {
-                  setUserProfile(profileDocSnap.data() as OwnerProfile | BrokerProfile | FirmProfile);
-                }
+              const profile = await ownerBrokerService.getProfileByRole(firebaseUser.uid, role);
+              if (profile) {
+                setUserProfile(profile as OwnerProfile | BrokerProfile | FirmProfile);
               }
             }
           } else {
@@ -93,62 +88,46 @@ const Dashboard: React.FC = () => {
 
     const fetchLandlordData = async () => {
       try {
-        const propQuery = query(
-          collection(db, 'properties'),
-          where('createdBy', '==', user.uid)
-        );
-        const propSnapshot = await getDocs(propQuery);
-        const loadedProps: PropertyItem[] = [];
-        propSnapshot.forEach((docSnap) => {
-          const data = docSnap.data();
-          loadedProps.push({
-            id: docSnap.id,
-            title: data.title || '',
-            city: data.city || 'Mumbai',
-            location: data.location || '',
-            address: data.address || '',
-            price: typeof data.price === 'number' ? `₹${data.price.toLocaleString('en-IN')}` : data.price || '',
-            rating: data.rating || '5.0',
-            badge: data.badge || data.propertyType || '1 BHK',
-            features: data.features || `${data.propertyType} • ${data.area || 0} sq.ft • ${data.furnishing || 'Semi-Furnished'}`,
-            image: data.image || (data.images && data.images.length > 0 ? data.images[0] : '') || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80',
-            isUserAdded: true,
-            indoorImages: data.indoorImages || [],
-            outdoorImages: data.outdoorImages || [],
-            securityFees: data.securityFees,
-            advanceRentMonths: data.advanceRentMonths,
-            brokerage: data.brokerage,
-            totalAdvance: data.totalAdvance,
-            listedByRole: data.listedByRole,
-            description: data.description || '',
-            overallscore: data.overallscore !== undefined ? data.overallscore : data.overallScore,
-            pillars: data.pillars || data.neighborhoodPillars || null,
-            meta: data.meta || null,
-            confidence: data.confidence !== undefined ? data.confidence : data.neighborhoodConfidence || null
-          });
-        });
+        const userProps = await propertyService.getUserProperties(user.uid);
+        const loadedProps: PropertyItem[] = userProps.map((prop) => ({
+          id: prop.id,
+          title: prop.title || '',
+          city: prop.city || 'Mumbai',
+          location: prop.location || '',
+          address: prop.address || '',
+          price: typeof prop.price === 'number' ? `₹${prop.price.toLocaleString('en-IN')}` : prop.price || '',
+          rating: prop.rating || '5.0',
+          badge: prop.badge || prop.propertyType || '1 BHK',
+          features: prop.features || `${prop.propertyType} • ${prop.area || 0} sq.ft • ${prop.furnishing || 'Semi-Furnished'}`,
+          image: prop.image || (prop.images && prop.images.length > 0 ? prop.images[0] : '') || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80',
+          isUserAdded: true,
+          indoorImages: prop.indoorImages || [],
+          outdoorImages: prop.outdoorImages || [],
+          securityFees: prop.securityFees,
+          advanceRentMonths: prop.advanceRentMonths,
+          brokerage: prop.brokerage,
+          totalAdvance: prop.totalAdvance,
+          listedByRole: prop.listedByRole,
+          description: prop.description || '',
+          overallscore: prop.overallscore !== undefined ? prop.overallscore : prop.overallScore,
+          pillars: prop.pillars || prop.neighborhoodPillars || null,
+          meta: prop.meta || null,
+          confidence: prop.confidence !== undefined ? prop.confidence : prop.neighborhoodConfidence || null
+        }));
         setProperties(loadedProps);
 
-        const inqQuery = query(
-          collection(db, 'inquiries'),
-          where('ownerId', '==', user.uid)
-        );
-        const inqSnapshot = await getDocs(inqQuery);
-        const loadedInqs: InquiryItem[] = [];
-        inqSnapshot.forEach((docSnap) => {
-          const data = docSnap.data();
-          loadedInqs.push({
-            id: docSnap.id,
-            propertyId: data.propertyId || '',
-            propertyTitle: data.propertyTitle || '',
-            propertyPrice: data.propertyPrice || '',
-            tenantName: data.tenantName || data.inquirerName || 'Anonymous',
-            tenantEmail: data.tenantEmail || data.inquirerEmail || '',
-            tenantPhone: data.tenantPhone || data.inquirerPhone || '',
-            message: data.message || '',
-            createdAt: data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : data.createdAt || new Date().toISOString()
-          });
-        });
+        const ownerInquiries = await inquiryService.getInquiriesByOwner(user.uid);
+        const loadedInqs: InquiryItem[] = ownerInquiries.map((inq) => ({
+          id: inq.id,
+          propertyId: inq.propertyId || '',
+          propertyTitle: inq.propertyTitle || '',
+          propertyPrice: inq.propertyPrice || '',
+          tenantName: inq.tenantName || inq.inquirerName || 'Anonymous',
+          tenantEmail: inq.tenantEmail || inq.inquirerEmail || '',
+          tenantPhone: inq.tenantPhone || inq.inquirerPhone || '',
+          message: inq.message || '',
+          createdAt: inq.createdAt instanceof Date ? inq.createdAt.toISOString() : inq.createdAt || new Date().toISOString()
+        }));
         
         loadedInqs.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
         setInquiries(loadedInqs);
@@ -166,7 +145,7 @@ const Dashboard: React.FC = () => {
     setAuthSubmitting(true);
     setAuthError('');
     try {
-      await signInWithPopup(auth, googleProvider);
+      await userService.googleSignIn();
     } catch (err: any) {
       console.error('Error signing in with Google:', err);
       setAuthError('Authentication failed. Please verify browser popup permissions.');
@@ -180,7 +159,7 @@ const Dashboard: React.FC = () => {
       return;
     }
     try {
-      await signOut(auth);
+      await userService.logout();
       setProperties([]);
       setInquiries([]);
       setEditingProperty(null);
@@ -228,22 +207,7 @@ const Dashboard: React.FC = () => {
     }
 
     try {
-      // Find related inquiries
-      const inqQuery = query(
-        collection(db, 'inquiries'),
-        where('propertyId', '==', id)
-      );
-      const inqSnapshot = await getDocs(inqQuery);
-
-      // Delete property document and all related inquiries
-      const deletePromises: Promise<void>[] = [];
-      deletePromises.push(deleteDoc(doc(db, 'properties', id as string)));
-
-      inqSnapshot.forEach((docSnap) => {
-        deletePromises.push(deleteDoc(doc(db, 'inquiries', docSnap.id)));
-      });
-
-      await Promise.all(deletePromises);
+      await propertyService.deleteProperty(id as string);
 
       // Update local state
       setProperties(properties.filter((p: PropertyItem) => p.id !== id));
@@ -261,7 +225,7 @@ const Dashboard: React.FC = () => {
     }
 
     try {
-      await deleteDoc(doc(db, 'inquiries', inqId));
+      await inquiryService.deleteInquiry(inqId);
       setInquiries(inquiries.filter((i: InquiryItem) => i.id !== inqId));
     } catch (err) {
       console.error('Error dismissing inquiry:', err);

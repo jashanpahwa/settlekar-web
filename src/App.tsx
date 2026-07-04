@@ -1,21 +1,22 @@
 import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
-import './App.css';
-import LandingPage from './LandingPage';
+import './styles/App.css';
+import LandingPage from './pages/LandingPage';
 
 // Lazy load other route components to split bundles and optimize initial page load performance
-const PrivacyPolicy = lazy(() => import('./PrivacyPolicy'));
-const TermsOfService = lazy(() => import('./TermsOfService'));
-const DeleteAccount = lazy(() => import('./DeleteAccount'));
-const NotFound = lazy(() => import('./NotFound'));
-const PropertyRedirect = lazy(() => import('./PropertyRedirect'));
-const Dashboard = lazy(() => import('./Dashboard'));
-const LocationPage = lazy(() => import('./LocationPage'));
-const GuidesIndex = lazy(() => import('./GuidesIndex'));
-const ArticlePage = lazy(() => import('./ArticlePage'));
+const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
+const TermsOfService = lazy(() => import('./pages/TermsOfService'));
+const DeleteAccount = lazy(() => import('./pages/DeleteAccount'));
+const NotFound = lazy(() => import('./pages/NotFound'));
+const PropertyRedirect = lazy(() => import('./pages/PropertyRedirect'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const LocationPage = lazy(() => import('./pages/LocationPage'));
+const GuidesIndex = lazy(() => import('./pages/GuidesIndex'));
+const ArticlePage = lazy(() => import('./pages/ArticlePage'));
+const SearchPage = lazy(() => import('./pages/SearchPage'));
 
-import ScrollToTop from './components/ScrollToTop';
+import ScrollToTop from './components/Landing/ScrollToTop';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Suspense fallback={null}>
           <Routes>
             <Route path="/" element={<LandingPage />} />
+            <Route path="/search" element={<SearchPage />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-of-service" element={<TermsOfService />} />
             <Route path="/delete-account" element={<DeleteAccount />} />

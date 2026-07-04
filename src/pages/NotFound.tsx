@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import styles from './NotFound.module.css';
+import styles from '../styles/NotFound.module.css';
 import logoImage from '/logo.png';
 
 const NotFound: React.FC = () => {

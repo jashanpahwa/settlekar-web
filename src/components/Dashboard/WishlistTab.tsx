@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { db } from '../../firebase';
-import { collection, query, where, getDocs, doc, getDoc, deleteDoc } from 'firebase/firestore';
 import { User } from 'firebase/auth';
 import { PropertyItem } from './types';
-import styles from '../../Dashboard.module.css';
+import styles from '../../styles/Dashboard.module.css';
+import { wishlistService } from '../../services/wishlistService';
 
 interface WishlistTabProps {
   user: User;
@@ -16,50 +15,25 @@ const WishlistTab: React.FC<WishlistTabProps> = ({ user }) => {
   const fetchWishlist = async () => {
     setLoading(true);
     try {
-      const q = query(
-        collection(db, 'wishlists'),
-        where('userId', '==', user.uid)
-      );
-      const querySnapshot = await getDocs(q);
-      const loadedItems: { id: string; propertyId: string; property: PropertyItem }[] = [];
-
-      for (const docSnap of querySnapshot.docs) {
-        const data = docSnap.data();
-        const propertyId = data.propertyId;
-        
-        if (propertyId) {
-          const propDocRef = doc(db, 'properties', propertyId);
-          const propDocSnap = await getDoc(propDocRef);
-          if (propDocSnap.exists()) {
-            const propData = propDocSnap.data();
-            loadedItems.push({
-              id: docSnap.id,
-              propertyId,
-              property: {
-                id: propDocSnap.id,
-                title: propData.title || '',
-                city: propData.city || 'Mumbai',
-                location: propData.location || '',
-                address: propData.address || '',
-                price: typeof propData.price === 'number' ? `₹${propData.price.toLocaleString('en-IN')}` : propData.price || '',
-                rating: propData.rating || '5.0',
-                badge: propData.badge || propData.propertyType || '1 BHK',
-                features: propData.features || `${propData.propertyType} • ${propData.area || 0} sq.ft • ${propData.furnishing || 'Semi-Furnished'}`,
-                image: propData.image || (propData.images && propData.images.length > 0 ? propData.images[0] : '') || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80',
-                isUserAdded: true,
-                description: propData.description || ''
-              }
-            });
-          } else {
-            // Cleanup orphaned wishlist entry
-            try {
-              await deleteDoc(doc(db, 'wishlists', docSnap.id));
-            } catch (err) {
-              console.warn("Failed to cleanup orphaned wishlist item:", docSnap.id, err);
-            }
-          }
+      const items = await wishlistService.getWishlist(user.uid);
+      const loadedItems: { id: string; propertyId: string; property: PropertyItem }[] = items.map((item) => ({
+        id: item.id,
+        propertyId: item.propertyId,
+        property: {
+          id: item.property.id,
+          title: item.property.title || '',
+          city: item.property.city || 'Mumbai',
+          location: item.property.location || '',
+          address: item.property.address || '',
+          price: typeof item.property.price === 'number' ? `₹${item.property.price.toLocaleString('en-IN')}` : item.property.price || '',
+          rating: item.property.rating || '5.0',
+          badge: item.property.badge || item.property.propertyType || '1 BHK',
+          features: item.property.features || `${item.property.propertyType} • ${item.property.area || 0} sq.ft • ${item.property.furnishing || 'Semi-Furnished'}`,
+          image: item.property.image || (item.property.images && item.property.images.length > 0 ? item.property.images[0] : '') || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80',
+          isUserAdded: true,
+          description: item.property.description || ''
         }
-      }
+      }));
       setWishlistItems(loadedItems);
     } catch (err) {
       console.error("Error fetching wishlist:", err);
@@ -75,7 +49,7 @@ const WishlistTab: React.FC<WishlistTabProps> = ({ user }) => {
   const handleRemove = async (wishlistId: string) => {
     if (!window.confirm("Are you sure you want to remove this property from your wishlist?")) return;
     try {
-      await deleteDoc(doc(db, 'wishlists', wishlistId));
+      await wishlistService.removeFromWishlistById(wishlistId);
       setWishlistItems(wishlistItems.filter(item => item.id !== wishlistId));
     } catch (err) {
       console.error("Error removing wishlist item:", err);

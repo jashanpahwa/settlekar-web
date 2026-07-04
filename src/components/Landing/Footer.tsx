@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import styles from './Footer.module.css';
+import styles from '../../styles/Footer.module.css';
 import logoImage from '/logo.png';
 import ContactModal from './ContactModal';
 

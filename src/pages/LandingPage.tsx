@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import styles from './LandingPage.module.css';
+import styles from '../styles/LandingPage.module.css';
 import logoImage from '/logo.png';
-import { ArrowUpRight, MapPin, X, Download } from 'lucide-react';
-import Footer from './components/Footer';
-import FeaturesSection from './components/FeaturesSection';
-import FaqSection from './components/FaqSection';
-import TestimonialsSection from './components/TestimonialsSection';
-import HowItWorks from './components/HowItWorks';
-import DownloadSection from './components/DownloadSection';
+import { ArrowUpRight, MapPin, X, Download, Search } from 'lucide-react';
+import Footer from '../components/Landing/Footer';
+import FeaturesSection from '../components/Landing/FeaturesSection';
+import FaqSection from '../components/Landing/FaqSection';
+import TestimonialsSection from '../components/Landing/TestimonialsSection';
+import HowItWorks from '../components/Landing/HowItWorks';
+import DownloadSection from '../components/Landing/DownloadSection';
 
 export interface WebPropertyItem {
   id: number;
@@ -173,6 +173,7 @@ const LandingPage: React.FC = () => {
 
           {/* Center: Nav Links (hidden on mobile) */}
           <nav className={styles.videoNavLinks} aria-label="Main navigation">
+            <Link to="/search" className={styles.videoNavLink}>Search Properties</Link>
             <a href="#features" onClick={(e) => handleScrollToSection('features', e)} className={styles.videoNavLink}>Features</a>
             <a href="#how-it-works" onClick={(e) => handleScrollToSection('how-it-works', e)} className={styles.videoNavLink}>How It Works</a>
             <a href="#download" onClick={(e) => handleScrollToSection('download', e)} className={styles.videoNavLink}>Download</a>
@@ -226,14 +227,15 @@ const LandingPage: React.FC = () => {
 
           {/* Nav Items */}
           <nav className={styles.mobileMenuNav}>
-            {['Properties', 'How It Works', 'Download', 'List Property'].map((label, i) => {
+            {['Search Properties', 'Properties', 'How It Works', 'Download', 'List Property'].map((label, i) => {
               const hrefMap: Record<string, string> = {
+                'Search Properties': '/search',
                 'Properties': '#features',
                 'How It Works': '#how-it-works',
                 'Download': '#download',
                 'List Property': '/dashboard',
               };
-              const isInternal = label === 'List Property';
+              const isInternal = label === 'List Property' || label === 'Search Properties';
               const style = {
                 transitionDelay: `${i * 80 + 100}ms`,
                 opacity: isMobileMenuOpen ? 1 : 0,
@@ -276,7 +278,7 @@ const LandingPage: React.FC = () => {
             rel="noopener noreferrer"
             className={styles.mobileMenuCta}
             style={{
-              transitionDelay: `${4 * 80 + 100}ms`,
+              transitionDelay: `${5 * 80 + 100}ms`,
               opacity: isMobileMenuOpen ? 1 : 0,
               transform: isMobileMenuOpen ? 'translateY(0)' : 'translateY(20px)',
             }}
@@ -313,24 +315,23 @@ const LandingPage: React.FC = () => {
 
             {/* CTA Row */}
             <div className={`${styles.heroCtas} ${styles.animFadeUpD3}`}>
+              <Link
+                to="/search"
+                className={`${styles.heroCtaBtn} ${styles.heroCtaBtnPrimary}`}
+                id="hero-search-btn"
+              >
+                <Search size={16} />
+                SEARCH PROPERTIES
+              </Link>
               <a
                 href={googlePlayUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`${styles.heroCtaBtn} ${styles.heroCtaBtnPrimary}`}
+                className={`${styles.heroCtaBtn} ${styles.heroCtaBtnSecondary}`}
                 id="hero-download-btn"
               >
                 <Download size={16} />
                 DOWNLOAD APP
-              </a>
-              <a
-                href="#features"
-                onClick={(e) => handleScrollToSection('features', e)}
-                className={`${styles.heroCtaBtn} ${styles.heroCtaBtnSecondary}`}
-                id="hero-explore-btn"
-              >
-                EXPLORE FEATURES
-                <ArrowUpRight size={14} className={styles.heroCtaArrow} />
               </a>
             </div>
 

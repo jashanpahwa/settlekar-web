@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import styles from './TermsOfService.module.css';
+import styles from '../styles/TermsOfService.module.css';
 import logoImage from '/logo.png';
 
 const TermsOfService = () => {

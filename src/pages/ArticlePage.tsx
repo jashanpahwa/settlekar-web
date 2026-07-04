@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion, useScroll, useTransform } from 'motion/react';
-import styles from './ArticlePage.module.css';
-import { articlesData } from './articlesData';
+import styles from '../styles/ArticlePage.module.css';
+import { articlesData } from '../utils/articlesData';
 import logoImage from '/logo.png';
 import NotFound from './NotFound';
 

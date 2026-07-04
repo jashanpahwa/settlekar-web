@@ -1,6 +1,6 @@
 import React from 'react';
 import { InquiryItem } from './types';
-import styles from '../../Dashboard.module.css';
+import styles from '../../styles/Dashboard.module.css';
 
 interface InquiriesTabProps {
   inquiries: InquiryItem[];

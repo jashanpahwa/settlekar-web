@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styles from '../../Dashboard.module.css';
+import styles from '../../styles/Dashboard.module.css';
 
 interface SwitchRoleTabProps {
   currentRole: 'owner' | 'broker' | 'firm' | 'tenant';

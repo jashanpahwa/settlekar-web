@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Copy, Check } from 'lucide-react';
 import { PropertyItem } from './types';
-import styles from '../../Dashboard.module.css';
+import styles from '../../styles/Dashboard.module.css';
 
 interface PropertiesTabProps {
   properties: PropertyItem[];

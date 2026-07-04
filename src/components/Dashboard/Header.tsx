@@ -1,7 +1,7 @@
 import React from 'react';
 import { User } from 'firebase/auth';
 import { OwnerProfile, BrokerProfile, FirmProfile } from './RegistrationGate';
-import styles from '../../Dashboard.module.css';
+import styles from '../../styles/Dashboard.module.css';
 
 interface HeaderProps {
   user: User;

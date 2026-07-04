@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { db, storage } from '../../firebase';
 import { User } from 'firebase/auth';
-import { collection, addDoc, doc, serverTimestamp, updateDoc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { PropertyItem } from './types';
-import styles from '../../Dashboard.module.css';
+import styles from '../../styles/Dashboard.module.css';
+import { propertyService } from '../../services/propertyService';
 
 interface ListPropertyTabProps {
   user: User;
@@ -583,7 +581,7 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
         ownerProfilePhoto: user.photoURL || '',
         area: parseInt(sqft) || 0,
         createdBy: user.uid,
-        createdAt: serverTimestamp(),
+        createdAt: new Date(),
         status: 'Available',
         furnishing,
         image: placeholderImg,
@@ -615,42 +613,19 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
         )
       };
 
-      let finalImageUrl = placeholderImg;
-      let finalIndoorUrls: string[] = [];
-      let finalOutdoorUrls: string[] = [];
-
       // 1. EDIT MODE
       if (editingProperty) {
         const editingPropId = editingProperty.id.toString();
         setUploadProgress(true);
 
-        // Preserve already uploaded indoor images (non-blobs)
-        finalIndoorUrls = [...indoorPreviews.filter(url => !url.startsWith('blob:') && !url.startsWith('data:'))];
-        if (indoorFiles.length > 0) {
-          const uploadPromises = indoorFiles.map(async (file, idx) => {
-            const storageRef = ref(storage, `properties/${editingPropId}/indoor_${idx}_${Date.now()}`);
-            const uploadResult = await uploadBytes(storageRef, file);
-            return getDownloadURL(uploadResult.ref);
-          });
-          const newUrls = await Promise.all(uploadPromises);
-          finalIndoorUrls = [...finalIndoorUrls, ...newUrls];
-        }
+        // Identify deleted images
+        const originalIndoor = editingProperty.indoorImages || [];
+        const originalOutdoor = editingProperty.outdoorImages || [];
+        const deletedIndoor = originalIndoor.filter(url => !indoorPreviews.includes(url));
+        const deletedOutdoor = originalOutdoor.filter(url => !outdoorPreviews.includes(url));
+        const imagesToDelete = [...deletedIndoor, ...deletedOutdoor];
 
-        // Preserve already uploaded outdoor images
-        finalOutdoorUrls = [...outdoorPreviews.filter(url => !url.startsWith('blob:') && !url.startsWith('data:'))];
-        if (outdoorFiles.length > 0) {
-          const uploadPromises = outdoorFiles.map(async (file, idx) => {
-            const storageRef = ref(storage, `properties/${editingPropId}/outdoor_${idx}_${Date.now()}`);
-            const uploadResult = await uploadBytes(storageRef, file);
-            return getDownloadURL(uploadResult.ref);
-          });
-          const newUrls = await Promise.all(uploadPromises);
-          finalOutdoorUrls = [...finalOutdoorUrls, ...newUrls];
-        }
-
-        const combinedUrls = [...finalIndoorUrls, ...finalOutdoorUrls];
-        finalImageUrl = combinedUrls[0] || placeholderImg;
-
+        // Prepare base payload
         const updatePayload = {
           title: title.trim(),
           description: description.trim(),
@@ -664,10 +639,6 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
           ownerContact: ownerContact.trim(),
           area: parseInt(sqft) || 0,
           furnishing,
-          image: finalImageUrl,
-          images: combinedUrls,
-          indoorImages: finalIndoorUrls,
-          outdoorImages: finalOutdoorUrls,
           city,
           badge: propertyType,
           features: featuresStr,
@@ -679,104 +650,80 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
           overallscore: neighborhoodScore !== null ? neighborhoodScore : null,
           pillars: neighborhoodPillars || null,
           meta: neighborhoodMeta || null,
-          confidence: neighborhoodConfidence || null
+          confidence: neighborhoodConfidence || null,
+          // Pass existing images so the service knows what to keep
+          indoorImages: originalIndoor.filter(url => !imagesToDelete.includes(url)),
+          outdoorImages: originalOutdoor.filter(url => !imagesToDelete.includes(url))
         };
 
-        // Update Firestore document
-        await updateDoc(doc(db, 'properties', editingPropId), updatePayload);
+        // Update using propertyService
+        await propertyService.updateProperty(
+          editingPropId,
+          updatePayload,
+          indoorFiles,
+          outdoorFiles,
+          imagesToDelete
+        );
+
+        // Retrieve full updated property from Firestore to get final image URLs
+        const updatedProp = await propertyService.getPropertyById(editingPropId);
 
         const updatedPropItem: PropertyItem = {
           id: editingPropId,
-          title: updatePayload.title,
-          city: updatePayload.city,
-          location: updatePayload.location,
-          address: updatePayload.address,
+          title: updatedProp.title,
+          city: updatedProp.city,
+          location: updatedProp.location,
+          address: updatedProp.address,
           price: displayPriceString,
           rating: editingProperty.rating,
-          badge: updatePayload.badge,
-          features: updatePayload.features,
-          image: finalImageUrl,
-          indoorImages: finalIndoorUrls,
-          outdoorImages: finalOutdoorUrls,
+          badge: updatedProp.badge,
+          features: updatedProp.features,
+          image: updatedProp.image,
+          indoorImages: updatedProp.indoorImages || [],
+          outdoorImages: updatedProp.outdoorImages || [],
           isUserAdded: true,
-          securityFees: parsedSecurity,
-          advanceRentMonths,
-          brokerage: parsedBrokerage,
-          totalAdvance: calculatedTotalAdvance,
-          listedByRole: userRole,
-          description: updatePayload.description,
-          overallscore: neighborhoodScore !== null ? neighborhoodScore : undefined,
-          pillars: neighborhoodPillars || undefined,
-          meta: neighborhoodMeta || undefined,
-          confidence: neighborhoodConfidence || undefined
+          securityFees: updatedProp.securityFees,
+          advanceRentMonths: updatedProp.advanceRentMonths,
+          brokerage: updatedProp.brokerage,
+          totalAdvance: updatedProp.totalAdvance,
+          listedByRole: updatedProp.listedByRole,
+          description: updatedProp.description,
+          overallscore: updatedProp.overallscore !== null ? updatedProp.overallscore : undefined,
+          pillars: updatedProp.pillars || undefined,
+          meta: updatedProp.meta || undefined,
+          confidence: updatedProp.confidence || undefined
         };
 
         onSaveSuccess(updatedPropItem, true);
       } else {
         // 2. CREATE MODE (Post New Property)
-        const docRef = await addDoc(collection(db, 'properties'), finalPropertyPayload);
-
-        if (indoorFiles.length > 0 || outdoorFiles.length > 0) {
-          setUploadProgress(true);
-
-          // Upload Indoor Images
-          if (indoorFiles.length > 0) {
-            const indoorPromises = indoorFiles.map(async (file, idx) => {
-              const storageRef = ref(storage, `properties/${docRef.id}/indoor_${idx}_${Date.now()}`);
-              const uploadResult = await uploadBytes(storageRef, file);
-              return getDownloadURL(uploadResult.ref);
-            });
-            finalIndoorUrls = await Promise.all(indoorPromises);
-          }
-
-          // Upload Outdoor Images
-          if (outdoorFiles.length > 0) {
-            const outdoorPromises = outdoorFiles.map(async (file, idx) => {
-              const storageRef = ref(storage, `properties/${docRef.id}/outdoor_${idx}_${Date.now()}`);
-              const uploadResult = await uploadBytes(storageRef, file);
-              return getDownloadURL(uploadResult.ref);
-            });
-            finalOutdoorUrls = await Promise.all(outdoorPromises);
-          }
-
-          const combinedUrls = [...finalIndoorUrls, ...finalOutdoorUrls];
-          if (combinedUrls.length > 0) {
-            finalImageUrl = combinedUrls[0];
-          }
-
-          // Update Firestore document with all uploaded image URLs
-          await updateDoc(doc(db, 'properties', docRef.id), {
-            image: finalImageUrl,
-            images: combinedUrls,
-            indoorImages: finalIndoorUrls,
-            outdoorImages: finalOutdoorUrls
-          });
-        }
+        setUploadProgress(true);
+        const addedProp = await propertyService.addProperty(finalPropertyPayload, indoorFiles, outdoorFiles);
 
         const newPropItem: PropertyItem = {
-          id: docRef.id,
-          title: finalPropertyPayload.title,
-          city: finalPropertyPayload.city,
-          location: finalPropertyPayload.location,
-          address: finalPropertyPayload.address,
+          id: addedProp.id,
+          title: addedProp.title,
+          city: addedProp.city,
+          location: addedProp.location,
+          address: addedProp.address,
           price: displayPriceString,
-          rating: finalPropertyPayload.rating,
-          badge: finalPropertyPayload.badge,
-          features: finalPropertyPayload.features,
-          image: finalImageUrl,
+          rating: addedProp.rating,
+          badge: addedProp.badge,
+          features: addedProp.features,
+          image: addedProp.image,
           isUserAdded: true,
-          indoorImages: finalIndoorUrls,
-          outdoorImages: finalOutdoorUrls,
-          securityFees: parsedSecurity,
-          advanceRentMonths,
-          brokerage: parsedBrokerage,
-          totalAdvance: calculatedTotalAdvance,
-          listedByRole: userRole,
-          description: finalPropertyPayload.description,
-          overallscore: neighborhoodScore !== null ? neighborhoodScore : undefined,
-          pillars: neighborhoodPillars || undefined,
-          meta: neighborhoodMeta || undefined,
-          confidence: neighborhoodConfidence || undefined
+          indoorImages: addedProp.indoorImages || [],
+          outdoorImages: addedProp.outdoorImages || [],
+          securityFees: addedProp.securityFees,
+          advanceRentMonths: addedProp.advanceRentMonths,
+          brokerage: addedProp.brokerage,
+          totalAdvance: addedProp.totalAdvance,
+          listedByRole: addedProp.listedByRole,
+          description: addedProp.description,
+          overallscore: addedProp.overallscore !== null ? addedProp.overallscore : undefined,
+          pillars: addedProp.pillars || undefined,
+          meta: addedProp.meta || undefined,
+          confidence: addedProp.confidence || undefined
         };
 
         onSaveSuccess(newPropItem, false);
