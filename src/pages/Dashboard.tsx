@@ -14,7 +14,6 @@ import OverviewTab from '../components/Dashboard/OverviewTab';
 import PropertiesTab from '../components/Dashboard/PropertiesTab';
 import InquiriesTab from '../components/Dashboard/InquiriesTab';
 import ListPropertyTab from '../components/Dashboard/ListPropertyTab';
-import SwitchRoleTab from '../components/Dashboard/SwitchRoleTab';
 import WishlistTab from '../components/Dashboard/WishlistTab';
 import LoginView from '../components/Dashboard/LoginView';
 import RegistrationGate, { OwnerProfile, BrokerProfile, FirmProfile } from '../components/Dashboard/RegistrationGate';
@@ -24,7 +23,7 @@ import Header from '../components/Dashboard/Header';
 export type { OwnerProfile, BrokerProfile, FirmProfile };
 
 const Dashboard: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'list' | 'properties' | 'inquiries' | 'wishlist' | 'switchRole'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'list' | 'properties' | 'inquiries' | 'wishlist'>('overview');
   
   // Auth States
   const [user, setUser] = useState<User | null>(null);
@@ -174,9 +173,11 @@ const Dashboard: React.FC = () => {
     setUserProfile(profile);
   };
 
-  const handleSwitchRoleTo = (_newRole: 'owner' | 'broker' | 'firm' | 'tenant') => {
-    setUserRole(null);
-    setUserProfile(null);
+  const handleSwitchRole = () => {
+    if (window.confirm('Are you sure you want to switch your role? You will need to setup a profile for the new role.')) {
+      setUserRole(null);
+      setUserProfile(null);
+    }
   };
 
   // Populate form fields and switch tab to Edit a Property
@@ -298,6 +299,7 @@ const Dashboard: React.FC = () => {
         propertiesCount={properties.length}
         inquiriesCount={inquiries.length}
         handleSignOut={handleSignOut}
+        onSwitchRole={handleSwitchRole}
       />
 
       {/* Main Content Area */}
@@ -351,12 +353,7 @@ const Dashboard: React.FC = () => {
             <WishlistTab user={user} />
           )}
 
-          {activeTab === 'switchRole' && (
-            <SwitchRoleTab 
-              currentRole={userRole} 
-              onSwitchRole={handleSwitchRoleTo} 
-            />
-          )}
+
         </div>
       </main>
     </div>

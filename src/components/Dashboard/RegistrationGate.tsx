@@ -105,9 +105,9 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
     if (phone.trim().length < 10) return alert("Please enter a valid 10-digit phone number.");
     if (!city.trim()) return alert("City is required.");
 
-    if (selectedRegRole === 'broker') {
-      if (!reraNumber.trim()) return alert("RERA Registration Number is required.");
-    }
+    // if (selectedRegRole === 'broker') {
+    //   if (!reraNumber.trim()) return alert("RERA Registration Number is required.");
+    // }
 
     if (selectedRegRole === 'firm') {
       if (!firmName.trim()) return alert("Company / Firm Name is required.");
@@ -346,7 +346,8 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
                   onChange={(e) => setCity(e.target.value)}
                   required
                 >
-                  <option value="Mumbai">Mumbai</option>
+                  
+                  <option value="Mumbai">Jaipur</option>
                   <option value="Bangalore">Bangalore</option>
                   <option value="Pune">Pune</option>
                   <option value="Delhi NCR">Delhi NCR</option>
@@ -414,7 +415,7 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
                   </div>
                 </div>
                 <div className={styles.formGroup}>
-                  <label htmlFor="reraNumber">RERA Registration Number <span style={{ color: '#ef4444' }}>*</span></label>
+                  <label htmlFor="reraNumber">RERA Registration Number </label>
                   <span style={{ fontSize: '0.775rem', color: '#6366F1', marginTop: '-4px', marginBottom: '4px' }}>🛡️ RERA number is required for individual brokers</span>
                   <input
                     type="text"
@@ -422,7 +423,7 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
                     value={reraNumber}
                     onChange={(e) => setReraNumber(e.target.value)}
                     placeholder="e.g. A51800012345"
-                    required
+                    
                   />
                 </div>
               </>

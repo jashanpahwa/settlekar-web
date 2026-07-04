@@ -5,11 +5,12 @@ import logoImage from '/logo.png';
 
 interface SidebarProps {
   userRole: 'owner' | 'broker' | 'firm' | 'tenant';
-  activeTab: 'overview' | 'list' | 'properties' | 'inquiries' | 'wishlist' | 'switchRole';
-  setActiveTab: (tab: 'overview' | 'list' | 'properties' | 'inquiries' | 'wishlist' | 'switchRole') => void;
+  activeTab: 'overview' | 'list' | 'properties' | 'inquiries' | 'wishlist';
+  setActiveTab: (tab: 'overview' | 'list' | 'properties' | 'inquiries' | 'wishlist') => void;
   propertiesCount: number;
   inquiriesCount: number;
   handleSignOut: () => Promise<void>;
+  onSwitchRole: () => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
@@ -19,6 +20,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   propertiesCount,
   inquiriesCount,
   handleSignOut,
+  onSwitchRole,
 }) => {
   return (
     <aside className={styles.sidebar}>
@@ -78,8 +80,8 @@ const Sidebar: React.FC<SidebarProps> = ({
         </button>
 
         <button
-          className={`${styles.menuItem} ${activeTab === 'switchRole' ? styles.activeMenu : ''}`}
-          onClick={() => setActiveTab('switchRole')}
+          className={styles.menuItem}
+          onClick={onSwitchRole}
         >
           <span className={styles.icon}>🔄</span> Switch Role
         </button>

@@ -173,11 +173,11 @@ const LandingPage: React.FC = () => {
 
           {/* Center: Nav Links (hidden on mobile) */}
           <nav className={styles.videoNavLinks} aria-label="Main navigation">
-            <Link to="/search" className={styles.videoNavLink}>Search Properties</Link>
+           
             <a href="#features" onClick={(e) => handleScrollToSection('features', e)} className={styles.videoNavLink}>Features</a>
             <a href="#how-it-works" onClick={(e) => handleScrollToSection('how-it-works', e)} className={styles.videoNavLink}>How It Works</a>
             <a href="#download" onClick={(e) => handleScrollToSection('download', e)} className={styles.videoNavLink}>Download</a>
-            <Link to="/dashboard" className={styles.videoNavLink}>List Property</Link>
+            <Link to="/search" className={styles.videoNavLink}>Search Properties</Link>
           </nav>
 
           {/* Right: CTA Button (hidden on mobile) */}
