@@ -1,0 +1,230 @@
+import React, { useState, useRef, useEffect } from 'react';
+import { IndianRupee, Home, MapPin } from 'lucide-react';
+import { DualRangeSlider } from './DualRangeSlider';
+
+interface FloatingFilterBarProps {
+  minBudget: number;
+  maxBudget: number;
+  selectedTypes: string[];
+  kmRange: number;
+  onBudgetChange: (min: number, max: number) => void;
+  onTypesChange: (types: string[]) => void;
+  onKmRangeChange: (km: number) => void;
+}
+
+const PROPERTY_TYPES = [
+  { id: '1rk', label: '1 RK' },
+  { id: '1bhk', label: '1 BHK' },
+  { id: '2bhk', label: '2 BHK' },
+  { id: '3bhk', label: '3 BHK' },
+  { id: '4bhk', label: '4 BHK' },
+  { id: 'villa', label: 'Villa' },
+  { id: 'apartment', label: 'Apartment' },
+  { id: 'studio', label: 'Studio' },
+  { id: 'pg', label: 'PG' },
+  { id: 'shop', label: 'Shop' },
+];
+
+export const FloatingFilterBar: React.FC<FloatingFilterBarProps> = ({
+  minBudget,
+  maxBudget,
+  selectedTypes,
+  kmRange,
+  onBudgetChange,
+  onTypesChange,
+  onKmRangeChange,
+}) => {
+  const [activeDropdown, setActiveDropdown] = useState<'budget' | 'bhk' | 'distance' | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setActiveDropdown(null);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleTypeToggle = (typeId: string) => {
+    onTypesChange(
+      selectedTypes.includes(typeId)
+        ? selectedTypes.filter((id) => id !== typeId)
+        : [...selectedTypes, typeId]
+    );
+  };
+
+  const isFilterActive = (type: 'budget' | 'bhk' | 'distance') => {
+    if (type === 'budget') {
+      return minBudget !== 5000 || maxBudget !== 120000;
+    }
+    if (type === 'bhk') {
+      return selectedTypes.length > 0;
+    }
+    if (type === 'distance') {
+      return kmRange !== 15;
+    }
+    return false;
+  };
+
+  return (
+    <div
+      ref={containerRef}
+      className="absolute top-20 left-4 z-30 flex flex-wrap gap-2 max-w-[calc(100vw-2rem)] md:max-w-none"
+    >
+      {/* 1. Budget Pill */}
+      <div className="relative">
+        <button
+          onClick={() => setActiveDropdown(activeDropdown === 'budget' ? null : 'budget')}
+          className={`px-3.5 py-2.5 rounded-xl border text-xs font-bold transition-all duration-200 cursor-pointer shadow-md flex items-center space-x-1.5 active:scale-95 ${
+            isFilterActive('budget') || activeDropdown === 'budget'
+              ? 'bg-primary border-primary text-white'
+              : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+          }`}
+        >
+          <IndianRupee className="h-3.5 w-3.5" />
+          <span>
+            {minBudget === 5000 && maxBudget === 120000
+              ? 'Budget'
+              : `₹${(minBudget / 1000).toFixed(0)}k - ₹${(maxBudget / 1000).toFixed(0)}k`}
+          </span>
+        </button>
+
+        {activeDropdown === 'budget' && (
+          <div className="absolute top-full left-0 mt-2 w-80 bg-white rounded-2xl border border-slate-100 shadow-xl p-5 z-50">
+            <h4 className="font-bold text-slate-800 text-sm mb-3">Rent Budget</h4>
+            <DualRangeSlider
+              min={5000}
+              max={120000}
+              step={1000}
+              minValue={minBudget}
+              maxValue={maxBudget}
+              onChange={onBudgetChange}
+            />
+            <div className="flex justify-between items-center mt-4">
+              <span className="text-xs text-slate-500 font-bold">
+                ₹{minBudget.toLocaleString('en-IN')} - ₹{maxBudget.toLocaleString('en-IN')}
+              </span>
+              <button
+                onClick={() => onBudgetChange(5000, 120000)}
+                className="text-xs text-primary hover:text-primary/80 font-bold transition-colors cursor-pointer"
+              >
+                Reset
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 2. BHK configuration Pill */}
+      <div className="relative">
+        <button
+          onClick={() => setActiveDropdown(activeDropdown === 'bhk' ? null : 'bhk')}
+          className={`px-3.5 py-2.5 rounded-xl border text-xs font-bold transition-all duration-200 cursor-pointer shadow-md flex items-center space-x-1.5 active:scale-95 ${
+            isFilterActive('bhk') || activeDropdown === 'bhk'
+              ? 'bg-primary border-primary text-white'
+              : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+          }`}
+        >
+          <Home className="h-3.5 w-3.5" />
+          <span>
+            {selectedTypes.length === 0
+              ? 'BHK Type'
+              : selectedTypes.length === 1
+              ? PROPERTY_TYPES.find((t) => t.id === selectedTypes[0])?.label
+              : `${selectedTypes.length} Selected`}
+          </span>
+        </button>
+
+        {activeDropdown === 'bhk' && (
+          <div className="absolute top-full left-0 mt-2 w-72 bg-white rounded-2xl border border-slate-100 shadow-xl p-4 z-50 space-y-3">
+            <h4 className="font-bold text-slate-800 text-sm">Configuration</h4>
+            <div className="flex flex-wrap gap-2 max-h-48 overflow-y-auto pr-1">
+              {PROPERTY_TYPES.map((type) => {
+                const isSelected = selectedTypes.includes(type.id);
+                return (
+                  <button
+                    key={type.id}
+                    onClick={() => handleTypeToggle(type.id)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all duration-150 active:scale-95 cursor-pointer ${
+                      isSelected
+                        ? 'bg-primary border-primary text-white shadow-sm'
+                        : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                    }`}
+                  >
+                    {type.label}
+                  </button>
+                );
+              })}
+            </div>
+            <div className="flex justify-between items-center pt-2 border-t border-slate-50">
+              <button
+                onClick={() => onTypesChange([])}
+                className="text-[11px] text-slate-500 hover:text-slate-600 font-bold cursor-pointer"
+              >
+                Clear
+              </button>
+              <button
+                onClick={() => setActiveDropdown(null)}
+                className="text-[11px] text-primary hover:text-primary/80 font-bold cursor-pointer"
+              >
+                Apply
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 3. Distance Pill */}
+      <div className="relative">
+        <button
+          onClick={() => setActiveDropdown(activeDropdown === 'distance' ? null : 'distance')}
+          className={`px-3.5 py-2.5 rounded-xl border text-xs font-bold transition-all duration-200 cursor-pointer shadow-md flex items-center space-x-1.5 active:scale-95 ${
+            isFilterActive('distance') || activeDropdown === 'distance'
+              ? 'bg-primary border-primary text-white'
+              : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+          }`}
+        >
+          <MapPin className="h-3.5 w-3.5" />
+          <span>{kmRange === 15 ? 'Distance' : `< ${kmRange} km`}</span>
+        </button>
+
+        {activeDropdown === 'distance' && (
+          <div className="absolute top-full left-0 mt-2 w-72 bg-white rounded-2xl border border-slate-100 shadow-xl p-4 z-50 space-y-3">
+            <h4 className="font-bold text-slate-800 text-sm">Search Radius</h4>
+            <div className="space-y-1.5">
+              <input
+                type="range"
+                min={1}
+                max={50}
+                step={1}
+                value={kmRange}
+                onChange={(e) => onKmRangeChange(Number(e.target.value))}
+                className="w-full h-1.5 bg-slate-200 rounded-full appearance-none cursor-pointer accent-[#0A2540] mt-2"
+              />
+              <div className="flex justify-between text-[10px] text-slate-400 font-semibold px-0.5">
+                <span>1 km</span>
+                <span>50 km</span>
+              </div>
+            </div>
+            <div className="flex justify-between items-center pt-2 border-t border-slate-50">
+              <span className="text-xs font-bold text-primary">{kmRange} km</span>
+              <button
+                onClick={() => {
+                  onKmRangeChange(15);
+                  setActiveDropdown(null);
+                }}
+                className="text-xs text-primary hover:text-primary/80 font-bold cursor-pointer"
+              >
+                Reset
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+export default FloatingFilterBar;

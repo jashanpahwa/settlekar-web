@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { MapPin, SlidersHorizontal, Home, Heart, MessageCircle } from 'lucide-react';
-import styles from '../styles/SearchPage.module.css';
-import logoImage from '/logo.png';
+import { loadGoogleMaps } from '../utils/googleMapsLoader';
 import { propertyService } from '../services/propertyService';
-import { locationPages } from '../utils/locationPages';
+import { SearchInitialForm } from '../components/Search/SearchInitialForm';
+import { SearchMapView, getPropertyCoords } from '../components/Search/SearchMapView';
+import { SearchSidebar } from '../components/Search/SearchSidebar';
+import { FloatingSearchBar } from '../components/Search/FloatingSearchBar';
+import { FloatingFilterBar } from '../components/Search/FloatingFilterBar';
+import { getRouteDistances, getHaversineDistance } from '../utils/routeDistance';
 
 interface SearchProperty {
   id: string;
@@ -22,29 +24,86 @@ interface SearchProperty {
   furnishing?: string;
 }
 
-const SearchPage: React.FC = () => {
-  // Filter States
-  const [city, setCity] = useState('Jaipur');
-  const [locality, setLocality] = useState('');
-  const [minPrice, setMinPrice] = useState('');
-  const [maxPrice, setMaxPrice] = useState('');
-  const [propertyType, setPropertyType] = useState('all');
-  const [furnishing, setFurnishing] = useState('all');
+export const SearchPage: React.FC = () => {
+  // Navigation View State
+  const [viewMode, setViewMode] = useState<'form' | 'map'>('form');
 
-  // UI States
+  // Script Load State
+  const [mapsLoaded, setMapsLoaded] = useState(false);
+
+  // Search Filter and Center States
+  const [searchAddress, setSearchAddress] = useState('');
+  const [searchCenter, setSearchCenter] = useState<{ lat: number; lng: number }>({
+    lat: 19.0760, // Mumbai Center default
+    lng: 72.8777,
+  });
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+
+  // Filter values
+  const [minBudget, setMinBudget] = useState(5000);
+  const [maxBudget, setMaxBudget] = useState(120000);
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+  const [kmRange, setKmRange] = useState<number>(15);
+
+  // Loaded Properties & Computed Route Distances
   const [properties, setProperties] = useState<SearchProperty[]>([]);
   const [filteredProperties, setFilteredProperties] = useState<SearchProperty[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [isFilterOpen, setIsFilterOpen] = useState(true); // Open sidebar by default on desktop
+  const [propertyDistances, setPropertyDistances] = useState<Record<string, number>>({});
+  const [selectedProperty, setSelectedProperty] = useState<SearchProperty | null>(null);
 
-  // Fetch all properties (live + mock static properties)
+  // UI States
+  const [loading, setLoading] = useState(true);
+  const [distancesLoading, setDistancesLoading] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+  // Load Google Maps Script
+  useEffect(() => {
+    const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || 'AIzaSyD1bFpK1qmChgNVkhVwABceydgC4w55GYE';
+    const unsubscribe = loadGoogleMaps(apiKey, () => {
+      setMapsLoaded(true);
+    });
+
+    // Try to get user GPS location silently on load
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setUserLocation({
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude,
+          });
+        },
+        (err) => console.log('Location acquisition declined or failed:', err),
+        { timeout: 5000 }
+      );
+    }
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  // Reverse-geocode user location once maps load and userLocation is resolved (unless already searched)
+  useEffect(() => {
+    if (!mapsLoaded || !userLocation || searchAddress) return;
+
+    const geocoder = new google.maps.Geocoder();
+    geocoder.geocode({ location: userLocation }, (results: any, status: any) => {
+      if (status === 'OK' && results && results[0]) {
+        const addr = results[0].formatted_address;
+        setSearchAddress(addr);
+        setSearchCenter(userLocation);
+      }
+    });
+  }, [mapsLoaded, userLocation]);
+
+  // Fetch all properties (live firestore only)
   useEffect(() => {
     const loadProperties = async () => {
       setLoading(true);
       try {
-        // 1. Fetch live properties from Firestore using propertyService
+        // Fetch live properties from Firestore using propertyService
         const liveProps = await propertyService.getAllProperties();
-        const formattedLive: SearchProperty[] = liveProps.map(p => ({
+        const formattedLive: SearchProperty[] = liveProps.map((p) => ({
           id: p.id,
           title: p.title || '',
           city: p.city || 'Jaipur',
@@ -54,43 +113,18 @@ const SearchPage: React.FC = () => {
           rating: p.rating || '5.0',
           badge: p.badge || p.propertyType || 'Flat',
           features: p.features || `${p.propertyType || 'Flat'} • ${p.area || 0} sq.ft`,
-          image: p.image || (p.images && p.images[0]) || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80',
+          image:
+            p.image ||
+            (p.images && p.images[0]) ||
+            'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80',
           description: p.description || '',
           propertyType: (p.propertyType || '').toLowerCase(),
-          furnishing: (p.furnishing || '').toLowerCase()
+          furnishing: (p.furnishing || '').toLowerCase(),
         }));
 
-        // 2. Fetch mock static properties from locationPages
-        const formattedMock: SearchProperty[] = [];
-        locationPages.forEach(page => {
-          if (page.properties) {
-            page.properties.forEach(p => {
-              // Parse price string like "₹12,000/mo" to number if possible
-              const cleanedPrice = p.price ? parseInt(p.price.replace(/[^\d]/g, ''), 10) : 0;
-              formattedMock.push({
-                id: `mock-${p.id}`,
-                title: p.title || '',
-                city: page.city || 'Jaipur',
-                location: p.location || '',
-                address: p.location || '',
-                price: cleanedPrice || p.price,
-                rating: p.rating || '4.8',
-                badge: p.badge || p.type || 'Flat',
-                features: p.features ? p.features.join(' • ') : '',
-                image: p.image || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80',
-                description: p.description || '',
-                propertyType: (p.type || '').toLowerCase(),
-                furnishing: 'semi-furnished' // fallback
-              });
-            });
-          }
-        });
-
-        // Combine (avoiding duplicates if any)
-        const combined = [...formattedLive, ...formattedMock];
-        setProperties(combined);
+        setProperties(formattedLive);
       } catch (error) {
-        console.error('Error loading properties:', error);
+        console.error('Error fetching properties:', error);
       } finally {
         setLoading(false);
       }
@@ -99,226 +133,179 @@ const SearchPage: React.FC = () => {
     loadProperties();
   }, []);
 
-  // Filter properties client-side
+  // Calculate actual route distances from searchCenter asynchronously using the Google Distance Matrix API
   useEffect(() => {
-    let result = properties;
-
-    // Filter by City
-    if (city) {
-      result = result.filter(p => p.city.toLowerCase() === city.toLowerCase());
+    if (!searchCenter || properties.length === 0 || viewMode !== 'map') {
+      setPropertyDistances({});
+      return;
     }
 
-    // Filter by Locality
-    if (locality.trim()) {
-      const normalizedLoc = locality.toLowerCase().trim();
-      result = result.filter(p =>
-        p.location.toLowerCase().includes(normalizedLoc) ||
-        p.address.toLowerCase().includes(normalizedLoc) ||
-        p.title.toLowerCase().includes(normalizedLoc)
-      );
-    }
+    const fetchRouteDistances = async () => {
+      setDistancesLoading(true);
+      try {
+        // Gather all properties with coordinates
+        const validProps = properties.filter((p) => getPropertyCoords(p) !== null);
+        const destinations = validProps.map((p) => getPropertyCoords(p)!);
 
-    // Filter by Price range
-    if (minPrice) {
-      const min = parseInt(minPrice, 10);
-      result = result.filter(p => {
-        const pPrice = typeof p.price === 'number' ? p.price : parseInt(p.price.replace(/[^\d]/g, ''), 10);
-        return pPrice >= min;
+        if (destinations.length > 0) {
+          const distances = await getRouteDistances(searchCenter, destinations);
+          
+          const distanceMap: Record<string, number> = {};
+          validProps.forEach((p, index) => {
+            distanceMap[p.id] = distances[index];
+          });
+          setPropertyDistances(distanceMap);
+        }
+      } catch (error) {
+        console.error('Error fetching batch route distances:', error);
+      } finally {
+        setDistancesLoading(false);
+      }
+    };
+
+    fetchRouteDistances();
+  }, [searchCenter, properties, viewMode]);
+
+  // Filter properties client-side based on route distance, budget, configuration
+  useEffect(() => {
+    let result = [...properties];
+
+    // 1. Budget Filter
+    result = result.filter((p) => {
+      const priceVal = typeof p.price === 'number' ? p.price : parseInt(p.price.replace(/[^\d]/g, ''), 10) || 0;
+      return priceVal >= minBudget && priceVal <= maxBudget;
+    });
+
+    // 2. Configuration (Type) Filter (1 RK, 1 BHK, 2 BHK, 3 BHK, 4 BHK, Villa, Apartment, Studio, PG, Shop)
+    if (selectedTypes.length > 0) {
+      result = result.filter((p) => {
+        const typeLower = (p.propertyType || p.badge || '').toLowerCase();
+        const titleLower = (p.title || '').toLowerCase();
+
+        return selectedTypes.some((type) => {
+          if (type === '1rk') return typeLower.includes('1 rk') || typeLower.includes('1rk') || titleLower.includes('1 rk') || titleLower.includes('1rk');
+          if (type === '1bhk') return typeLower.includes('1 bhk') || typeLower.includes('1bhk') || titleLower.includes('1 bhk') || titleLower.includes('1bhk');
+          if (type === '2bhk') return typeLower.includes('2 bhk') || typeLower.includes('2bhk') || titleLower.includes('2 bhk') || titleLower.includes('2bhk');
+          if (type === '3bhk') return typeLower.includes('3 bhk') || typeLower.includes('3bhk') || titleLower.includes('3 bhk') || titleLower.includes('3bhk');
+          if (type === '4bhk') return typeLower.includes('4 bhk') || typeLower.includes('4bhk') || titleLower.includes('4 bhk') || titleLower.includes('4bhk');
+          if (type === 'villa') return typeLower.includes('villa') || titleLower.includes('villa');
+          if (type === 'apartment') return typeLower.includes('apartment') || titleLower.includes('apartment') || typeLower.includes('flat') || titleLower.includes('flat');
+          if (type === 'studio') return typeLower.includes('studio') || titleLower.includes('studio');
+          if (type === 'pg') return typeLower.includes('pg') || typeLower.includes('co-living') || typeLower.includes('coliving') || titleLower.includes('pg');
+          if (type === 'shop') return typeLower.includes('shop') || titleLower.includes('shop') || typeLower.includes('commercial') || titleLower.includes('commercial');
+          return false;
+        });
       });
     }
-    if (maxPrice) {
-      const max = parseInt(maxPrice, 10);
-      result = result.filter(p => {
-        const pPrice = typeof p.price === 'number' ? p.price : parseInt(p.price.replace(/[^\d]/g, ''), 10);
-        return pPrice <= max;
-      });
-    }
 
-    // Filter by Property Type
-    if (propertyType !== 'all') {
-      const typeLower = propertyType.toLowerCase();
-      result = result.filter(p => p.propertyType?.includes(typeLower) || p.badge?.toLowerCase().includes(typeLower));
-    }
-
-    // Filter by Furnishing
-    if (furnishing !== 'all') {
-      const furnLower = furnishing.toLowerCase();
-      result = result.filter(p => p.furnishing?.includes(furnLower) || p.features?.toLowerCase().includes(furnLower));
+    // 3. Geolocation Proximity Filter & Distance Sorting (within kmRange of searched center)
+    if (searchCenter && viewMode === 'map') {
+      result = result
+        .map((p) => {
+          // Use pre-calculated route distance if available, otherwise Haversine fallback
+          let distance = propertyDistances[p.id];
+          if (distance === undefined) {
+            const coords = getPropertyCoords(p);
+            distance = coords ? getHaversineDistance(searchCenter, coords) : 999999;
+          }
+          return { ...p, distance };
+        })
+        .filter((p) => p.distance <= kmRange) // Filter by kmRange selected
+        .sort((a, b) => a.distance - b.distance); // Sort by distance ascending
     }
 
     setFilteredProperties(result);
-  }, [properties, city, locality, minPrice, maxPrice, propertyType, furnishing]);
+  }, [properties, searchCenter, minBudget, maxBudget, selectedTypes, propertyDistances, kmRange, viewMode]);
 
-  const handleClearFilters = () => {
-    setLocality('');
-    setMinPrice('');
-    setMaxPrice('');
-    setPropertyType('all');
-    setFurnishing('all');
+  // Transition from Initial Form to Map View
+  const handleInitialSearchSubmit = (searchData: {
+    address: string;
+    lat: number;
+    lng: number;
+    minBudget: number;
+    maxBudget: number;
+    selectedTypes: string[];
+    kmRange: number;
+  }) => {
+    setSearchAddress(searchData.address);
+    setSearchCenter({ lat: searchData.lat, lng: searchData.lng });
+    setMinBudget(searchData.minBudget);
+    setMaxBudget(searchData.maxBudget);
+    setSelectedTypes(searchData.selectedTypes);
+    setKmRange(searchData.kmRange);
+    setViewMode('map');
   };
 
+  // Re-run search from Floating Bar
+  const handleFloatingSearchSubmit = (address: string, lat: number, lng: number) => {
+    setSearchAddress(address);
+    setSearchCenter({ lat, lng });
+    setSelectedProperty(null); // Clear selected property on new search
+  };
+
+  if (viewMode === 'form') {
+    return (
+      <SearchInitialForm
+        mapsLoaded={mapsLoaded}
+        initialAddress={searchAddress}
+        onSearch={handleInitialSearchSubmit}
+      />
+    );
+  }
+
   return (
-    <div className={styles.searchPageContainer}>
-      {/* Header */}
-      <header className={styles.header}>
-        <div className={styles.headerContent}>
-          <Link to="/" className={styles.logoLink}>
-            <img src={logoImage} alt="SettleKar Logo" className={styles.logo} />
-            <span className={styles.logoText}>SettleKar</span>
-          </Link>
-          <div className={styles.navLinks}>
-            <Link to="/" className={styles.navLink}>Home</Link>
-            <Link to="/dashboard" className={styles.navLinkCta}>List Property</Link>
+    <div className="h-screen w-screen flex overflow-hidden font-sans relative">
+      {/* Sidebar - shows matches */}
+      <SearchSidebar
+        properties={filteredProperties}
+        selectedProperty={selectedProperty}
+        onSelectProperty={(p) => setSelectedProperty(p)}
+        loading={loading || distancesLoading}
+        isOpen={isSidebarOpen}
+        onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
+        searchAddress={searchAddress}
+      />
+
+      {/* Map Content Area */}
+      <div className="flex-1 h-full relative bg-slate-100">
+        {/* Floating search control */}
+        <FloatingSearchBar
+          mapsLoaded={mapsLoaded}
+          initialAddress={searchAddress}
+          onSearchLocation={handleFloatingSearchSubmit}
+          onBackToForm={() => setViewMode('form')}
+        />
+
+        {/* Floating Quick Filters */}
+        <FloatingFilterBar
+          minBudget={minBudget}
+          maxBudget={maxBudget}
+          selectedTypes={selectedTypes}
+          kmRange={kmRange}
+          onBudgetChange={(min, max) => {
+            setMinBudget(min);
+            setMaxBudget(max);
+          }}
+          onTypesChange={(types) => setSelectedTypes(types)}
+          onKmRangeChange={(km) => setKmRange(km)}
+        />
+
+        {/* Google Map component */}
+        {mapsLoaded ? (
+          <SearchMapView
+            properties={filteredProperties}
+            selectedProperty={selectedProperty}
+            onSelectProperty={(p) => setSelectedProperty(p)}
+            center={searchCenter}
+            userLocation={userLocation}
+            selectedLocation={searchCenter}
+          />
+        ) : (
+          <div className="w-full h-full flex flex-col items-center justify-center space-y-3">
+            <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+            <span className="text-sm font-semibold text-slate-500">Initializing interactive maps...</span>
           </div>
-        </div>
-      </header>
-
-      {/* Main Layout */}
-      <div className={styles.mainLayout}>
-        {/* Toggle Filters Button for Mobile */}
-        <button
-          className={styles.mobileFilterBtn}
-          onClick={() => setIsFilterOpen(!isFilterOpen)}
-        >
-          <SlidersHorizontal size={18} />
-          {isFilterOpen ? 'Hide Filters' : 'Show Filters'}
-        </button>
-
-        {/* Sidebar Filters */}
-        <aside className={`${styles.sidebar} ${isFilterOpen ? styles.sidebarOpen : ''}`}>
-          <div className={styles.sidebarHeader}>
-            <h3>Filter Properties</h3>
-            <button className={styles.clearBtn} onClick={handleClearFilters}>Clear All</button>
-          </div>
-
-          <div className={styles.filterGroup}>
-            <label>City</label>
-            <select value={city} onChange={(e) => setCity(e.target.value)} className={styles.select}>
-              <option value="Jaipur">Jaipur</option>
-              <option value="Mumbai">Mumbai</option>
-              <option value="Delhi">Delhi</option>
-              <option value="Bangalore">Bangalore</option>
-              <option value="Pune">Pune</option>
-            </select>
-          </div>
-
-          <div className={styles.filterGroup}>
-            <label>Locality / Area</label>
-            <div className={styles.inputIconWrapper}>
-              <MapPin size={16} className={styles.inputIcon} />
-              <input
-                type="text"
-                value={locality}
-                onChange={(e) => setLocality(e.target.value)}
-                placeholder="e.g. Vaishali Nagar"
-                className={styles.input}
-              />
-            </div>
-          </div>
-
-          <div className={styles.filterGroup}>
-            <label>Budget (Monthly Rent)</label>
-            <div className={styles.priceRange}>
-              <input
-                type="number"
-                value={minPrice}
-                onChange={(e) => setMinPrice(e.target.value)}
-                placeholder="Min ₹"
-                className={styles.priceInput}
-              />
-              <span className={styles.priceDivider}>to</span>
-              <input
-                type="number"
-                value={maxPrice}
-                onChange={(e) => setMaxPrice(e.target.value)}
-                placeholder="Max ₹"
-                className={styles.priceInput}
-              />
-            </div>
-          </div>
-
-          <div className={styles.filterGroup}>
-            <label>Configuration / Type</label>
-            <select value={propertyType} onChange={(e) => setPropertyType(e.target.value)} className={styles.select}>
-              <option value="all">All Configurations</option>
-              <option value="1 bhk">1 BHK</option>
-              <option value="2 bhk">2 BHK</option>
-              <option value="3 bhk">3 BHK</option>
-              <option value="pg">PG / Co-Living</option>
-              <option value="studio">Studio Apartment</option>
-            </select>
-          </div>
-
-          <div className={styles.filterGroup}>
-            <label>Furnishing Status</label>
-            <select value={furnishing} onChange={(e) => setFurnishing(e.target.value)} className={styles.select}>
-              <option value="all">All</option>
-              <option value="fully">Fully Furnished</option>
-              <option value="semi">Semi-Furnished</option>
-              <option value="unfurnished">Unfurnished</option>
-            </select>
-          </div>
-        </aside>
-
-        {/* Results Area */}
-        <main className={styles.resultsArea}>
-          <div className={styles.resultsHeader}>
-            <h2>
-              {loading ? 'Searching properties...' : `${filteredProperties.length} Properties found in ${city}`}
-            </h2>
-          </div>
-
-          {loading ? (
-            <div className={styles.loaderContainer}>
-              <div className={styles.spinner}></div>
-            </div>
-          ) : filteredProperties.length === 0 ? (
-            <div className={styles.emptyState}>
-              <Home size={48} className={styles.emptyIcon} />
-              <h3>No Properties Match Your Filters</h3>
-              <p>Try widening your price range, typing a different locality, or clearing filters.</p>
-              <button className={styles.emptyStateBtn} onClick={handleClearFilters}>
-                Reset Filters
-              </button>
-            </div>
-          ) : (
-            <div className={styles.propertiesGrid}>
-              {filteredProperties.map((p) => {
-                const displayPrice = typeof p.price === 'number'
-                  ? `₹${p.price.toLocaleString('en-IN')}/mo`
-                  : p.price;
-
-                return (
-                  <div key={p.id} className={styles.propertyCard}>
-                    <div className={styles.cardImageWrapper}>
-                      <img src={p.image} alt={p.title} className={styles.cardImage} />
-                      <span className={styles.cardBadge}>{p.badge}</span>
-                      <button className={styles.wishlistHeartBtn} aria-label="Add to Wishlist">
-                        <Heart size={18} />
-                      </button>
-                    </div>
-                    <div className={styles.cardContent}>
-                      <span className={styles.cardRating}>★ {p.rating}</span>
-                      <h3 className={styles.cardTitle}>{p.title}</h3>
-                      <p className={styles.cardAddress}>📍 {p.address || p.location}</p>
-                      <p className={styles.cardFeatures}>{p.features}</p>
-                      {p.description && (
-                        <p className={styles.cardDescription}>{p.description.substring(0, 80)}...</p>
-                      )}
-                      <div className={styles.cardFooter}>
-                        <span className={styles.cardPrice}>{displayPrice}</span>
-                        <Link to={`/property/${p.id.toString().replace('mock-', '')}`} className={styles.contactBtn}>
-                          <MessageCircle size={14} />
-                          Details
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </main>
+        )}
       </div>
     </div>
   );

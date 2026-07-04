@@ -14,6 +14,9 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
+    /* Types */
+    "types": ["google.maps"],
+
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
