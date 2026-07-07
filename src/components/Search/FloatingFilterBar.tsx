@@ -93,7 +93,7 @@ export const FloatingFilterBar: React.FC<FloatingFilterBarProps> = ({
         </button>
 
         {activeDropdown === 'budget' && (
-          <div className="absolute top-full left-0 mt-2 w-80 bg-white rounded-2xl border border-slate-100 shadow-xl p-5 z-50">
+          <div className="absolute top-full left-0 mt-2 w-[calc(100vw-2rem)] sm:w-80 bg-white rounded-2xl border border-slate-100 shadow-xl p-5 z-50">
             <h4 className="font-bold text-slate-800 text-sm mb-3">Rent Budget</h4>
             <DualRangeSlider
               min={5000}
@@ -139,7 +139,7 @@ export const FloatingFilterBar: React.FC<FloatingFilterBarProps> = ({
         </button>
 
         {activeDropdown === 'bhk' && (
-          <div className="absolute top-full left-0 mt-2 w-72 bg-white rounded-2xl border border-slate-100 shadow-xl p-4 z-50 space-y-3">
+          <div className="absolute top-full left-0 mt-2 w-[calc(100vw-2rem)] sm:w-72 bg-white rounded-2xl border border-slate-100 shadow-xl p-4 z-50 space-y-3">
             <h4 className="font-bold text-slate-800 text-sm">Configuration</h4>
             <div className="flex flex-wrap gap-2 max-h-48 overflow-y-auto pr-1">
               {PROPERTY_TYPES.map((type) => {
@@ -192,7 +192,7 @@ export const FloatingFilterBar: React.FC<FloatingFilterBarProps> = ({
         </button>
 
         {activeDropdown === 'distance' && (
-          <div className="absolute top-full left-0 mt-2 w-72 bg-white rounded-2xl border border-slate-100 shadow-xl p-4 z-50 space-y-3">
+          <div className="absolute top-full left-0 mt-2 w-[calc(100vw-2rem)] sm:w-72 bg-white rounded-2xl border border-slate-100 shadow-xl p-4 z-50 space-y-3">
             <h4 className="font-bold text-slate-800 text-sm">Search Radius</h4>
             <div className="space-y-1.5">
               <input

@@ -11,6 +11,8 @@ interface SidebarProps {
   inquiriesCount: number;
   handleSignOut: () => Promise<void>;
   onSwitchRole: () => void;
+  isOpen?: boolean;
+  onClose?: () => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
@@ -21,78 +23,114 @@ const Sidebar: React.FC<SidebarProps> = ({
   inquiriesCount,
   handleSignOut,
   onSwitchRole,
+  isOpen = false,
+  onClose = () => {},
 }) => {
+  const handleTabClick = (tab: 'overview' | 'list' | 'properties' | 'inquiries' | 'wishlist') => {
+    setActiveTab(tab);
+    onClose();
+  };
+
+  const handleSwitchClick = () => {
+    onSwitchRole();
+    onClose();
+  };
+
+  const handleSignOutClick = () => {
+    handleSignOut();
+    onClose();
+  };
+
   return (
-    <aside className={styles.sidebar}>
-      <div className={styles.sidebarHeader}>
-        <Link to="/" className={styles.logoLink}>
-          <img src={logoImage} alt="SettleKar" className={styles.logoImage} />
-        </Link>
-        <span className={styles.portalBadge}>
-          {userRole === 'broker'
-            ? 'Broker Portal'
-            : userRole === 'firm'
-            ? 'Firm Portal'
-            : userRole === 'tenant'
-            ? 'Tenant Portal'
-            : 'Owner Portal'}
-        </span>
-      </div>
+    <>
+      {/* Backdrop overlay for mobile drawer */}
+      <div 
+        className={`${styles.sidebarOverlay} ${isOpen ? styles.overlayVisible : ''}`} 
+        onClick={onClose}
+      />
 
-      <nav className={styles.menu}>
-        <button
-          className={`${styles.menuItem} ${activeTab === 'overview' ? styles.activeMenu : ''}`}
-          onClick={() => setActiveTab('overview')}
-        >
-          <span className={styles.icon}>📊</span> Overview
-        </button>
+      <aside className={`${styles.sidebar} ${isOpen ? styles.sidebarOpen : ''}`}>
+        <div className={styles.sidebarHeader}>
+          <Link to="/" className={styles.logoLink} onClick={onClose}>
+            <img src={logoImage} alt="SettleKar" className={styles.logoImage} />
+          </Link>
+          <span className={styles.portalBadge}>
+            {userRole === 'broker'
+              ? 'Broker Portal'
+              : userRole === 'firm'
+              ? 'Firm Portal'
+              : userRole === 'tenant'
+              ? 'Tenant Portal'
+              : 'Owner Portal'}
+          </span>
+          {/* Close button inside drawer for mobile */}
+          <button className={styles.drawerCloseBtn} onClick={onClose} aria-label="Close menu">
+            ✕
+          </button>
+        </div>
 
-        {userRole !== 'tenant' && (
-          <>
-            <button
-              className={`${styles.menuItem} ${activeTab === 'list' ? styles.activeMenu : ''}`}
-              onClick={() => setActiveTab('list')}
-            >
-              <span className={styles.icon}>➕</span> List Property
-            </button>
-            <button
-              className={`${styles.menuItem} ${activeTab === 'properties' ? styles.activeMenu : ''}`}
-              onClick={() => setActiveTab('properties')}
-            >
-              <span className={styles.icon}>🏠</span> My Properties
-              {propertiesCount > 0 && <span className={styles.badgeCount}>{propertiesCount}</span>}
-            </button>
-            <button
-              className={`${styles.menuItem} ${activeTab === 'inquiries' ? styles.activeMenu : ''}`}
-              onClick={() => setActiveTab('inquiries')}
-            >
-              <span className={styles.icon}>✉️</span> Inquiries
-              {inquiriesCount > 0 && <span className={styles.badgeCountBlue}>{inquiriesCount}</span>}
-            </button>
-          </>
-        )}
+        <nav className={styles.menu}>
+          <button
+            className={`${styles.menuItem} ${activeTab === 'overview' ? styles.activeMenu : ''}`}
+            onClick={() => handleTabClick('overview')}
+          >
+            <span className={styles.icon}>📊</span> Overview
+          </button>
 
-        <button
-          className={`${styles.menuItem} ${activeTab === 'wishlist' ? styles.activeMenu : ''}`}
-          onClick={() => setActiveTab('wishlist')}
-        >
-          <span className={styles.icon}>❤️</span> Wishlist
-        </button>
+          {userRole !== 'tenant' && (
+            <>
+              <button
+                className={`${styles.menuItem} ${activeTab === 'list' ? styles.activeMenu : ''}`}
+                onClick={() => handleTabClick('list')}
+              >
+                <span className={styles.icon}>➕</span> List Property
+              </button>
+              <button
+                className={`${styles.menuItem} ${activeTab === 'properties' ? styles.activeMenu : ''}`}
+                onClick={() => handleTabClick('properties')}
+              >
+                <span className={styles.icon}>🏠</span> My Properties
+                {propertiesCount > 0 && <span className={styles.badgeCount}>{propertiesCount}</span>}
+              </button>
+              <button
+                className={`${styles.menuItem} ${activeTab === 'inquiries' ? styles.activeMenu : ''}`}
+                onClick={() => handleTabClick('inquiries')}
+              >
+                <span className={styles.icon}>✉️</span> Inquiries
+                {inquiriesCount > 0 && <span className={styles.badgeCountBlue}>{inquiriesCount}</span>}
+              </button>
+            </>
+          )}
 
-        <button
-          className={styles.menuItem}
-          onClick={onSwitchRole}
-        >
-          <span className={styles.icon}>🔄</span> Switch Role
-        </button>
-      </nav>
+          <button
+            className={`${styles.menuItem} ${activeTab === 'wishlist' ? styles.activeMenu : ''}`}
+            onClick={() => handleTabClick('wishlist')}
+          >
+            <span className={styles.icon}>❤️</span> Wishlist
+          </button>
 
-      <div className={styles.sidebarFooter}>
-        <button onClick={handleSignOut} className={styles.backHomeBtn}>
-          🚪 Sign Out
-        </button>
-      </div>
-    </aside>
+          <button
+            className={styles.menuItem}
+            onClick={handleSwitchClick}
+          >
+            <span className={styles.icon}>🔄</span> Switch Role
+          </button>
+
+          <button
+            className={`${styles.menuItem} ${styles.mobileSignOut}`}
+            onClick={handleSignOutClick}
+          >
+            <span className={styles.icon}>🚪</span> Sign Out
+          </button>
+        </nav>
+
+        <div className={styles.sidebarFooter}>
+          <button onClick={handleSignOutClick} className={styles.backHomeBtn}>
+            🚪 Sign Out
+          </button>
+        </div>
+      </aside>
+    </>
   );
 };
 

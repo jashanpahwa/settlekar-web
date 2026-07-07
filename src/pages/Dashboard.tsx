@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { auth } from '../firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { userService } from '../services/userService';
@@ -24,6 +25,7 @@ export type { OwnerProfile, BrokerProfile, FirmProfile };
 
 const Dashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'overview' | 'list' | 'properties' | 'inquiries' | 'wishlist'>('overview');
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState<boolean>(false);
   
   // Auth States
   const [user, setUser] = useState<User | null>(null);
@@ -291,6 +293,34 @@ const Dashboard: React.FC = () => {
       {/* React 19 Document Metadata */}
       <title>SettleKar - Dashboard</title>
       <meta name="robots" content="noindex, nofollow" />
+
+      {/* Mobile Sticky Header Bar */}
+      <div className={styles.mobileHeaderBar}>
+        <Link to="/" className={styles.mobileLogoLink}>
+          <img src="/logo.png" alt="SettleKar" className={styles.mobileLogoImage} />
+        </Link>
+        <div className={styles.mobileHeaderRight}>
+          <span className={styles.mobilePortalBadge}>
+            {userRole === 'broker'
+              ? 'Broker'
+              : userRole === 'firm'
+              ? 'Firm'
+              : userRole === 'tenant'
+              ? 'Tenant'
+              : 'Owner'}
+          </span>
+          <button 
+            className={styles.mobileMenuToggle}
+            onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
+            aria-label="Toggle Menu"
+            aria-expanded={isMobileSidebarOpen}
+          >
+            <span className={`${styles.hamburgerLine} ${isMobileSidebarOpen ? styles.lineOpen1 : ''}`}></span>
+            <span className={`${styles.hamburgerLine} ${isMobileSidebarOpen ? styles.lineOpen2 : ''}`}></span>
+            <span className={`${styles.hamburgerLine} ${isMobileSidebarOpen ? styles.lineOpen3 : ''}`}></span>
+          </button>
+        </div>
+      </div>
       
       <Sidebar
         userRole={userRole}
@@ -300,6 +330,8 @@ const Dashboard: React.FC = () => {
         inquiriesCount={inquiries.length}
         handleSignOut={handleSignOut}
         onSwitchRole={handleSwitchRole}
+        isOpen={isMobileSidebarOpen}
+        onClose={() => setIsMobileSidebarOpen(false)}
       />
 
       {/* Main Content Area */}

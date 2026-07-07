@@ -66,9 +66,11 @@ export const SearchSidebar: React.FC<SearchSidebarProps> = ({
       {/* Toggle Button Container - positioned on the edge of the sidebar */}
       <button
         onClick={onToggle}
-        className="absolute top-1/2 -translate-y-1/2 -right-4 bg-white border border-slate-200 text-slate-700 h-10 w-8 flex items-center justify-center rounded-r-xl shadow-md hover:text-primary hover:bg-slate-50 transition-all duration-200 cursor-pointer z-50"
+        className={`absolute top-1/2 -translate-y-1/2 bg-[#0A2540] border border-slate-200 text-slate-700 h-10 w-8 flex items-center justify-center rounded-xl md:rounded-r-xl md:rounded-l-none shadow-md hover:text-primary hover:bg-slate-50 transition-all duration-200 cursor-pointer z-50 ${
+          isOpen ? 'right-4 md:-right-4' : '-right-12'
+        }`}
       >
-        {isOpen ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+        {isOpen ? <ChevronLeft className="h-4 w-4 text-white" /> : <ChevronRight className="h-4 w-4 text-white" />}
       </button>
 
       {/* Sidebar Contents */}
