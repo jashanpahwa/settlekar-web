@@ -115,20 +115,20 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
                     fontWeight: 700,
                     marginBottom: '10px',
                     background: prop.overallscore >= 80 
-                      ? 'rgba(16, 185, 129, 0.1)' 
+                      ? 'rgba(5, 150, 105, 0.1)' 
                       : prop.overallscore >= 60 
-                        ? 'rgba(245, 158, 11, 0.1)' 
-                        : 'rgba(239, 68, 68, 0.1)',
+                        ? 'rgba(217, 119, 6, 0.1)' 
+                        : 'rgba(220, 38, 38, 0.1)',
                     color: prop.overallscore >= 80 
-                      ? '#34d399' 
+                      ? '#059669' 
                       : prop.overallscore >= 60 
-                        ? '#fb923c' 
-                        : '#f87171',
+                        ? '#d97706' 
+                        : '#dc2626',
                     border: prop.overallscore >= 80 
-                      ? '1px solid rgba(16, 185, 129, 0.2)' 
+                      ? '1px solid rgba(5, 150, 105, 0.2)' 
                       : prop.overallscore >= 60 
-                        ? '1px solid rgba(245, 158, 11, 0.2)' 
-                        : '1px solid rgba(239, 68, 68, 0.2)',
+                        ? '1px solid rgba(217, 119, 6, 0.2)' 
+                        : '1px solid rgba(220, 38, 38, 0.2)',
                   }}>
                     🛡️ Livability Score: <strong>{prop.overallscore}/100</strong>
                   </div>

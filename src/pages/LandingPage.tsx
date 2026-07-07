@@ -411,7 +411,6 @@ const LandingPage: React.FC = () => {
 
       {/* Footer */}
       <Footer />
-
     </div>
   );
 };

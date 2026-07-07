@@ -188,8 +188,8 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
             <span className={styles.signInBadge}>Account setup</span>
           </div>
 
-          <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: '#ffffff', marginBottom: '8px' }}>Select your account type</h2>
-          <p style={{ color: '#94a3b8', fontSize: '0.925rem', marginBottom: '24px' }}>
+          <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '8px' }}>Select your account type</h2>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.925rem', marginBottom: '24px' }}>
             Before listing a property or managing inquiries, please specify if you are an Owner, Broker, Firm, or Tenant.
           </p>
 
@@ -286,15 +286,15 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
 
           <button 
             onClick={() => setRegStep('select')} 
-            style={{ background: 'none', border: 'none', color: '#38bdf8', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.875rem', marginBottom: '16px', padding: 0 }}
+            style={{ background: 'none', border: 'none', color: 'var(--primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.875rem', marginBottom: '16px', padding: 0 }}
           >
             ← Back to role selection
           </button>
 
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#ffffff', marginBottom: '8px' }}>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '8px' }}>
             {selectedRegRole === 'owner' ? 'Owner Profile Registration' : selectedRegRole === 'broker' ? 'Broker Profile Registration' : 'Firm Profile Registration'}
           </h2>
-          <p style={{ color: '#94a3b8', fontSize: '0.9rem', marginBottom: '24px' }}>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '24px' }}>
             Please fill out the form below to register your business profile on SettleKar.
           </p>
 
@@ -358,8 +358,8 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
 
             {/* Owner-specific Fields */}
             {selectedRegRole === 'owner' && (
-              <div style={{ background: 'rgba(255, 255, 255, 0.01)', padding: '20px', borderRadius: '16px', border: '1px solid rgba(255, 255, 255, 0.05)', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <h4 style={{ color: '#ffffff', margin: '0', fontSize: '0.95rem', fontWeight: 600 }}>Government ID (Optional — builds trust)</h4>
+              <div style={{ background: 'rgba(15, 23, 42, 0.01)', padding: '20px', borderRadius: '16px', border: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <h4 style={{ color: 'var(--text-primary)', margin: '0', fontSize: '0.95rem', fontWeight: 600 }}>Government ID (Optional — builds trust)</h4>
                 <div className={styles.formRow}>
                   <div className={styles.formGroup}>
                     <label htmlFor="govtIdType">ID Type</label>

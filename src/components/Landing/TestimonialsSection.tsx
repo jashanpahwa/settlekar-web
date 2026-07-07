@@ -37,6 +37,10 @@ const testimonialsData: Testimonial[] = [
 const TestimonialsSection: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(0); // -1 for left, 1 for right
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+
+  const minSwipeDistance = 50;
 
   const handlePrev = () => {
     setDirection(-1);
@@ -46,6 +50,28 @@ const TestimonialsSection: React.FC = () => {
   const handleNext = () => {
     setDirection(1);
     setCurrentIndex((prev) => (prev === testimonialsData.length - 1 ? 0 : prev + 1));
+  };
+
+  // Touch handlers for mobile swipe
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+    if (isLeftSwipe) {
+      handleNext();
+    } else if (isRightSwipe) {
+      handlePrev();
+    }
   };
 
   const slideVariants = {
@@ -66,19 +92,24 @@ const TestimonialsSection: React.FC = () => {
   const current = testimonialsData[currentIndex];
 
   return (
-    <section className="w-full bg-[#0A0A0B] py-24 px-6 md:px-12 flex flex-col items-center justify-center font-sans overflow-hidden">
+    <section className="w-full bg-[#0A0A0B] py-20 px-6 md:px-12 flex flex-col items-center justify-center font-sans overflow-hidden">
        {/* Decorative ambient background glow */}
       <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-indigo-500/5 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[120px] pointer-events-none" />
 
-      <div className="w-full max-w-[1200px] bg-[#EAEAEA] rounded-[32px] p-8 md:p-16 flex flex-col justify-between min-h-[460px] md:min-h-[420px] relative">
+      <div 
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        className="w-full max-w-[1200px] bg-[#EAEAEA] rounded-[32px] p-8 md:p-16 flex flex-col justify-between min-h-[460px] md:min-h-[420px] relative"
+      >
         
         {/* Top Header Row */}
         <div className="w-full">
           <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-widest block mb-4 select-none">
             Customer Feedback
           </span>
-          <div className="w-full h-[1px] bg-gray-300/60 mb-10" />
+          <div className="w-full h-[1px] bg-gray-300/60 mb-8" />
         </div>
 
         {/* Testimonial Quote Block */}
@@ -94,10 +125,10 @@ const TestimonialsSection: React.FC = () => {
               transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
               className="w-full relative"
             >
-              <blockquote className="text-gray-800 text-2xl md:text-4xl lg:text-4xl font-normal leading-[1.4] md:leading-[1.3] tracking-tight relative max-w-[1000px] select-text pr-10">
+              <blockquote className="text-gray-800 text-xl sm:text-2xl md:text-4xl lg:text-4xl font-normal leading-[1.5] md:leading-[1.3] tracking-tight relative max-w-[1000px] select-text pr-10">
                 <span className="text-gray-400 font-serif mr-1">«</span>
                 {current.comment}
-                {/* Visual fade-out mask to replicate the screenshot's premium edge truncation look */}
+                {/* Visual fade-out mask to replicate premium edge truncation look */}
                 <span className="absolute bottom-0 right-0 h-8 w-24 bg-gradient-to-r from-transparent to-[#EAEAEA] pointer-events-none" />
               </blockquote>
             </motion.div>
@@ -105,7 +136,7 @@ const TestimonialsSection: React.FC = () => {
         </div>
 
         {/* Bottom Navigation & Profile Row */}
-        <div className="w-full mt-10">
+        <div className="w-full mt-6">
           <div className="w-full h-[1px] bg-gray-300/60 mb-6" />
           
           <div className="flex items-center justify-between">
@@ -127,22 +158,42 @@ const TestimonialsSection: React.FC = () => {
               </div>
             </div>
 
-            {/* Slider Controls */}
-            <div className="flex items-center gap-3">
-              <button
-                onClick={handlePrev}
-                className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gray-300/40 hover:bg-gray-300/80 active:scale-95 flex items-center justify-center text-gray-700 transition-all duration-200 cursor-pointer"
-                aria-label="Previous testimonial"
-              >
-                <ArrowLeft size={18} />
-              </button>
-              <button
-                onClick={handleNext}
-                className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gray-300/40 hover:bg-gray-300/80 active:scale-95 flex items-center justify-center text-gray-700 transition-all duration-200 cursor-pointer"
-                aria-label="Next testimonial"
-              >
-                <ArrowRight size={18} />
-              </button>
+            {/* Dot indicators for mobile view, buttons for desktop */}
+            <div className="flex items-center gap-4">
+              {/* Dot Indicators */}
+              <div className="flex gap-1.5 items-center">
+                {testimonialsData.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => {
+                      setDirection(idx > currentIndex ? 1 : -1);
+                      setCurrentIndex(idx);
+                    }}
+                    className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                      idx === currentIndex ? 'bg-gray-800 w-4' : 'bg-gray-400 w-2'
+                    }`}
+                    aria-label={`Go to testimonial ${idx + 1}`}
+                  />
+                ))}
+              </div>
+
+              {/* Slider Arrow Controls (hidden on mobile for thumb friendliness, visible on md and up) */}
+              <div className="hidden md:flex items-center gap-3">
+                <button
+                  onClick={handlePrev}
+                  className="w-12 h-12 rounded-full bg-gray-300/40 hover:bg-gray-300/80 active:scale-95 flex items-center justify-center text-gray-700 transition-all duration-200 cursor-pointer"
+                  aria-label="Previous testimonial"
+                >
+                  <ArrowLeft size={18} />
+                </button>
+                <button
+                  onClick={handleNext}
+                  className="w-12 h-12 rounded-full bg-gray-300/40 hover:bg-gray-300/80 active:scale-95 flex items-center justify-center text-gray-700 transition-all duration-200 cursor-pointer"
+                  aria-label="Next testimonial"
+                >
+                  <ArrowRight size={18} />
+                </button>
+              </div>
             </div>
           </div>
         </div>

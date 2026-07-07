@@ -25,8 +25,8 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
       <div className={styles.tabContent}>
         <div className={styles.emptyState} style={{ padding: '60px 20px', textAlign: 'center' }}>
           <div className={styles.emptyIcon} style={{ fontSize: '3rem', marginBottom: '20px' }}>⚠️</div>
-          <h2 style={{ fontSize: '1.75rem', fontWeight: 700, color: '#ffffff', marginBottom: '12px' }}>Tenant Accounts Cannot List Properties</h2>
-          <p style={{ color: '#94a3b8', maxWidth: '500px', margin: '0 auto 24px auto', lineHeight: 1.6 }}>
+          <h2 style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '12px' }}>Tenant Accounts Cannot List Properties</h2>
+          <p style={{ color: 'var(--text-muted)', maxWidth: '500px', margin: '0 auto 24px auto', lineHeight: 1.6 }}>
             You are registered as a tenant. If you are a property owner or a broker, please change your profile type in the top right profile dropdown or settings to list properties.
           </p>
           <button className={styles.emptyStateBtn} onClick={onCancel}>
@@ -1159,8 +1159,8 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
               )}
 
               {fetchingScore && (
-                <div style={{ textAlign: 'center', padding: '30px 20px', color: '#94a3b8' }}>
-                  <div style={{ display: 'inline-block', width: '30px', height: '30px', border: '3px solid rgba(255,255,255,0.1)', borderTopColor: '#3b82f6', borderRadius: '50%', animation: 'spin 1s linear infinite', marginBottom: '12px' }}></div>
+                <div style={{ textAlign: 'center', padding: '30px 20px', color: 'var(--text-muted)' }}>
+                  <div style={{ display: 'inline-block', width: '30px', height: '30px', border: '3px solid rgba(15,23,42,0.1)', borderTopColor: 'var(--primary)', borderRadius: '50%', animation: 'spin 1s linear infinite', marginBottom: '12px' }}></div>
                   <p style={{ fontSize: '0.9rem', margin: 0 }}>Querying LivableIndia APIs and mapping compound neighborhood pillars...</p>
                   <style dangerouslySetInnerHTML={{__html: `
                     @keyframes spin { to { transform: rotate(360deg); } }

@@ -1,8 +1,8 @@
 /* =====================================================================
-   SETTLEKAR LANDLORD/OWNER PORTAL — DARK GLOW THEME
+   SETTLEKAR LANDLORD/OWNER PORTAL — OBSIDIAN BENTO DESIGN SYSTEM
    ===================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap');
 
 /* Loading Screen */
 .loadingScreen {
@@ -1101,7 +1101,7 @@
 }
 
 .appCard {
-  background: #121214;
+  background: #F8FAFC;
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 28px;
   padding: 32px;
@@ -1123,7 +1123,7 @@
 .appCardTitle {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #ffffff;
+  color: #000;
   margin: 0;
 }
 
@@ -1191,7 +1191,7 @@
 .toggleText h4 {
   font-size: 0.95rem;
   font-weight: 600;
-  color: #ffffff;
+  color: #94a3b8;
   margin: 0 0 2px 0;
 }
 
@@ -1299,6 +1299,7 @@
 
 .fileUploadZone:hover {
   border-color: #3b82f6;
+  color:#000;
   background: rgba(59, 130, 246, 0.02);
 }
 
@@ -1813,7 +1814,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: #ffffff;
+  color:  #94a3b8;
   font-size: 1.05rem;
   font-weight: 600;
   flex-wrap: wrap;
@@ -1830,7 +1831,7 @@
 
 .financialSummaryFormula {
   font-size: 0.8rem;
-  color: #94a3b8;
+  color: #000;
   line-height: 1.5;
   background: rgba(0, 0, 0, 0.2);
   padding: 8px 14px;
@@ -1842,7 +1843,7 @@
 /* Neighborhood Score UI */
 .scoreFetchBtn {
   background: linear-gradient(135deg, #4f46e5 0%, #2563eb 100%);
-  color: #ffffff;
+  color: #000;
   border: none;
   border-radius: 12px;
   padding: 12px 24px;
@@ -1870,7 +1871,7 @@
 
 .scoreFetchBtn:disabled {
   background: rgba(255, 255, 255, 0.06);
-  color: rgba(255, 255, 255, 0.3);
+  color: #000;
   box-shadow: none;
   border: 1px solid rgba(255, 255, 255, 0.05);
   cursor: not-allowed;
@@ -2028,6 +2029,436 @@
   background: rgba(239, 68, 68, 0.1);
   color: #f87171;
   border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+/* =====================================================================
+   OBSIDIAN BENTO DESIGN OVERRIDES - LIGHT MODE WITH ROYAL BLUE ACCENT
+   ===================================================================== */
+
+:root {
+  --bg-light: #F8FAFC;
+  --surface: #FFFFFF;
+  --surface-hover: #F1F5F9;
+  --primary: #2563EB; /* Royal Blue */
+  --accent: #EF4444; /* Coral/Red */
+  --border-color: #E2E8F0;
+  --text-primary: #0F172A; /* Deep Slate */
+  --text-muted: #64748B; /* Slate Gray */
+  --roundness: 6px;
+}
+
+/* Base resets inside Dashboard layout */
+.dashboardLayout {
+  background-color: var(--bg-light) !important;
+  color: var(--text-primary) !important;
+  font-family: 'Inter', sans-serif !important;
+}
+
+/* Authentication Page Override */
+.signInContainer {
+  background: var(--bg-light) !important;
+}
+.signInContainer::before {
+  background: radial-gradient(circle, rgba(37, 99, 235, 0.04) 0%, transparent 70%) !important;
+}
+.signInCard {
+  background: var(--surface) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--roundness) !important;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.06) !important;
+}
+.signInCard h2 {
+  font-family: 'Space Grotesk', sans-serif !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  color: var(--text-primary) !important;
+}
+.signInCard p {
+  color: var(--text-muted) !important;
+}
+.signInBadge {
+  background: rgba(37, 99, 235, 0.1) !important;
+  border: 1px solid var(--primary) !important;
+  color: var(--primary) !important;
+  border-radius: 9999px !important;
+}
+.bulletItem {
+  background: rgba(15, 23, 42, 0.01) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--roundness) !important;
+}
+.bulletItem h4 {
+  color: var(--text-primary) !important;
+}
+.bulletItem p {
+  color: var(--text-muted) !important;
+}
+.googleSignInBtn {
+  background: #ffffff !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--roundness) !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02) !important;
+}
+.googleSignInBtn:hover {
+  background: var(--surface-hover) !important;
+}
+.authError {
+  border-radius: var(--roundness) !important;
+  border: 1px solid rgba(239, 68, 68, 0.2) !important;
+}
+
+/* Sidebar Overrides */
+.sidebar {
+  background: var(--surface) !important;
+  border-right: 1px solid var(--border-color) !important;
+  padding: 30px 20px !important;
+}
+.logoImage {
+  filter: none !important; /* Keep original color logo in light mode! */
+}
+.portalBadge {
+  background: rgba(37, 99, 235, 0.1) !important;
+  border: 1px solid var(--primary) !important;
+  color: var(--primary) !important;
+  border-radius: var(--roundness) !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+  text-transform: uppercase !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.05em !important;
+}
+.menuItem {
+  border-radius: var(--roundness) !important;
+  color: var(--text-muted) !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+  font-weight: 500 !important;
+  transition: all 150ms ease !important;
+  border-left: 2px solid transparent !important;
+  background: transparent !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+}
+.menuItem:hover {
+  background: var(--surface-hover) !important;
+  color: var(--text-primary) !important;
+}
+.activeMenu {
+  background: var(--surface-hover) !important;
+  border-left: 2px solid var(--primary) !important;
+  color: var(--primary) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  font-weight: 600 !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+}
+.badgeCount {
+  background: rgba(15, 23, 42, 0.05) !important;
+  color: var(--text-muted) !important;
+  border-radius: var(--roundness) !important;
+}
+.badgeCountBlue {
+  background: rgba(37, 99, 235, 0.15) !important;
+  color: var(--primary) !important;
+  border-radius: var(--roundness) !important;
+}
+.backHomeBtn {
+  background: var(--surface-hover) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+  border-radius: var(--roundness) !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+  text-transform: uppercase !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.05em !important;
+}
+
+/* Header & Panels Overrides */
+.topHeader {
+  border-bottom: 1px solid var(--border-color) !important;
+}
+.headerInfo h1 {
+  font-family: 'Space Grotesk', sans-serif !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  color: var(--text-primary) !important;
+}
+.headerInfo p {
+  color: var(--text-muted) !important;
+}
+.ownerProfile {
+  background: var(--surface) !important;
+  border-radius: var(--roundness) !important;
+  border: 1px solid var(--border-color) !important;
+}
+.profileAvatar {
+  background: linear-gradient(135deg, var(--bg-light), var(--surface-hover)) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 50% !important;
+  color: var(--text-primary) !important;
+}
+.profileDetails h4 {
+  color: var(--text-primary) !important;
+}
+.profileDetails span {
+  color: var(--primary) !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+  text-transform: uppercase !important;
+  font-weight: 500 !important;
+}
+
+/* Stat Cards Override */
+.statCard {
+  background: var(--surface) !important;
+  border-radius: var(--roundness) !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.02) !important;
+  transition: border-color 150ms ease !important;
+}
+.statCard:hover {
+  border-color: var(--primary) !important;
+  transform: none !important;
+}
+.statIcon {
+  border-radius: var(--roundness) !important;
+  background: rgba(37, 99, 235, 0.1) !important;
+  color: var(--primary) !important;
+}
+.statData h3 {
+  font-family: 'JetBrains Mono', monospace !important;
+  color: var(--primary) !important;
+  font-size: 2.2rem !important;
+}
+.statData p {
+  color: var(--text-muted) !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+}
+
+/* Hero / Welcome Banner Override */
+.overviewHero {
+  background: var(--surface) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--roundness) !important;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.02) !important;
+}
+.overviewHeroText h2 {
+  font-family: 'Space Grotesk', sans-serif !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  color: var(--text-primary) !important;
+}
+.overviewHeroText p {
+  color: var(--text-muted) !important;
+}
+.listPromoBtn {
+  background: var(--primary) !important;
+  color: #ffffff !important;
+  border-radius: var(--roundness) !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+  text-transform: uppercase !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.05em !important;
+  transition: background-color 150ms ease !important;
+}
+.listPromoBtn:hover {
+  background: #1d4ed8 !important;
+  transform: none !important;
+}
+
+/* Cards grids / Listed cards */
+.listedCard {
+  background: var(--surface) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--roundness) !important;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.02) !important;
+  transition: border-color 150ms ease !important;
+}
+.listedCard:hover {
+  border-color: var(--primary) !important;
+  transform: none !important;
+}
+.listedCardTitleLink {
+  color: var(--text-primary) !important;
+}
+.listedCardBadge {
+  background: rgba(37, 99, 235, 0.1) !important;
+  border: 1px solid var(--primary) !important;
+  color: var(--primary) !important;
+  border-radius: var(--roundness) !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+  text-transform: uppercase !important;
+}
+.listedCardPrice {
+  font-family: 'JetBrains Mono', monospace !important;
+  color: var(--primary) !important;
+}
+.editPropBtn {
+  background: var(--surface) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+  border-radius: var(--roundness) !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+  text-transform: uppercase !important;
+  font-weight: 600 !important;
+  transition: border-color 150ms ease !important;
+}
+.editPropBtn:hover {
+  border-color: var(--primary) !important;
+}
+.deletePropBtn {
+  background: rgba(255, 42, 85, 0.05) !important;
+  border: 1px solid rgba(255, 42, 85, 0.2) !important;
+  color: var(--accent) !important;
+  border-radius: var(--roundness) !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+  text-transform: uppercase !important;
+  font-weight: 600 !important;
+  transition: border-color 150ms ease !important;
+}
+.deletePropBtn:hover {
+  border-color: var(--accent) !important;
+}
+.copyUidBtn {
+  border-radius: var(--roundness) !important;
+  background: var(--surface-hover) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-muted) !important;
+}
+.copyUidBtn:hover {
+  color: var(--text-primary) !important;
+  border-color: var(--primary) !important;
+}
+
+/* Inquiry Cards & Lead lists */
+.inquiryCard {
+  background: var(--surface) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--roundness) !important;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.02) !important;
+  transition: border-color 150ms ease !important;
+}
+.inquiryCard:hover {
+  border-color: var(--primary) !important;
+}
+.inquiryHeader h3 {
+  font-family: 'Space Grotesk', sans-serif !important;
+  text-transform: uppercase !important;
+  color: var(--text-primary) !important;
+}
+.inquiryMsg {
+  color: var(--text-muted) !important;
+}
+.timeBadge {
+  font-family: 'JetBrains Mono', monospace !important;
+  background: rgba(15, 23, 42, 0.03) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-muted) !important;
+  border-radius: var(--roundness) !important;
+}
+.contactBtn {
+  border-radius: var(--roundness) !important;
+  background: var(--surface) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+  text-transform: uppercase !important;
+  font-weight: 500 !important;
+  transition: border-color 150ms ease !important;
+}
+.contactBtn:hover {
+  border-color: var(--primary) !important;
+}
+
+/* Form Inputs & Fields */
+.formGroup label {
+  font-family: 'Space Grotesk', sans-serif !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  color: var(--text-muted) !important;
+}
+.formGroup input,
+.formGroup select,
+.formGroup textarea {
+  background: #ffffff !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--roundness) !important;
+  color: var(--text-primary) !important;
+}
+.formGroup input:focus,
+.formGroup select:focus,
+.formGroup textarea:focus {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 1px var(--primary) !important;
+}
+.toggleContainer {
+  background: var(--surface) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--roundness) !important;
+}
+
+/* Empty State / Search panels */
+.emptyCard, .emptyState {
+  background: var(--surface) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--roundness) !important;
+}
+.emptyState h2 {
+  color: var(--text-primary) !important;
+}
+.emptyState p {
+  color: var(--text-muted) !important;
+}
+.emptyStateBtn {
+  background: var(--primary) !important;
+  color: #ffffff !important;
+  border-radius: var(--roundness) !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+  text-transform: uppercase !important;
+  font-weight: 600 !important;
+}
+
+/* Map Location Input Badge */
+.mapLinkBadge {
+  background: rgba(37, 99, 235, 0.1) !important;
+  border: 1px solid var(--primary) !important;
+  color: var(--primary) !important;
+  border-radius: var(--roundness) !important;
+  }
+
+/* Section headers */
+.sectionHeader h2 {
+  font-family: 'Space Grotesk', sans-serif !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  color: var(--text-primary) !important;
+}
+.sectionHeader p {
+  color: var(--text-muted) !important;
+}
+.viewAllBtn {
+  color: var(--primary) !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+  text-transform: uppercase !important;
+  font-weight: 600 !important;
+}
+
+/* Mobile Header Bar Overlay */
+.mobileHeaderBar {
+  background: #0A2540 !important;
+  border-bottom: 1px solid var(--border-color) !important;
+}
+.drawerCloseBtn {
+  border-radius: var(--roundness) !important;
+  border: 1px solid var(--border-color) !important;
+  background: var(--surface-hover) !important;
+  color: var(--text-primary) !important;
 }
 
 

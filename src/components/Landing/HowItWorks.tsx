@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Search, Phone, Key, PlusCircle, Camera, CheckCircle2, ArrowRight, ArrowDown } from 'lucide-react';
+import { Search, Phone, Key, PlusCircle, Camera, CheckCircle2, ArrowRight } from 'lucide-react';
 
 interface Step {
   number: string;
@@ -53,12 +53,42 @@ const ownerSteps: Step[] = [
 
 const HowItWorks: React.FC = () => {
   const [role, setRole] = useState<'tenant' | 'owner'>('tenant');
+  const [activeIndex, setActiveIndex] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const steps = role === 'tenant' ? tenantSteps : ownerSteps;
 
+  // Reset index and scroll on tab toggle
+  useEffect(() => {
+    setActiveIndex(0);
+    if (containerRef.current) {
+      containerRef.current.scrollTo({ left: 0 });
+    }
+  }, [role]);
+
+  const handleScroll = () => {
+    if (!containerRef.current) return;
+    const { scrollLeft, scrollWidth, clientWidth } = containerRef.current;
+    const maxScroll = scrollWidth - clientWidth;
+    if (maxScroll <= 0) return;
+    const percentage = scrollLeft / maxScroll;
+    const index = Math.round(percentage * 2);
+    setActiveIndex(index);
+  };
+
   return (
-    <section className="relative w-full bg-[#0A0A0B] py-24 px-6 md:px-12 flex flex-col items-center justify-center font-sans overflow-hidden border-t border-white/5">
-      
+    <section className="relative w-full bg-[#0A0A0B] py-20 px-6 md:px-12 flex flex-col items-center justify-center font-sans overflow-hidden border-t border-white/5">
+      {/* Hide scrollbars style */}
+      <style dangerouslySetInnerHTML={{__html: `
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .no-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}} />
+
       <div className="relative z-10 w-full max-w-[1200px] flex flex-col items-center">
         {/* Section Header */}
         <div className="text-center mb-12">
@@ -104,8 +134,12 @@ const HowItWorks: React.FC = () => {
           />
         </div>
 
-        {/* Steps Flow Grid */}
-        <div className="w-full grid grid-cols-1 lg:grid-cols-5 items-center gap-6 lg:gap-0">
+        {/* Steps Flow Container (Horizontal Swipeable Carousel on Mobile, Grid on Desktop) */}
+        <div 
+          ref={containerRef}
+          onScroll={handleScroll}
+          className="w-full flex lg:grid lg:grid-cols-5 items-center gap-6 lg:gap-0 overflow-x-auto lg:overflow-x-visible snap-x snap-mandatory lg:snap-none scroll-smooth pb-4 no-scrollbar"
+        >
           <AnimatePresence mode="wait">
             {steps.map((step, index) => {
               const isLast = index === steps.length - 1;
@@ -117,7 +151,7 @@ const HowItWorks: React.FC = () => {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -20 }}
                     transition={{ duration: 0.5, delay: index * 0.1, ease: 'easeOut' }}
-                    className="lg:col-span-1 bg-[#121214] border border-white/5 rounded-[28px] p-8 flex flex-col justify-between min-h-[260px] relative group hover:border-white/10 transition-all duration-300"
+                    className="w-[85vw] max-w-[340px] lg:w-auto lg:max-w-none shrink-0 snap-center lg:snap-align-none lg:col-span-1 bg-[#121214] border border-white/5 rounded-[28px] p-8 flex flex-col justify-between min-h-[260px] relative group hover:border-white/10 transition-all duration-300"
                   >
                     {/* Background glow lines */}
                     <div className="absolute inset-0 bg-gradient-to-b from-blue-500/0 to-blue-500/2 opacity-0 group-hover:opacity-100 rounded-[28px] transition-all duration-500 pointer-events-none" />
@@ -135,46 +169,53 @@ const HowItWorks: React.FC = () => {
                       <h3 className="text-white font-semibold text-lg mb-2">
                         {step.title}
                       </h3>
-                      <p className="text-gray-400 text-sm leading-[1.6]">
+                      <p className="text-gray-300 text-[15px] leading-[1.7]">
                         {step.description}
                       </p>
                     </div>
                   </motion.div>
 
-                  {/* Flow Arrow (Hidden after last card) */}
+                  {/* Flow Arrow (Only on Desktop, Hidden on Mobile) */}
                   {!isLast && (
-                    <div className="lg:col-span-1 flex items-center justify-center py-4 lg:py-0">
-                      {/* Desktop Arrow pointing Right */}
-                      <div className="hidden lg:block">
-                        <motion.div
-                          initial={{ scale: 0.8, opacity: 0 }}
-                          animate={{ scale: 1, opacity: 0.3 }}
-                          transition={{ delay: 0.2 }}
-                          className="flex items-center gap-1.5 text-gray-500"
-                        >
-                          <div className="w-8 h-[2px] bg-gradient-to-r from-gray-500 to-transparent" />
-                          <ArrowRight size={18} />
-                          <div className="w-8 h-[2px] bg-gradient-to-l from-gray-500 to-transparent" />
-                        </motion.div>
-                      </div>
-                      {/* Mobile Arrow pointing Down */}
-                      <div className="block lg:hidden">
-                        <motion.div
-                          initial={{ scale: 0.8, opacity: 0 }}
-                          animate={{ scale: 1, opacity: 0.3 }}
-                          className="flex flex-col items-center gap-1.5 text-gray-500"
-                        >
-                          <div className="h-6 w-[2px] bg-gradient-to-b from-gray-500 to-transparent" />
-                          <ArrowDown size={18} />
-                          <div className="h-6 w-[2px] bg-gradient-to-t from-gray-500 to-transparent" />
-                        </motion.div>
-                      </div>
+                    <div className="hidden lg:flex lg:col-span-1 items-center justify-center py-0">
+                      <motion.div
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 0.3 }}
+                        transition={{ delay: 0.2 }}
+                        className="flex items-center gap-1.5 text-gray-500"
+                      >
+                        <div className="w-8 h-[2px] bg-gradient-to-r from-gray-500 to-transparent" />
+                        <ArrowRight size={18} />
+                        <div className="w-8 h-[2px] bg-gradient-to-l from-gray-500 to-transparent" />
+                      </motion.div>
                     </div>
                   )}
                 </React.Fragment>
               );
             })}
           </AnimatePresence>
+        </div>
+
+        {/* Carousel Dot Indicators for Mobile */}
+        <div className="flex lg:hidden items-center justify-center gap-2 mt-4 relative z-10">
+          {steps.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => {
+                if (!containerRef.current) return;
+                const { scrollWidth, clientWidth } = containerRef.current;
+                const maxScroll = scrollWidth - clientWidth;
+                containerRef.current.scrollTo({
+                  left: (maxScroll / 2) * idx,
+                  behavior: 'smooth',
+                });
+              }}
+              className={`h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
+                idx === activeIndex ? 'bg-blue-400 w-5' : 'bg-gray-600 w-2.5'
+              }`}
+              aria-label={`Go to step slide ${idx + 1}`}
+            />
+          ))}
         </div>
 
       </div>

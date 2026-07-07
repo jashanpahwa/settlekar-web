@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import { MapPin, Home, Zap } from 'lucide-react';
 
@@ -22,7 +22,7 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: 'easeOut', delay }}
-      className="relative flex flex-col justify-start items-start w-full group mx-auto"
+      className="feature-card-wrapper relative flex flex-col justify-start items-start w-[85vw] max-w-[340px] md:w-full shrink-0 snap-center md:snap-align-none group mx-auto"
     >
       {/* Glow Background (Crucial) */}
       <div
@@ -47,10 +47,10 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
             {icon}
           </div>
           <div className="flex-grow flex flex-col justify-end mt-4">
-            <h3 className="text-white font-medium text-xl mb-2 tracking-tight">
+            <h3 className="text-white font-semibold text-xl mb-2 tracking-tight">
               {title}
             </h3>
-            <p className="text-gray-400 text-[14px] leading-[1.6] font-normal selection:bg-white/20">
+            <p className="text-gray-300 text-[15px] leading-[1.7] font-normal selection:bg-white/20">
               {description}
             </p>
           </div>
@@ -61,6 +61,9 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
 };
 
 const FeaturesSection: React.FC = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
   const cardsData = [
     {
       title: 'Map Search',
@@ -85,8 +88,29 @@ const FeaturesSection: React.FC = () => {
     },
   ];
 
+  const handleScroll = () => {
+    if (!containerRef.current) return;
+    const { scrollLeft, scrollWidth, clientWidth } = containerRef.current;
+    const maxScroll = scrollWidth - clientWidth;
+    if (maxScroll <= 0) return;
+    const percentage = scrollLeft / maxScroll;
+    const index = Math.round(percentage * 2);
+    setActiveIndex(index);
+  };
+
   return (
-    <section className="relative w-full bg-[#0A0A0B] py-24 px-6 md:px-12 flex flex-col items-center justify-center font-sans overflow-hidden">
+    <section className="relative w-full bg-[#0A0A0B] py-20 px-6 md:px-12 flex flex-col items-center justify-center font-sans overflow-hidden">
+      {/* Dynamic Style Injection to hide scrollbars */}
+      <style dangerouslySetInnerHTML={{__html: `
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .no-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}} />
+
       {/* Background ambient lighting */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[150px] pointer-events-none" />
       
@@ -102,7 +126,12 @@ const FeaturesSection: React.FC = () => {
         </p>
       </div>
 
-      <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-8 lg:gap-8 w-full max-w-[1200px]">
+      {/* Swipeable Carousel Container for mobile, Standard Grid for desktop */}
+      <div 
+        ref={containerRef}
+        onScroll={handleScroll}
+        className="relative z-10 flex md:grid md:grid-cols-3 overflow-x-auto md:overflow-x-visible snap-x snap-mandatory md:snap-none scroll-smooth flex-row gap-6 md:gap-8 w-full max-w-[1200px] pb-4 no-scrollbar"
+      >
         {cardsData.map((card, index) => (
           <FeatureCard
             key={index}
@@ -111,6 +140,28 @@ const FeaturesSection: React.FC = () => {
             icon={card.icon}
             gradient={card.gradient}
             delay={card.delay}
+          />
+        ))}
+      </div>
+
+      {/* Carousel Dot Indicators for Mobile */}
+      <div className="flex md:hidden items-center justify-center gap-2 mt-4 relative z-10">
+        {cardsData.map((_, idx) => (
+          <button
+            key={idx}
+            onClick={() => {
+              if (!containerRef.current) return;
+              const { scrollWidth, clientWidth } = containerRef.current;
+              const maxScroll = scrollWidth - clientWidth;
+              containerRef.current.scrollTo({
+                left: (maxScroll / 2) * idx,
+                behavior: 'smooth',
+              });
+            }}
+            className={`h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
+              idx === activeIndex ? 'bg-blue-400 w-5' : 'bg-gray-600 w-2.5'
+            }`}
+            aria-label={`Go to feature slide ${idx + 1}`}
           />
         ))}
       </div>

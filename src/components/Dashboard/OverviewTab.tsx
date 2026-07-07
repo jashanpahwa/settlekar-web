@@ -40,8 +40,8 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
           </div>
           <div className={styles.emptyCard} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px', padding: '40px 20px', textAlign: 'center' }}>
             <div style={{ fontSize: '2.5rem' }}>📱</div>
-            <h3 style={{ color: '#ffffff', fontWeight: 600 }}>Download SettleKar Mobile App</h3>
-            <p style={{ maxWidth: '500px', margin: '0 auto', color: '#94a3b8' }}>
+            <h3 style={{ color: 'var(--text-primary)', fontWeight: 600 }}>Download SettleKar Mobile App</h3>
+            <p style={{ maxWidth: '500px', margin: '0 auto', color: 'var(--text-muted)' }}>
               Get instant notifications, chat in real-time, and complete your rental agreements directly using the SettleKar mobile app available on Android and iOS.
             </p>
           </div>

@@ -93,8 +93,18 @@ const FaqSection: React.FC = () => {
   };
 
   return (
-    <section id="faq" className="relative w-full bg-[#0A0A0B] py-24 px-6 md:px-12 flex flex-col items-center justify-center font-sans overflow-hidden border-t border-white/5">
-     
+    <section id="faq" className="relative w-full bg-[#0A0A0B] py-20 px-6 md:px-12 flex flex-col items-center justify-center font-sans overflow-hidden border-t border-white/5">
+      {/* Dynamic Style Injection to hide scrollbars */}
+      <style dangerouslySetInnerHTML={{__html: `
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .no-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}} />
+
       <div className="relative z-10 w-full max-w-[1200px]">
         {/* Top Header Row */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-16">
@@ -123,8 +133,8 @@ const FaqSection: React.FC = () => {
           {/* Left Column: Menu Tabs & Support CTA */}
           <div className="lg:col-span-4 flex flex-col gap-8">
             
-            {/* Tab Menu Card */}
-            <div className="bg-[#121214] border border-white/5 rounded-[28px] p-2 flex flex-col gap-1">
+            {/* Tab Menu Card (Horizontal Swipe Strip on Mobile, Vertical on Desktop) */}
+            <div className="bg-[#121214] border border-white/5 rounded-[28px] p-2 flex flex-row lg:flex-col overflow-x-auto lg:overflow-x-visible no-scrollbar gap-1 w-full">
               {faqCategories.map((category) => (
                 <button
                   key={category.id}
@@ -132,7 +142,7 @@ const FaqSection: React.FC = () => {
                     setActiveTab(category.id);
                     setOpenIndex(null);
                   }}
-                  className={`relative w-full text-left px-6 py-4 rounded-[20px] text-sm font-medium transition-all duration-300 ${
+                  className={`relative shrink-0 text-center lg:text-left px-5 py-3 lg:px-6 lg:py-4 rounded-[20px] text-xs lg:text-sm font-semibold transition-all duration-300 cursor-pointer ${
                     activeTab === category.id
                       ? 'text-white bg-white/10 border border-white/5 shadow-sm'
                       : 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent'
@@ -145,7 +155,7 @@ const FaqSection: React.FC = () => {
 
             {/* "Got Questions?" CTA Card */}
             <div className="bg-[#121214] border border-white/5 rounded-[28px] p-8 flex flex-col items-start gap-4">
-              <h3 className="text-white font-medium text-xl">
+              <h3 className="text-white font-semibold text-xl">
                 Got Questions?
               </h3>
               <p className="text-gray-400 text-[14px] leading-[1.6]">
@@ -153,7 +163,7 @@ const FaqSection: React.FC = () => {
               </p>
               <a
                 href="mailto:support@settlekar.com"
-                className="inline-flex items-center gap-2 text-white font-medium text-[14px] hover:gap-3 transition-all duration-300 mt-2 hover:text-blue-400"
+                className="inline-flex items-center gap-2 text-white font-semibold text-[14px] hover:gap-3 transition-all duration-300 mt-2 hover:text-blue-400"
               >
                 Email us <ArrowRight size={16} />
               </a>
@@ -176,9 +186,9 @@ const FaqSection: React.FC = () => {
                   {/* Header Button */}
                   <button
                     onClick={() => handleToggle(index)}
-                    className="w-full text-left px-8 py-6 flex items-center justify-between gap-6 cursor-pointer relative z-10"
+                    className="w-full text-left px-6 py-5 md:px-8 md:py-6 flex items-center justify-between gap-6 cursor-pointer relative z-10"
                   >
-                    <span className="text-white font-medium text-base md:text-lg group-hover:text-white transition-colors duration-200">
+                    <span className="text-white font-semibold text-base md:text-lg group-hover:text-white transition-colors duration-200">
                       {faq.question}
                     </span>
                     <div
@@ -199,7 +209,7 @@ const FaqSection: React.FC = () => {
                         exit={{ height: 0, opacity: 0 }}
                         transition={{ duration: 0.3, ease: 'easeInOut' }}
                       >
-                        <div className="px-8 pb-6 text-gray-400 text-[14px] md:text-base leading-[1.6] relative z-10 border-t border-white/5 pt-4 selection:bg-white/20">
+                        <div className="px-6 md:px-8 pb-6 text-gray-300 text-[15px] md:text-base leading-[1.7] relative z-10 border-t border-white/5 pt-4 selection:bg-white/20">
                           {faq.answer}
                         </div>
                       </motion.div>

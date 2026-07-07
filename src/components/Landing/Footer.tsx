@@ -151,24 +151,6 @@ const Footer: React.FC = () => {
         {/* ===== RIGHT CARD ===== */}
         <div className={styles.footerRight}>
 
-          {/* Floating lucky badge */}
-          <div className={styles.footerLuckyGraphic}>
-            <div className={styles.luckyCube}>
-              <span className={styles.luckyCubeMark}>S</span>
-            </div>
-            <div className={styles.luckyTextRow}>
-              <svg
-                className={styles.luckyArrow}
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path d="M3 20 C 6 14, 10 9, 18 5" />
-                <path d="M18 5 L 12 5" />
-                <path d="M18 5 L 18 11" />
-              </svg>
-              <span className={styles.luckyText}>Find home?</span>
-            </div>
-          </div>
 
           {/* Nav columns */}
           <div className={styles.footerRightTop}>

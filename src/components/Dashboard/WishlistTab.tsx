@@ -106,7 +106,7 @@ const WishlistTab: React.FC<WishlistTabProps> = ({ user }) => {
                       type="button"
                       className={styles.deletePropBtn}
                       onClick={() => handleRemove(item.id)}
-                      style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.2)' }}
+                      style={{ background: 'rgba(220, 38, 38, 0.1)', color: '#dc2626', border: '1px solid rgba(220, 38, 38, 0.2)' }}
                       aria-label={`Remove ${item.property.title}`}
                     >
                       ❤️ Remove

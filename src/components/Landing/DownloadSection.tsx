@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import { Smartphone, Globe, Shield, Zap, CheckCircle2, Apple } from 'lucide-react';
 
 const DownloadSection: React.FC = () => {
   const googlePlayUrl = 'https://play.google.com/store/apps/details?id=com.settlekar.settlekar';
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   const cards = [
     {
@@ -41,17 +43,32 @@ const DownloadSection: React.FC = () => {
     },
   ];
 
+  const handleScroll = () => {
+    if (!containerRef.current) return;
+    const { scrollLeft, scrollWidth, clientWidth } = containerRef.current;
+    const maxScroll = scrollWidth - clientWidth;
+    if (maxScroll <= 0) return;
+    const percentage = scrollLeft / maxScroll;
+    const index = Math.round(percentage * 2);
+    setActiveIndex(index);
+  };
+
   return (
     <section 
       id="download" 
-      className="relative w-full bg-[#0A0A0B] py-28 px-6 md:px-12 flex flex-col items-center justify-center font-sans overflow-hidden border-t border-white/5"
-      style={{
-       
-        backgroundSize: '24px 24px',
-      }}
+      className="relative w-full bg-[#0A0A0B] py-20 px-6 md:px-12 flex flex-col items-center justify-center font-sans overflow-hidden border-t border-white/5"
     >
+      {/* Hide scrollbars style */}
+      <style dangerouslySetInnerHTML={{__html: `
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .no-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}} />
       
-     
       <div className="relative z-10 w-full max-w-[1200px]">
         {/* Header Section */}
         <div className="mb-16 max-w-2xl">
@@ -66,11 +83,15 @@ const DownloadSection: React.FC = () => {
           </p>
         </div>
 
-        {/* Action Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+        {/* Action Cards Grid (Snapping swipeable carousel on mobile, standard grid on desktop) */}
+        <div 
+          ref={containerRef}
+          onScroll={handleScroll}
+          className="flex md:grid md:grid-cols-3 overflow-x-auto md:overflow-x-visible snap-x snap-mandatory md:snap-none scroll-smooth flex-row gap-6 md:gap-8 w-full max-w-[1200px] pb-4 no-scrollbar mb-8 lg:mb-16"
+        >
           {cards.map((card, index) => {
             const isExternal = card.actionUrl.startsWith('http');
-            const LinkComponent = isExternal ? 'a' : 'a';
+            const LinkComponent = 'a';
 
             return (
               <motion.div
@@ -79,7 +100,7 @@ const DownloadSection: React.FC = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.1, ease: 'easeOut' }}
-                className={`group relative bg-[#111113] rounded-[32px] border border-white/5 p-8 md:p-10 min-h-[360px] flex flex-col justify-between overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:border-white/15 ${card.glowColor}`}
+                className={`group relative bg-[#111113] rounded-[32px] border border-white/5 p-8 md:p-10 min-h-[360px] w-[85vw] max-w-[340px] md:w-full shrink-0 snap-center md:snap-align-none flex flex-col justify-between overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:border-white/15 ${card.glowColor}`}
               >
                 {/* Glow Background gradient rising from bottom */}
                 <div 
@@ -106,7 +127,7 @@ const DownloadSection: React.FC = () => {
                   <h3 className="text-white text-xl md:text-2xl font-bold tracking-tight mb-3">
                     {card.title}
                   </h3>
-                  <p className="text-gray-400 text-sm leading-[1.6]">
+                  <p className="text-gray-300 text-[15px] leading-[1.7]">
                     {card.description}
                   </p>
                 </div>
@@ -125,6 +146,28 @@ const DownloadSection: React.FC = () => {
               </motion.div>
             );
           })}
+        </div>
+
+        {/* Carousel Dot Indicators for Mobile */}
+        <div className="flex md:hidden items-center justify-center gap-2 mb-12 relative z-10">
+          {cards.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => {
+                if (!containerRef.current) return;
+                const { scrollWidth, clientWidth } = containerRef.current;
+                const maxScroll = scrollWidth - clientWidth;
+                containerRef.current.scrollTo({
+                  left: (maxScroll / 2) * idx,
+                  behavior: 'smooth',
+                });
+              }}
+              className={`h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
+                idx === activeIndex ? 'bg-blue-400 w-5' : 'bg-gray-600 w-2.5'
+              }`}
+              aria-label={`Go to download slide ${idx + 1}`}
+            />
+          ))}
         </div>
 
         {/* Horizontal Badges Footer */}
