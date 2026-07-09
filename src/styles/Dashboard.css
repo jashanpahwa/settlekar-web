@@ -2,8 +2,6 @@
    SETTLEKAR LANDLORD/OWNER PORTAL — OBSIDIAN BENTO DESIGN SYSTEM
    ===================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap');
-
 /* Loading Screen */
 .loadingScreen {
   position: fixed;
@@ -1142,7 +1140,7 @@
 .formGroup label {
   font-size: 0.85rem;
   font-weight: 600;
-  color: #94a3b8;
+  color: #475569;
 }
 
 .formGroup input,
@@ -1814,7 +1812,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color:  #94a3b8;
+  color: #334155;
   font-size: 1.05rem;
   font-weight: 600;
   flex-wrap: wrap;
@@ -1823,17 +1821,16 @@
 
 .financialSummaryHeader strong {
   font-size: 1.65rem;
-  color: #38bdf8;
-  text-shadow: 0 0 25px rgba(56, 189, 248, 0.4);
+  color: #2563eb;
   font-weight: 800;
   font-family: system-ui, -apple-system, sans-serif;
 }
 
 .financialSummaryFormula {
   font-size: 0.8rem;
-  color: #000;
+  color: #1e293b;
   line-height: 1.5;
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(37, 99, 235, 0.05);
   padding: 8px 14px;
   border-radius: 10px;
   font-family: monospace;
@@ -1843,7 +1840,7 @@
 /* Neighborhood Score UI */
 .scoreFetchBtn {
   background: linear-gradient(135deg, #4f46e5 0%, #2563eb 100%);
-  color: #000;
+  color: #ffffff;
   border: none;
   border-radius: 12px;
   padding: 12px 24px;
@@ -1871,7 +1868,7 @@
 
 .scoreFetchBtn:disabled {
   background: rgba(255, 255, 255, 0.06);
-  color: #000;
+  color: #94a3b8;
   box-shadow: none;
   border: 1px solid rgba(255, 255, 255, 0.05);
   cursor: not-allowed;

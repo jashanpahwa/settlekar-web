@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { User } from 'firebase/auth';
 import { PropertyItem } from './types';
-import styles from '../../styles/Dashboard.module.css';
 import { propertyService } from '../../services/propertyService';
 
 interface ListPropertyTabProps {
@@ -11,6 +10,49 @@ interface ListPropertyTabProps {
   onSaveSuccess: (updatedOrNewProp: PropertyItem, isEdit: boolean) => void;
   onCancel: () => void;
 }
+
+interface SegmentedControlProps {
+  label: string;
+  value: boolean | null;
+  onChange: (val: boolean) => void;
+  options: { label: string; value: boolean }[];
+  required?: boolean;
+}
+
+const SegmentedControl: React.FC<SegmentedControlProps> = ({
+  label,
+  value,
+  onChange,
+  options,
+  required = false
+}) => {
+  return (
+    <div className="mb-5">
+      <label className="block text-[0.85rem] font-semibold text-[#475569] mb-2">
+        {label} {required && '*'}
+      </label>
+      <div className="flex bg-[#19191c] rounded-xl p-1 border border-white/8">
+        {options.map((opt) => {
+          const isSelected = value === opt.value;
+          return (
+            <button
+              key={opt.label}
+              type="button"
+              onClick={() => onChange(opt.value)}
+              className={`flex-1 py-2.5 px-3.5 rounded-lg text-[0.85rem] font-semibold text-center transition-all duration-200 cursor-pointer ${
+                isSelected
+                  ? 'bg-blue-500 text-white shadow-[0_2px_8px_rgba(59,130,246,0.3)]'
+                  : 'bg-transparent text-slate-400'
+              }`}
+            >
+              {opt.label}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
 
 const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
   user,
@@ -22,14 +64,14 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
   // Check if tenant
   if (userRole === 'tenant') {
     return (
-      <div className={styles.tabContent}>
-        <div className={styles.emptyState} style={{ padding: '60px 20px', textAlign: 'center' }}>
-          <div className={styles.emptyIcon} style={{ fontSize: '3rem', marginBottom: '20px' }}>⚠️</div>
+      <div className="tabContent">
+        <div className="emptyState" style={{ padding: '60px 20px', textAlign: 'center' }}>
+          <div className="emptyIcon" style={{ fontSize: '3rem', marginBottom: '20px' }}>⚠️</div>
           <h2 style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '12px' }}>Tenant Accounts Cannot List Properties</h2>
           <p style={{ color: 'var(--text-muted)', maxWidth: '500px', margin: '0 auto 24px auto', lineHeight: 1.6 }}>
             You are registered as a tenant. If you are a property owner or a broker, please change your profile type in the top right profile dropdown or settings to list properties.
           </p>
-          <button className={styles.emptyStateBtn} onClick={onCancel}>
+          <button className="emptyStateBtn" onClick={onCancel}>
             Go Back
           </button>
         </div>
@@ -42,9 +84,12 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
   const [sqft, setSqft] = useState('500');
-  const [available, setAvailable] = useState(true);
-  const [propertyType, setPropertyType] = useState('1 BHK');
-  const [isIndependent, setIsIndependent] = useState(false);
+  const [available, setAvailable] = useState<boolean | null>(null);
+  const [propertyType, setPropertyType] = useState('');
+  const [isIndependent, setIsIndependent] = useState<boolean | null>(null);
+  const [bachelorFriendly, setBachelorFriendly] = useState<boolean | null>(null);
+  const [womenOnly, setWomenOnly] = useState<boolean | null>(null);
+  const [isTopFloor, setIsTopFloor] = useState<boolean | null>(null);
   const [city, setCity] = useState<string>('Mumbai');
   const [locationStr, setLocationStr] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
@@ -283,8 +328,12 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
 
       setSqft(parsedSqft);
       setFurnishing(parsedFurnishing);
-      setIsIndependent(parsedIndependent);
-      setPropertyType(editingProperty.badge || '1 BHK');
+      setAvailable(editingProperty.available !== undefined ? editingProperty.available : null);
+      setIsIndependent(editingProperty.isIndependent !== undefined ? editingProperty.isIndependent : parsedIndependent);
+      setBachelorFriendly(editingProperty.bachelorFriendly !== undefined ? editingProperty.bachelorFriendly : null);
+      setWomenOnly(editingProperty.womenOnly !== undefined ? editingProperty.womenOnly : null);
+      setIsTopFloor(editingProperty.isTopFloor !== undefined ? editingProperty.isTopFloor : null);
+      setPropertyType(editingProperty.badge || '');
       
       // Address & City
       setCity(editingProperty.city || 'Mumbai');
@@ -347,9 +396,12 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
       setDescription('');
       setPrice('');
       setSqft('500');
-      setAvailable(true);
-      setPropertyType('1 BHK');
-      setIsIndependent(false);
+      setAvailable(null);
+      setPropertyType('');
+      setIsIndependent(null);
+      setBachelorFriendly(null);
+      setWomenOnly(null);
+      setIsTopFloor(null);
       setLocationStr('');
       setSearchQuery('');
       setLocationWarning('');
@@ -532,8 +584,8 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
   // Form Submission
   const handleListProperty = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title || !locationStr || !price) {
-      setFormError('Please fill in all required fields (*).');
+    if (!title || !locationStr || !price || !propertyType || available === null || isIndependent === null || bachelorFriendly === null || womenOnly === null || isTopFloor === null) {
+      setFormError('Please fill in all required fields (*), including all property details.');
       return;
     }
 
@@ -576,6 +628,9 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
         available,
         propertyType,
         isIndependent,
+        bachelorFriendly,
+        womenOnly,
+        isTopFloor,
         ownerName: ownerName.trim() || user.displayName || 'Verified Owner',
         ownerContact: ownerContact.trim(),
         ownerProfilePhoto: user.photoURL || '',
@@ -606,6 +661,9 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
           propertyType.toLowerCase(),
           isIndependent ? 'independent' : '',
           available ? 'available' : '',
+          bachelorFriendly ? 'bachelor friendly' : '',
+          womenOnly ? 'women only' : '',
+          isTopFloor ? 'top floor' : '',
           ...title.toLowerCase().split(' '),
           ...propertyType.toLowerCase().split(' ')
         ].filter((keyword, idx, arr) => 
@@ -635,6 +693,9 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
           available,
           propertyType,
           isIndependent,
+          bachelorFriendly,
+          womenOnly,
+          isTopFloor,
           ownerName: ownerName.trim() || user.displayName || 'Verified Owner',
           ownerContact: ownerContact.trim(),
           area: parseInt(sqft) || 0,
@@ -691,7 +752,12 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
           overallscore: updatedProp.overallscore !== null ? updatedProp.overallscore : undefined,
           pillars: updatedProp.pillars || undefined,
           meta: updatedProp.meta || undefined,
-          confidence: updatedProp.confidence || undefined
+          confidence: updatedProp.confidence || undefined,
+          available: updatedProp.available,
+          isIndependent: updatedProp.isIndependent,
+          bachelorFriendly: updatedProp.bachelorFriendly,
+          womenOnly: updatedProp.womenOnly,
+          isTopFloor: updatedProp.isTopFloor
         };
 
         onSaveSuccess(updatedPropItem, true);
@@ -723,7 +789,12 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
           overallscore: addedProp.overallscore !== null ? addedProp.overallscore : undefined,
           pillars: addedProp.pillars || undefined,
           meta: addedProp.meta || undefined,
-          confidence: addedProp.confidence || undefined
+          confidence: addedProp.confidence || undefined,
+          available: addedProp.available,
+          isIndependent: addedProp.isIndependent,
+          bachelorFriendly: addedProp.bachelorFriendly,
+          womenOnly: addedProp.womenOnly,
+          isTopFloor: addedProp.isTopFloor
         };
 
         onSaveSuccess(newPropItem, false);
@@ -769,30 +840,30 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
   const calculatedTotalAdvance = (advanceRentMonths * parsedPrice) + parsedSecurity + parsedBrokerage;
 
   return (
-    <div className={styles.tabContent}>
-      <div className={styles.listHeaderWrapper}>
+    <div className="tabContent">
+      <div className="listHeaderWrapper">
         <h2>{editingProperty ? '✏️ Edit Listed Property' : 'List Property'}</h2>
         <p>{editingProperty ? 'Modify and update your listed property configurations inside the live database.' : 'Register your property directly on the SettleKar database live, matching native app configurations.'}</p>
       </div>
 
       {formSuccess && (
-        <div className={styles.formSuccessMsg}>
+        <div className="formSuccessMsg">
           🎉 Property {editingProperty ? 'Updated' : 'Listed'} Successfully! Redirecting to My Listings...
         </div>
       )}
 
-      {formError && <div className={styles.formErrorMsg}>{formError}</div>}
+      {formError && <div className="formErrorMsg">{formError}</div>}
 
-      <form onSubmit={handleListProperty} className={styles.listingForm}>
+      <form onSubmit={handleListProperty} className="listingForm">
         
         {/* CARD 1: Basic Information */}
-        <div className={styles.appCard}>
-          <div className={styles.appCardHeader}>
-            <span className={styles.appCardIcon}>🏠</span>
-            <h3 className={styles.appCardTitle}>Basic Information</h3>
+        <div className="appCard">
+          <div className="appCardHeader">
+            <span className="appCardIcon">🏠</span>
+            <h3 className="appCardTitle">Basic Information</h3>
           </div>
 
-          <div className={styles.formGroup}>
+          <div className="formGroup">
             <label htmlFor="prop-title">Property Title *</label>
             <input
               id="prop-title"
@@ -804,7 +875,7 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
             />
           </div>
 
-          <div className={styles.formGroup}>
+          <div className="formGroup">
             <label htmlFor="prop-desc">Description</label>
             <textarea
               id="prop-desc"
@@ -822,8 +893,8 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
             />
           </div>
 
-          <div className={styles.formRow}>
-            <div className={styles.formGroup}>
+          <div className="formRow">
+            <div className="formGroup">
               <label htmlFor="prop-price">Rent Per Month *</label>
               <input
                 id="prop-price"
@@ -835,7 +906,7 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
               />
             </div>
 
-            <div className={styles.formGroup}>
+            <div className="formGroup">
               <label htmlFor="prop-sqft">Area (sq ft)</label>
               <input
                 id="prop-sqft"
@@ -849,14 +920,14 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
         </div>
 
         {/* CARD 1.5: Financial Details */}
-        <div className={styles.appCard}>
-          <div className={styles.appCardHeader}>
-            <span className={styles.appCardIcon}>💰</span>
-            <h3 className={styles.appCardTitle}>Financial Details ({userRole === 'broker' ? 'Broker' : userRole === 'firm' ? 'Firm' : 'Owner'})</h3>
+        <div className="appCard">
+          <div className="appCardHeader">
+            <span className="appCardIcon">💰</span>
+            <h3 className="appCardTitle">Financial Details ({userRole === 'broker' ? 'Broker' : userRole === 'firm' ? 'Firm' : 'Owner'})</h3>
           </div>
 
-          <div className={styles.formRow}>
-            <div className={styles.formGroup}>
+          <div className="formRow">
+            <div className="formGroup">
               <label htmlFor="prop-security">Security Deposit / Fees (₹) *</label>
               <input
                 id="prop-security"
@@ -868,7 +939,7 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
               />
             </div>
 
-            <div className={styles.formGroup}>
+            <div className="formGroup">
               <label htmlFor="prop-advance-months">Advance Rent (Months) *</label>
               <select
                 id="prop-advance-months"
@@ -883,8 +954,8 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
           </div>
 
           {userRole === 'broker' && (
-            <div className={styles.formRow}>
-              <div className={styles.formGroup}>
+            <div className="formRow">
+              <div className="formGroup">
                 <label htmlFor="prop-brokerage">Brokerage Fees (₹) *</label>
                 <input
                   id="prop-brokerage"
@@ -899,46 +970,26 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
           )}
 
           {/* Real-time Calculated Total Advance Panel */}
-          <div className={styles.financialSummaryCard}>
-            <div className={styles.financialSummaryHeader}>
+          <div className="financialSummaryCard">
+            <div className="financialSummaryHeader">
               <span>Calculated Total Advance</span>
               <strong>₹{calculatedTotalAdvance.toLocaleString('en-IN')}</strong>
             </div>
-            <div className={styles.financialSummaryFormula}>
+            <div className="financialSummaryFormula">
               Formula: ({advanceRentMonths} × Rent [₹{(parsedPrice || 0).toLocaleString('en-IN')}]) + Security [₹{(parsedSecurity || 0).toLocaleString('en-IN')}] {userRole === 'broker' ? `+ Brokerage [₹${(parsedBrokerage || 0).toLocaleString('en-IN')}]` : ''}
             </div>
           </div>
         </div>
 
         {/* CARD 2: Property Details */}
-        <div className={styles.appCard}>
-          <div className={styles.appCardHeader}>
-            <span className={styles.appCardIcon}>⚙️</span>
-            <h3 className={styles.appCardTitle}>Property Details</h3>
+        <div className="appCard">
+          <div className="appCardHeader">
+            <span className="appCardIcon">⚙️</span>
+            <h3 className="appCardTitle">Property Details</h3>
           </div>
 
-          {/* Toggle Switch 1: Available */}
-          <div className={styles.toggleContainer}>
-            <div className={styles.toggleInfo}>
-              <span className={styles.toggleBulletIcon}>{available ? '🟢' : '⚪'}</span>
-              <div className={styles.toggleText}>
-                <h4>Available for Sale/Rent</h4>
-                <span>Property is currently {available ? 'available' : 'not available'}.</span>
-              </div>
-            </div>
-            <label className={styles.switch}>
-              <input
-                type="checkbox"
-                checked={available}
-                onChange={(e) => setAvailable(e.target.checked)}
-              />
-              <span className={styles.slider}></span>
-            </label>
-          </div>
-
-          {/* Dropdown: Property Type Selector */}
-          <div className={styles.formRow}>
-            <div className={styles.formGroup}>
+          <div className="formRow">
+            <div className="formGroup">
               <label htmlFor="prop-type">Property Type *</label>
               <select
                 id="prop-type"
@@ -946,6 +997,7 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
                 onChange={(e) => setPropertyType(e.target.value)}
                 required
               >
+                <option value="">Select Property Type *</option>
                 <option value="1 RK">1 RK</option>
                 <option value="1 BHK">1 BHK</option>
                 <option value="2 BHK">2 BHK</option>
@@ -959,7 +1011,7 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
               </select>
             </div>
 
-            <div className={styles.formGroup}>
+            <div className="formGroup">
               <label htmlFor="prop-furnish">Furnishing Status</label>
               <select
                 id="prop-furnish"
@@ -973,42 +1025,80 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
             </div>
           </div>
 
-          {/* Toggle Switch 2: Independent */}
-          <div className={styles.toggleContainer}>
-            <div className={styles.toggleInfo}>
-              <span className={styles.toggleBulletIcon}>🏢</span>
-              <div className={styles.toggleText}>
-                <h4>Independent Property</h4>
-                <span>Standalone property with {isIndependent ? 'independent' : 'shared'} access.</span>
-              </div>
-            </div>
-            <label className={styles.switch}>
-              <input
-                type="checkbox"
-                checked={isIndependent}
-                onChange={(e) => setIsIndependent(e.target.checked)}
-              />
-              <span className={styles.slider}></span>
-            </label>
+          <div className="grid grid-cols-1 gap-2 mt-2.5 ">
+            <SegmentedControl
+              label="Available for Rent"
+              value={available}
+              onChange={setAvailable}
+              options={[
+                { label: 'Available', value: true },
+                { label: 'Not Available', value: false }
+              ]}
+              required
+            />
+
+            <SegmentedControl
+              label="Independent Property"
+              value={isIndependent}
+              onChange={setIsIndependent}
+              options={[
+                { label: 'Independent', value: true },
+                { label: 'Shared', value: false }
+              ]}
+              required
+            />
+
+            <SegmentedControl
+              label="Bachelor Friendly"
+              value={bachelorFriendly}
+              onChange={setBachelorFriendly}
+              options={[
+                { label: 'Bachelor Friendly', value: true },
+                { label: 'Family Only', value: false }
+              ]}
+              required
+            />
+
+            <SegmentedControl
+              label="Women Only"
+              value={womenOnly}
+              onChange={setWomenOnly}
+              options={[
+                { label: 'Women Only', value: true },
+                { label: 'Open to All', value: false }
+              ]}
+              required
+            />
+
+            <SegmentedControl
+              label="Is Top Floor"
+              value={isTopFloor}
+              onChange={setIsTopFloor}
+              options={[
+                { label: 'Top Floor', value: true },
+                { label: 'Other Floor', value: false }
+              ]}
+              required
+            />
           </div>
         </div>
 
         {/* CARD 3: Location Details */}
-        <div className={styles.appCard}>
-          <div className={styles.appCardHeader}>
-            <span className={styles.appCardIcon}>📍</span>
-            <h3 className={styles.appCardTitle}>Property Location</h3>
+        <div className="appCard">
+          <div className="appCardHeader">
+            <span className="appCardIcon">📍</span>
+            <h3 className="appCardTitle">Property Location</h3>
           </div>
 
           {/* Single Search Location Input */}
-          <div className={styles.formRow}>
-            <div className={styles.formGroup} style={{ flex: 1 }}>
+          <div className="formRow">
+            <div className={`formGroup flex-1`}>
               <label htmlFor="prop-search-loc">Search Property Location *</label>
-              <div className={styles.mapSearchRow}>
+              <div className="mapSearchRow">
                 <input
                   id="prop-search-loc"
                   type="text"
-                  className={styles.mapSearchInput}
+                  className="mapSearchInput"
                   placeholder="e.g. Phoenix Marketcity Pune or Indiranagar Bangalore"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -1022,7 +1112,7 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
                 />
                 <button
                   type="button"
-                  className={styles.mapSearchBtn}
+                  className="mapSearchBtn"
                   onClick={() => handleMapSearch()}
                   disabled={searchingMap}
                 >
@@ -1033,96 +1123,52 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
           </div>
 
           {locationWarning && (
-            <div style={{
-              background: 'rgba(239, 68, 68, 0.08)',
-              border: '1px solid rgba(239, 68, 68, 0.15)',
-              color: '#ef4444',
-              padding: '10px 14px',
-              borderRadius: '8px',
-              fontSize: '0.85rem',
-              fontWeight: 600,
-              marginBottom: '15px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px'
-            }}>
+            <div className="bg-red-500/8 border border-red-500/15 text-red-500 py-2.5 px-3.5 rounded-lg text-[0.85rem] font-semibold mb-4 flex items-center gap-2">
               {locationWarning}
             </div>
           )}
 
           {coords && (
-            <div style={{
-              background: 'rgba(34, 197, 94, 0.08)',
-              border: '1px solid rgba(34, 197, 94, 0.15)',
-              color: '#16a34a',
-              padding: '10px 14px',
-              borderRadius: '8px',
-              fontSize: '0.85rem',
-              fontWeight: 600,
-              marginBottom: '15px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '4px'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <div className="bg-green-500/8 border border-green-500/15 text-green-600 py-2.5 px-3.5 rounded-lg text-[0.85rem] font-semibold mb-4 flex flex-col gap-1">
+              <div className="flex items-center gap-1.5">
                 <span>✅ Resolved Location:</span>
                 <strong>{locationStr || 'Unknown location'}</strong>
               </div>
-              <div style={{ fontSize: '0.8rem', opacity: 0.85 }}>
+              <div className="text-[0.8rem] opacity-85">
                 City Group: <strong>{city}</strong> | Coordinates: {coords.lat.toFixed(5)}, {coords.lng.toFixed(5)}
               </div>
             </div>
           )}
 
-          <div className={styles.formGroup} style={{ marginTop: '5px' }}>
-            <label style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', flexWrap: 'wrap', gap: '8px' }}>
+          <div className="formGroup" style={{ marginTop: '5px' }}>
+            <label className="flex justify-between items-center mb-2 flex-wrap gap-2">
               <span>Select/Adjust on Map *</span>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div className="flex items-center gap-3">
                 <button 
                   type="button" 
                   onClick={getCurrentLocation}
-                  style={{
-                    background: 'rgba(37, 99, 235, 0.08)',
-                    color: '#2563eb',
-                    border: '1px solid rgba(37, 99, 235, 0.15)',
-                    borderRadius: '8px',
-                    padding: '6px 12px',
-                    fontSize: '0.8rem',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    transition: 'all 0.2s'
-                  }}
+                  className="bg-blue-600/8 text-blue-600 border border-blue-600/15 rounded-lg py-1.5 px-3 text-[0.8rem] font-semibold cursor-pointer flex items-center gap-1.5 transition-all duration-200"
                 >
                   📍 Use My Location
                 </button>
-                <span className={styles.uploadSubtitle}>
+                <span className="uploadSubtitle">
                   {coords ? `📌 Pinned: ${coords.lat.toFixed(5)}, ${coords.lng.toFixed(5)}` : '⚠️ No location pinned yet'}
                 </span>
               </div>
             </label>
             <div 
               id="map-picker" 
-              style={{ 
-                height: '320px', 
-                width: '100%', 
-                borderRadius: '16px', 
-                border: '1px solid #cbd5e1', 
-                boxShadow: '0 4px 12px rgba(0,0,0,0.04)',
-                position: 'relative',
-                zIndex: 1
-              }}
+              className="h-[320px] w-full rounded-2xl border border-slate-300 shadow-[0_4px_12px_rgba(0,0,0,0.04)] relative z-1"
             ></div>
-            <span className={styles.uploadSubtitle} style={{ marginTop: '8px', display: 'block', fontStyle: 'italic' }}>
+            <span className={`uploadSubtitle mt-2 block italic`}>
               💡 Search above or click on the map to pin your property. SettleKar will reverse-geocode your pin and auto-fill the search bar!
             </span>
 
             {/* Neighborhood Score Section */}
-            <div style={{ marginTop: '20px', borderTop: '1px dashed rgba(255,255,255,0.08)', paddingTop: '15px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
-                <span className={styles.uploadSubtitle}>
+            {/* Neighborhood Score Section */}
+            <div className="mt-5 border-t border-dashed border-white/8 pt-3.5">
+              <div className="flex items-center justify-between flex-wrap gap-3">
+                <span className="uploadSubtitle">
                   {isScoreFetched 
                     ? '✅ Neighborhood rating successfully loaded.' 
                     : coords 
@@ -1131,7 +1177,7 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
                 </span>
                 <button
                   type="button"
-                  className={`${styles.scoreFetchBtn} ${isScoreFetched ? styles.scoreFetchBtnSuccess : ''}`}
+                  className={`scoreFetchBtn ${isScoreFetched ? 'scoreFetchBtnSuccess' : ''}`}
                   onClick={fetchNeighborhoodScore}
                   disabled={!coords || fetchingScore}
                 >
@@ -1144,42 +1190,30 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
               </div>
 
               {scoreError && (
-                <div style={{
-                  background: 'rgba(239, 68, 68, 0.08)',
-                  border: '1px solid rgba(239, 68, 68, 0.15)',
-                  color: '#ef4444',
-                  padding: '10px 14px',
-                  borderRadius: '8px',
-                  fontSize: '0.85rem',
-                  fontWeight: 600,
-                  marginTop: '12px'
-                }}>
+                <div className="bg-red-500/8 border border-red-500/15 text-red-500 py-2.5 px-3.5 rounded-lg text-[0.85rem] font-semibold mt-3">
                   ❌ {scoreError}
                 </div>
               )}
 
               {fetchingScore && (
-                <div style={{ textAlign: 'center', padding: '30px 20px', color: 'var(--text-muted)' }}>
-                  <div style={{ display: 'inline-block', width: '30px', height: '30px', border: '3px solid rgba(15,23,42,0.1)', borderTopColor: 'var(--primary)', borderRadius: '50%', animation: 'spin 1s linear infinite', marginBottom: '12px' }}></div>
-                  <p style={{ fontSize: '0.9rem', margin: 0 }}>Querying LivableIndia APIs and mapping compound neighborhood pillars...</p>
-                  <style dangerouslySetInnerHTML={{__html: `
-                    @keyframes spin { to { transform: rotate(360deg); } }
-                  `}} />
+                <div className="text-center py-7 px-5 text-slate-400">
+                  <div className="inline-block w-7.5 h-7.5 border-3 border-slate-800/10 border-t-primary rounded-full animate-spin mb-3"></div>
+                  <p className="text-[0.9rem] m-0">Querying LivableIndia APIs and mapping compound neighborhood pillars...</p>
                 </div>
               )}
 
               {!fetchingScore && isScoreFetched && neighborhoodScore !== null && (
-                <div className={styles.scoreCard}>
-                  <div className={styles.scoreHeader}>
-                    <div className={styles.scoreBadgeContainer}>
-                      <span className={styles.overallScoreLabel}>LIVABILITY SCORE</span>
-                      <span className={styles.overallScoreValue}>{neighborhoodScore}/100</span>
-                      <span className={`${styles.scoreIndicatorBadge} ${
+                <div className="scoreCard">
+                  <div className="scoreHeader">
+                    <div className="scoreBadgeContainer">
+                      <span className="overallScoreLabel">LIVABILITY SCORE</span>
+                      <span className="overallScoreValue">{neighborhoodScore}/100</span>
+                      <span className={`scoreIndicatorBadge ${
                         neighborhoodScore >= 80 
-                          ? styles.scoreBadgeHigh 
+                          ? 'scoreBadgeHigh' 
                           : neighborhoodScore >= 60 
-                            ? styles.scoreBadgeMedium 
-                            : styles.scoreBadgeLow
+                            ? 'scoreBadgeMedium' 
+                            : 'scoreBadgeLow'
                       }`}>
                         {neighborhoodScore >= 80 ? '🟢 Excellent' : neighborhoodScore >= 60 ? '🟡 Moderate' : '🔴 Poor'} Livability
                       </span>
@@ -1190,7 +1224,7 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
                   </div>
 
                   {neighborhoodPillars && (
-                    <div className={styles.scorePillarsGrid}>
+                    <div className="scorePillarsGrid">
                       {Object.entries(neighborhoodPillars).map(([key, value]: [string, any]) => {
                         const emojis: Record<string, string> = {
                           water: '💧',
@@ -1206,23 +1240,23 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
                           dining: '🍔'
                         };
                         const scoreColorClass = value.score >= 80 
-                          ? styles.scoreTextGreen 
+                          ? 'scoreTextGreen' 
                           : value.score >= 60 
-                            ? styles.scoreTextOrange 
-                            : styles.scoreTextRed;
+                            ? 'scoreTextOrange' 
+                            : 'scoreTextRed';
                         return (
-                          <div key={key} className={styles.scorePillarCard}>
-                            <div className={styles.pillarHeader}>
-                              <span className={styles.pillarName}>
+                          <div key={key} className="scorePillarCard">
+                            <div className="pillarHeader">
+                              <span className="pillarName">
                                 {emojis[key] || '📍'} {key.charAt(0).toUpperCase() + key.slice(1)}
                               </span>
-                              <span className={`${styles.pillarScore} ${scoreColorClass}`}>
+                              <span className={`pillarScore ${scoreColorClass}`}>
                                 {value.score}
                               </span>
                             </div>
-                            <div className={styles.pillarCategory}>{value.category}</div>
-                            <div className={styles.pillarCategory}>{value.geography}</div>
-                            <div className={styles.pillarDesc}>{value.description}</div>
+                            <div className="pillarCategory">{value.category}</div>
+                            <div className="pillarCategory">{value.geography}</div>
+                            <div className="pillarDesc">{value.description}</div>
                           </div>
                         );
                       })}
@@ -1235,14 +1269,14 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
         </div>
 
         {/* CARD 4: Owner Details */}
-        <div className={styles.appCard}>
-          <div className={styles.appCardHeader}>
-            <span className={styles.appCardIcon}>👤</span>
-            <h3 className={styles.appCardTitle}>Owner Details</h3>
+        <div className="appCard">
+          <div className="appCardHeader">
+            <span className="appCardIcon">👤</span>
+            <h3 className="appCardTitle">Owner Details</h3>
           </div>
 
-          <div className={styles.formRow}>
-            <div className={styles.formGroup}>
+          <div className="formRow">
+            <div className="formGroup">
               <label htmlFor="prop-owner-name">Owner Name *</label>
               <input
                 id="prop-owner-name"
@@ -1254,7 +1288,7 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
               />
             </div>
 
-            <div className={styles.formGroup}>
+            <div className="formGroup">
               <label htmlFor="prop-owner-contact">Owner Contact Number *</label>
               <input
                 id="prop-owner-contact"
@@ -1276,46 +1310,46 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
         </div>
 
         {/* CARD 5: Property Images */}
-        <div className={styles.appCard}>
-          <div className={styles.appCardHeader}>
-            <span className={styles.appCardIcon}>🖼️</span>
-            <h3 className={styles.appCardTitle}>Property Images</h3>
+        <div className="appCard">
+          <div className="appCardHeader">
+            <span className="appCardIcon">🖼️</span>
+            <h3 className="appCardTitle">Property Images</h3>
           </div>
 
-          <div className={styles.multiUploadContainer}>
+          <div className="multiUploadContainer">
             {/* 1. Indoor Images Section */}
-            <div className={styles.formGroup}>
+            <div className="formGroup">
               <label style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span>Indoor Images</span>
-                <span className={styles.uploadSubtitle}>{indoorFiles.length} selected</span>
+                <span className="uploadSubtitle">{indoorFiles.length} selected</span>
               </label>
               
-              <div className={styles.fileUploadZone}>
+              <div className="fileUploadZone">
                 <input
                   type="file"
                   id="prop-indoor-upload"
                   accept="image/*"
                   multiple
                   onChange={handleIndoorFilesChange}
-                  className={styles.fileInputHidden}
+                  className="fileInputHidden"
                 />
-                <label htmlFor="prop-indoor-upload" className={styles.fileUploadLabel}>
-                  <div className={styles.uploadPlaceholder}>
-                    <span className={styles.uploadIcon}>🚪</span>
-                    <span className={styles.uploadTitle}>Choose Indoor Images</span>
-                    <span className={styles.uploadSubtitle}>Upload multiple photos of rooms, kitchen, washrooms</span>
+                <label htmlFor="prop-indoor-upload" className="fileUploadLabel">
+                  <div className="uploadPlaceholder">
+                    <span className="uploadIcon">🚪</span>
+                    <span className="uploadTitle">Choose Indoor Images</span>
+                    <span className="uploadSubtitle">Upload multiple photos of rooms, kitchen, washrooms</span>
                   </div>
                 </label>
               </div>
 
               {indoorPreviews.length > 0 && (
-                <div className={styles.previewsGrid}>
+                <div className="previewsGrid">
                   {indoorPreviews.map((preview, idx) => (
-                    <div key={`indoor-pre-${idx}`} className={styles.previewThumbWrapper}>
-                      <img src={preview} alt={`Indoor preview ${idx + 1}`} className={styles.previewThumb} />
+                    <div key={`indoor-pre-${idx}`} className="previewThumbWrapper">
+                      <img src={preview} alt={`Indoor preview ${idx + 1}`} className="previewThumb" />
                       <button
                         type="button"
-                        className={styles.deleteThumbBtn}
+                        className="deleteThumbBtn"
                         onClick={() => removeIndoorImage(idx)}
                         title="Remove Image"
                       >
@@ -1328,38 +1362,38 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
             </div>
 
             {/* 2. Outdoor Images Section */}
-            <div className={styles.formGroup}>
+            <div className="formGroup">
               <label style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span>Outdoor/Surrounding Images</span>
-                <span className={styles.uploadSubtitle}>{outdoorFiles.length} selected</span>
+                <span className="uploadSubtitle">{outdoorFiles.length} selected</span>
               </label>
               
-              <div className={styles.fileUploadZone}>
+              <div className="fileUploadZone">
                 <input
                   type="file"
                   id="prop-outdoor-upload"
                   accept="image/*"
                   multiple
                   onChange={handleOutdoorFilesChange}
-                  className={styles.fileInputHidden}
+                  className="fileInputHidden"
                 />
-                <label htmlFor="prop-outdoor-upload" className={styles.fileUploadLabel}>
-                  <div className={styles.uploadPlaceholder}>
-                    <span className={styles.uploadIcon}>🌳</span>
-                    <span className={styles.uploadTitle}>Choose Outdoor Images</span>
-                    <span className={styles.uploadSubtitle}>Upload photos of society, entry gate, surroundings, or building front</span>
+                <label htmlFor="prop-outdoor-upload" className="fileUploadLabel">
+                  <div className="uploadPlaceholder">
+                    <span className="uploadIcon">🌳</span>
+                    <span className="uploadTitle">Choose Outdoor Images</span>
+                    <span className="uploadSubtitle">Upload photos of society, entry gate, surroundings, or building front</span>
                   </div>
                 </label>
               </div>
 
               {outdoorPreviews.length > 0 && (
-                <div className={styles.previewsGrid}>
+                <div className="previewsGrid">
                   {outdoorPreviews.map((preview, idx) => (
-                    <div key={`outdoor-pre-${idx}`} className={styles.previewThumbWrapper}>
-                      <img src={preview} alt={`Outdoor preview ${idx + 1}`} className={styles.previewThumb} />
+                    <div key={`outdoor-pre-${idx}`} className="previewThumbWrapper">
+                      <img src={preview} alt={`Outdoor preview ${idx + 1}`} className="previewThumb" />
                       <button
                         type="button"
-                        className={styles.deleteThumbBtn}
+                        className="deleteThumbBtn"
                         onClick={() => removeOutdoorImage(idx)}
                         title="Remove Image"
                       >
@@ -1374,7 +1408,7 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
         </div>
 
         {coords && !isScoreFetched && (
-          <div className={styles.scoreValidationWarning}>
+          <div className="scoreValidationWarning">
             ⚠️ <strong>Action Required:</strong> Please click "Fetch Neighborhood Score" in the Location Details card above before publishing.
           </div>
         )}
@@ -1382,7 +1416,7 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
         <div style={{ display: 'flex', gap: '15px', marginTop: '10px' }}>
           <button 
             type="submit" 
-            className={styles.submitFormBtn} 
+            className="submitFormBtn" 
             disabled={formSuccess || uploadProgress || (coords !== null && !isScoreFetched)} 
             style={{ flex: 1 }}
           >

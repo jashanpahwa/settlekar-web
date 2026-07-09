@@ -1,7 +1,39 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
+@import "./Dashboard.css";
 
 @theme {
   --color-primary: #0A2540;
+  
+  --animate-phone-float: phonefloat 5s ease-in-out infinite;
+  --animate-scroll-bounce: scrollBounce 1.8s ease-in-out infinite;
+  --animate-fade-up: fadeUp 0.8s ease-out forwards;
+  --animate-fade-in: fadeIn 1s ease-out forwards;
+
+  @keyframes phonefloat {
+    0%, 100% { transform: perspective(1000px) rotateY(-8deg) rotateX(4deg) translateY(0px); }
+    50%       { transform: perspective(1000px) rotateY(-8deg) rotateX(4deg) translateY(-14px); }
+  }
+  @keyframes scrollBounce {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(6px); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+}
+
+@utility bg-hero-pattern {
+  background:
+    radial-gradient(ellipse at 80% 20%, rgba(37, 99, 235, 0.18), transparent 50%),
+    radial-gradient(ellipse at 15% 80%, rgba(147, 197, 253, 0.10), transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(37, 99, 235, 0.06), transparent 70%),
+    linear-gradient(160deg, #0A2540 0%, #0D1F3C 50%, #0F172A 100%);
 }
 
 html,

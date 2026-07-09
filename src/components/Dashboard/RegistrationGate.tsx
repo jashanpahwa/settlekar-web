@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { User } from 'firebase/auth';
-import styles from '../../styles/Dashboard.module.css';
 import logoImage from '/logo.png';
 import { ownerBrokerService } from '../../services/ownerBrokerService';
 import { userCollectionService } from '../../services/userCollectionService';
@@ -177,15 +176,15 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
 
   if (regStep === 'select') {
     return (
-      <div className={styles.signInContainer}>
+      <div className="signInContainer">
         <title>SettleKar - Setup Profile</title>
         <meta name="robots" content="noindex, nofollow" />
-        <div className={styles.signInCard} style={{ maxWidth: '600px' }}>
-          <div className={styles.signInHeader}>
+        <div className="signInCard" style={{ maxWidth: '600px' }}>
+          <div className="signInHeader">
             <Link to="/">
-              <img src={logoImage} alt="SettleKar" className={styles.signInLogo} width={500} height={125} />
+              <img src={logoImage} alt="SettleKar" className="signInLogo" width={500} height={125} />
             </Link>
-            <span className={styles.signInBadge}>Account setup</span>
+            <span className="signInBadge">Account setup</span>
           </div>
 
           <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '8px' }}>Select your account type</h2>
@@ -197,10 +196,10 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
             {/* Owner Option */}
             <div 
               onClick={() => setSelectedRegRole('owner')}
-              className={`${styles.roleOptionCard} ${selectedRegRole === 'owner' ? styles.roleOptionCardActive : ''}`}
+              className={`roleOptionCard ${selectedRegRole === 'owner' ? 'roleOptionCardActive' : ''}`}
             >
-              <div className={styles.roleOptionIcon}>🏠</div>
-              <div className={styles.roleOptionDetails}>
+              <div className="roleOptionIcon">🏠</div>
+              <div className="roleOptionDetails">
                 <h4>Property Owner</h4>
                 <p>I own the apartment or house and want to list it directly with no brokerage.</p>
               </div>
@@ -209,10 +208,10 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
             {/* Broker Option */}
             <div 
               onClick={() => setSelectedRegRole('broker')}
-              className={`${styles.roleOptionCard} ${selectedRegRole === 'broker' ? styles.roleOptionCardActive : ''}`}
+              className={`roleOptionCard ${selectedRegRole === 'broker' ? 'roleOptionCardActive' : ''}`}
             >
-              <div className={styles.roleOptionIcon}>🏢</div>
-              <div className={styles.roleOptionDetails}>
+              <div className="roleOptionIcon">🏢</div>
+              <div className="roleOptionDetails">
                 <h4>Real Estate Broker</h4>
                 <p>I am a broker listing properties on behalf of landlords and want to specify brokerage fees.</p>
               </div>
@@ -221,10 +220,10 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
             {/* Firm Option */}
             <div 
               onClick={() => setSelectedRegRole('firm')}
-              className={`${styles.roleOptionCard} ${selectedRegRole === 'firm' ? styles.roleOptionCardActive : ''}`}
+              className={`roleOptionCard ${selectedRegRole === 'firm' ? 'roleOptionCardActive' : ''}`}
             >
-              <div className={styles.roleOptionIcon}>🏢🏢</div>
-              <div className={styles.roleOptionDetails}>
+              <div className="roleOptionIcon">🏢🏢</div>
+              <div className="roleOptionDetails">
                 <h4>Real Estate Firm / Developer</h4>
                 <p>We are a building firm, builder, developer, or commercial property management company.</p>
               </div>
@@ -233,10 +232,10 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
             {/* Tenant Option */}
             <div 
               onClick={() => setSelectedRegRole('tenant')}
-              className={`${styles.roleOptionCard} ${selectedRegRole === 'tenant' ? styles.roleOptionCardActive : ''}`}
+              className={`roleOptionCard ${selectedRegRole === 'tenant' ? 'roleOptionCardActive' : ''}`}
             >
-              <div className={styles.roleOptionIcon}>👤</div>
-              <div className={styles.roleOptionDetails}>
+              <div className="roleOptionIcon">👤</div>
+              <div className="roleOptionDetails">
                 <h4>Tenant / House Hunter</h4>
                 <p>I want to browse verified properties and find roommates or apartments to rent.</p>
               </div>
@@ -254,7 +253,7 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
                 setRegStep('form');
               }
             }}
-            className={styles.googleSignInBtn} 
+            className="googleSignInBtn" 
             disabled={!selectedRegRole || registering}
             style={{ background: '#2563eb', color: '#ffffff', fontWeight: 700 }}
           >
@@ -263,7 +262,7 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
 
           <button 
             onClick={handleSignOut} 
-            className={styles.backHomeLink}
+            className="backHomeLink"
             style={{ background: 'none', border: 'none', cursor: 'pointer', width: '100%', marginTop: '10px' }}
           >
             ← Sign Out
@@ -273,15 +272,15 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
     );
   } else {
     return (
-      <div className={styles.signInContainer}>
+      <div className="signInContainer">
         <title>SettleKar - Complete Profile Registration</title>
         <meta name="robots" content="noindex, nofollow" />
-        <div className={styles.signInCard} style={{ maxWidth: '600px', width: '100%' }}>
-          <div className={styles.signInHeader}>
+        <div className="signInCard" style={{ maxWidth: '600px', width: '100%' }}>
+          <div className="signInHeader">
             <Link to="/">
-              <img src={logoImage} alt="SettleKar" className={styles.signInLogo} width={500} height={125} />
+              <img src={logoImage} alt="SettleKar" className="signInLogo" width={500} height={125} />
             </Link>
-            <span className={styles.signInBadge}>Complete Registration</span>
+            <span className="signInBadge">Complete Registration</span>
           </div>
 
           <button 
@@ -300,8 +299,8 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
 
           <form onSubmit={handleRegisterRole} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             {/* Common Fields */}
-            <div className={styles.formRow}>
-              <div className={styles.formGroup}>
+            <div className="formRow">
+              <div className="formGroup">
                 <label htmlFor="fullName">
                   {selectedRegRole === 'firm' ? 'Contact Person Name' : 'Full Name'} <span style={{ color: '#ef4444' }}>*</span>
                 </label>
@@ -314,7 +313,7 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
                   required
                 />
               </div>
-              <div className={styles.formGroup}>
+              <div className="formGroup">
                 <label htmlFor="phone">Phone Number <span style={{ color: '#ef4444' }}>*</span></label>
                 <input
                   type="tel"
@@ -327,8 +326,8 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
               </div>
             </div>
 
-            <div className={styles.formRow}>
-              <div className={styles.formGroup}>
+            <div className="formRow">
+              <div className="formGroup">
                 <label htmlFor="email">Email Address</label>
                 <input
                   type="email"
@@ -338,7 +337,7 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
                   style={{ opacity: 0.6, cursor: 'not-allowed' }}
                 />
               </div>
-              <div className={styles.formGroup}>
+              <div className="formGroup">
                 <label htmlFor="city">City of Operation <span style={{ color: '#ef4444' }}>*</span></label>
                 <select 
                   id="city" 
@@ -360,8 +359,8 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
             {selectedRegRole === 'owner' && (
               <div style={{ background: 'rgba(15, 23, 42, 0.01)', padding: '20px', borderRadius: '16px', border: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 <h4 style={{ color: 'var(--text-primary)', margin: '0', fontSize: '0.95rem', fontWeight: 600 }}>Government ID (Optional — builds trust)</h4>
-                <div className={styles.formRow}>
-                  <div className={styles.formGroup}>
+                <div className="formRow">
+                  <div className="formGroup">
                     <label htmlFor="govtIdType">ID Type</label>
                     <select
                       id="govtIdType"
@@ -375,7 +374,7 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
                       <option value="Driving Licence">Driving Licence</option>
                     </select>
                   </div>
-                  <div className={styles.formGroup}>
+                  <div className="formGroup">
                     <label htmlFor="govtIdNumber">ID Number</label>
                     <input
                       type="text"
@@ -392,8 +391,8 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
             {/* Broker-specific Fields */}
             {selectedRegRole === 'broker' && (
               <>
-                <div className={styles.formRow}>
-                  <div className={styles.formGroup}>
+                <div className="formRow">
+                  <div className="formGroup">
                     <label htmlFor="agencyName">Agency / Firm Name (Optional)</label>
                     <input
                       type="text"
@@ -403,7 +402,7 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
                       placeholder="e.g. Skyline Realtors"
                     />
                   </div>
-                  <div className={styles.formGroup}>
+                  <div className="formGroup">
                     <label htmlFor="experience">Years of Experience (Optional)</label>
                     <input
                       type="number"
@@ -414,7 +413,7 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
                     />
                   </div>
                 </div>
-                <div className={styles.formGroup}>
+                <div className="formGroup">
                   <label htmlFor="reraNumber">RERA Registration Number </label>
                   <span style={{ fontSize: '0.775rem', color: '#6366F1', marginTop: '-4px', marginBottom: '4px' }}>🛡️ RERA number is required for individual brokers</span>
                   <input
@@ -432,8 +431,8 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
             {/* Firm-specific Fields */}
             {selectedRegRole === 'firm' && (
               <>
-                <div className={styles.formRow}>
-                  <div className={styles.formGroup}>
+                <div className="formRow">
+                  <div className="formGroup">
                     <label htmlFor="firmName">Company / Firm Name <span style={{ color: '#ef4444' }}>*</span></label>
                     <input
                       type="text"
@@ -444,7 +443,7 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
                       required
                     />
                   </div>
-                  <div className={styles.formGroup}>
+                  <div className="formGroup">
                     <label htmlFor="reraNumberFirm">Firm RERA Number <span style={{ color: '#ef4444' }}>*</span></label>
                     <span style={{ fontSize: '0.775rem', color: '#F59E0B', marginTop: '-4px', marginBottom: '4px' }}>🛡️ RERA registration is mandatory for all real estate firms</span>
                     <input
@@ -457,8 +456,8 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
                     />
                   </div>
                 </div>
-                <div className={styles.formRow}>
-                  <div className={styles.formGroup}>
+                <div className="formRow">
+                  <div className="formGroup">
                     <label htmlFor="gstNumber">GSTIN (Optional)</label>
                     <input
                       type="text"
@@ -468,7 +467,7 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
                       placeholder="e.g. 27AAAAA0000A1Z5"
                     />
                   </div>
-                  <div className={styles.formGroup}>
+                  <div className="formGroup">
                     <label htmlFor="totalAgents">Total Agents / Employees (Optional)</label>
                     <input
                       type="number"
@@ -479,7 +478,7 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
                     />
                   </div>
                 </div>
-                <div className={styles.formGroup}>
+                <div className="formGroup">
                   <label htmlFor="website">Website URL (Optional)</label>
                   <input
                     type="url"
@@ -489,7 +488,7 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
                     placeholder="e.g. https://company.com"
                   />
                 </div>
-                <div className={styles.formGroup}>
+                <div className="formGroup">
                   <label htmlFor="officeAddress">Office Address <span style={{ color: '#ef4444' }}>*</span></label>
                   <textarea
                     id="officeAddress"
@@ -506,7 +505,7 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
 
             <button 
               type="submit" 
-              className={styles.googleSignInBtn} 
+              className="googleSignInBtn" 
               disabled={registering}
               style={{ background: '#2563eb', color: '#ffffff', fontWeight: 700, marginTop: '12px' }}
             >

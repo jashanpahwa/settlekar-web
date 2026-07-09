@@ -1,7 +1,5 @@
 import React from 'react';
 import { InquiryItem } from './types';
-import styles from '../../styles/Dashboard.module.css';
-
 interface InquiriesTabProps {
   inquiries: InquiryItem[];
   handleDeleteInquiry: (inqId: string) => void;
@@ -14,31 +12,31 @@ const InquiriesTab: React.FC<InquiriesTabProps> = ({
   formatDate,
 }) => {
   return (
-    <div className={styles.tabContent}>
-      <div className={styles.sectionHeader}>
+    <div className="tabContent">
+      <div className="sectionHeader">
         <h2>Tenant Inquiries Panel</h2>
         <p>See genuine inquiry letters sent directly by prospective renters on your properties.</p>
       </div>
 
       {inquiries.length === 0 ? (
-        <div className={styles.emptyState}>
-          <div className={styles.emptyIcon}>✉️</div>
+        <div className="emptyState">
+          <div className="emptyIcon">✉️</div>
           <h2>No Inquiries Received</h2>
           <p>No tenant inquiries received yet. When users submit contact forms on SettleKar, they'll pop up here!</p>
         </div>
       ) : (
-        <div className={styles.inquiriesContainer}>
+        <div className="inquiriesContainer">
           {inquiries.map((inq: InquiryItem) => (
-            <div key={inq.id} className={styles.inquiryDetailsCard}>
-              <div className={styles.inquiryDetailsHead}>
-                <div className={styles.inqTitle}>
+            <div key={inq.id} className="inquiryDetailsCard">
+              <div className="inquiryDetailsHead">
+                <div className="inqTitle">
                   <h3>{inq.tenantName}</h3>
                   <span>Inquired on: <strong>{inq.propertyTitle}</strong> ({inq.propertyPrice})</span>
                 </div>
-                <div className={styles.inqMeta}>
-                  <span className={styles.inqTime}>{formatDate(inq.createdAt)}</span>
+                <div className="inqMeta">
+                  <span className="inqTime">{formatDate(inq.createdAt)}</span>
                   <button
-                    className={styles.dismissInqBtn}
+                    className="dismissInqBtn"
                     onClick={() => handleDeleteInquiry(inq.id)}
                     title="Dismiss Inquiry"
                   >
@@ -47,17 +45,17 @@ const InquiriesTab: React.FC<InquiriesTabProps> = ({
                 </div>
               </div>
               
-              <div className={styles.inquiryDetailsMsg}>
+              <div className="inquiryDetailsMsg">
                 <p>"{inq.message}"</p>
               </div>
 
-              <div className={styles.inquiryContactStrip}>
+              <div className="inquiryContactStrip">
                 <h4>Contact Prospective Tenant:</h4>
-                <div className={styles.contactButtons}>
-                  <a href={`mailto:${inq.tenantEmail}`} className={styles.contactEmailBtn}>
+                <div className="contactButtons">
+                  <a href={`mailto:${inq.tenantEmail}`} className="contactEmailBtn">
                     📧 Email: {inq.tenantEmail}
                   </a>
-                  <a href={`tel:${inq.tenantPhone}`} className={styles.contactPhoneBtn}>
+                  <a href={`tel:${inq.tenantPhone}`} className="contactPhoneBtn">
                     📞 Call/WhatsApp: {inq.tenantPhone}
                   </a>
                 </div>

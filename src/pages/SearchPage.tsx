@@ -22,6 +22,10 @@ interface SearchProperty {
   description?: string;
   propertyType?: string;
   furnishing?: string;
+  isIndependent?: boolean;
+  bachelorFriendly?: boolean;
+  womenOnly?: boolean;
+  isTopFloor?: boolean;
 }
 
 export const SearchPage: React.FC = () => {
@@ -44,6 +48,10 @@ export const SearchPage: React.FC = () => {
   const [maxBudget, setMaxBudget] = useState(120000);
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [kmRange, setKmRange] = useState<number>(15);
+  const [isIndependentFilter, setIsIndependentFilter] = useState<boolean | null>(null);
+  const [bachelorFriendlyFilter, setBachelorFriendlyFilter] = useState<boolean | null>(null);
+  const [womenOnlyFilter, setWomenOnlyFilter] = useState<boolean | null>(null);
+  const [isTopFloorFilter, setIsTopFloorFilter] = useState<boolean | null>(null);
 
   // Loaded Properties & Computed Route Distances
   const [properties, setProperties] = useState<SearchProperty[]>([]);
@@ -120,6 +128,10 @@ export const SearchPage: React.FC = () => {
           description: p.description || '',
           propertyType: (p.propertyType || '').toLowerCase(),
           furnishing: (p.furnishing || '').toLowerCase(),
+          isIndependent: p.isIndependent,
+          bachelorFriendly: p.bachelorFriendly,
+          womenOnly: p.womenOnly,
+          isTopFloor: p.isTopFloor,
         }));
 
         setProperties(formattedLive);
@@ -214,8 +226,41 @@ export const SearchPage: React.FC = () => {
         .sort((a, b) => a.distance - b.distance); // Sort by distance ascending
     }
 
+    // 4. Independent Property Filter
+    if (isIndependentFilter !== null) {
+      result = result.filter((p: any) => p.isIndependent === isIndependentFilter);
+    }
+
+    // 5. Bachelor Friendly Filter
+    if (bachelorFriendlyFilter !== null) {
+      result = result.filter((p: any) => p.bachelorFriendly === bachelorFriendlyFilter);
+    }
+
+    // 6. Women Only Filter
+    if (womenOnlyFilter !== null) {
+      result = result.filter((p: any) => p.womenOnly === womenOnlyFilter);
+    }
+
+    // 7. Is Top Floor Filter
+    if (isTopFloorFilter !== null) {
+      result = result.filter((p: any) => p.isTopFloor === isTopFloorFilter);
+    }
+
     setFilteredProperties(result);
-  }, [properties, searchCenter, minBudget, maxBudget, selectedTypes, propertyDistances, kmRange, viewMode]);
+  }, [
+    properties,
+    searchCenter,
+    minBudget,
+    maxBudget,
+    selectedTypes,
+    propertyDistances,
+    kmRange,
+    viewMode,
+    isIndependentFilter,
+    bachelorFriendlyFilter,
+    womenOnlyFilter,
+    isTopFloorFilter,
+  ]);
 
   // Transition from Initial Form to Map View
   const handleInitialSearchSubmit = (searchData: {
@@ -282,12 +327,20 @@ export const SearchPage: React.FC = () => {
           maxBudget={maxBudget}
           selectedTypes={selectedTypes}
           kmRange={kmRange}
+          isIndependent={isIndependentFilter}
+          bachelorFriendly={bachelorFriendlyFilter}
+          womenOnly={womenOnlyFilter}
+          isTopFloor={isTopFloorFilter}
           onBudgetChange={(min, max) => {
             setMinBudget(min);
             setMaxBudget(max);
           }}
           onTypesChange={(types) => setSelectedTypes(types)}
           onKmRangeChange={(km) => setKmRange(km)}
+          onIndependentChange={setIsIndependentFilter}
+          onBachelorFriendlyChange={setBachelorFriendlyFilter}
+          onWomenOnlyChange={setWomenOnlyFilter}
+          onTopFloorChange={setIsTopFloorFilter}
         />
 
         {/* Google Map component */}

@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import styles from '../../styles/Dashboard.module.css';
 import logoImage from '/logo.png';
 
 interface SidebarProps {
@@ -45,16 +44,16 @@ const Sidebar: React.FC<SidebarProps> = ({
     <>
       {/* Backdrop overlay for mobile drawer */}
       <div 
-        className={`${styles.sidebarOverlay} ${isOpen ? styles.overlayVisible : ''}`} 
+        className={`sidebarOverlay ${isOpen ? 'overlayVisible' : ''}`} 
         onClick={onClose}
       />
 
-      <aside className={`${styles.sidebar} ${isOpen ? styles.sidebarOpen : ''}`}>
-        <div className={styles.sidebarHeader}>
-          <Link to="/" className={styles.logoLink} onClick={onClose}>
-            <img src={logoImage} alt="SettleKar" className={styles.logoImage} />
+      <aside className={`sidebar ${isOpen ? 'sidebarOpen' : ''}`}>
+        <div className="sidebarHeader">
+          <Link to="/" className="logoLink" onClick={onClose}>
+            <img src={logoImage} alt="SettleKar" className="logoImage" />
           </Link>
-          <span className={styles.portalBadge}>
+          <span className="portalBadge">
             {userRole === 'broker'
               ? 'Broker Portal'
               : userRole === 'firm'
@@ -64,68 +63,68 @@ const Sidebar: React.FC<SidebarProps> = ({
               : 'Owner Portal'}
           </span>
           {/* Close button inside drawer for mobile */}
-          <button className={styles.drawerCloseBtn} onClick={onClose} aria-label="Close menu">
+          <button className="drawerCloseBtn" onClick={onClose} aria-label="Close menu">
             ✕
           </button>
         </div>
 
-        <nav className={styles.menu}>
+        <nav className="menu">
           <button
-            className={`${styles.menuItem} ${activeTab === 'overview' ? styles.activeMenu : ''}`}
+            className={`menuItem ${activeTab === 'overview' ? 'activeMenu' : ''}`}
             onClick={() => handleTabClick('overview')}
           >
-            <span className={styles.icon}>📊</span> Overview
+            <span className="icon">📊</span> Overview
           </button>
 
           {userRole !== 'tenant' && (
             <>
               <button
-                className={`${styles.menuItem} ${activeTab === 'list' ? styles.activeMenu : ''}`}
+                className={`menuItem ${activeTab === 'list' ? 'activeMenu' : ''}`}
                 onClick={() => handleTabClick('list')}
               >
-                <span className={styles.icon}>➕</span> List Property
+                <span className="icon">➕</span> List Property
               </button>
               <button
-                className={`${styles.menuItem} ${activeTab === 'properties' ? styles.activeMenu : ''}`}
+                className={`menuItem ${activeTab === 'properties' ? 'activeMenu' : ''}`}
                 onClick={() => handleTabClick('properties')}
               >
-                <span className={styles.icon}>🏠</span> My Properties
-                {propertiesCount > 0 && <span className={styles.badgeCount}>{propertiesCount}</span>}
+                <span className="icon">🏠</span> My Properties
+                {propertiesCount > 0 && <span className="badgeCount">{propertiesCount}</span>}
               </button>
               <button
-                className={`${styles.menuItem} ${activeTab === 'inquiries' ? styles.activeMenu : ''}`}
+                className={`menuItem ${activeTab === 'inquiries' ? 'activeMenu' : ''}`}
                 onClick={() => handleTabClick('inquiries')}
               >
-                <span className={styles.icon}>✉️</span> Inquiries
-                {inquiriesCount > 0 && <span className={styles.badgeCountBlue}>{inquiriesCount}</span>}
+                <span className="icon">✉️</span> Inquiries
+                {inquiriesCount > 0 && <span className="badgeCountBlue">{inquiriesCount}</span>}
               </button>
             </>
           )}
 
           <button
-            className={`${styles.menuItem} ${activeTab === 'wishlist' ? styles.activeMenu : ''}`}
+            className={`menuItem ${activeTab === 'wishlist' ? 'activeMenu' : ''}`}
             onClick={() => handleTabClick('wishlist')}
           >
-            <span className={styles.icon}>❤️</span> Wishlist
+            <span className="icon">❤️</span> Wishlist
           </button>
 
           <button
-            className={styles.menuItem}
+            className="menuItem"
             onClick={handleSwitchClick}
           >
-            <span className={styles.icon}>🔄</span> Switch Role
+            <span className="icon">🔄</span> Switch Role
           </button>
 
           <button
-            className={`${styles.menuItem} ${styles.mobileSignOut}`}
+            className={`menuItem mobileSignOut`}
             onClick={handleSignOutClick}
           >
-            <span className={styles.icon}>🚪</span> Sign Out
+            <span className="icon">🚪</span> Sign Out
           </button>
         </nav>
 
-        <div className={styles.sidebarFooter}>
-          <button onClick={handleSignOutClick} className={styles.backHomeBtn}>
+        <div className="sidebarFooter">
+          <button onClick={handleSignOutClick} className="backHomeBtn">
             🚪 Sign Out
           </button>
         </div>

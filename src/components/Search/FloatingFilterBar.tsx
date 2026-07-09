@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { IndianRupee, Home, MapPin } from 'lucide-react';
+import { IndianRupee, Home, MapPin, Users, UserCheck, Layers } from 'lucide-react';
 import { DualRangeSlider } from './DualRangeSlider';
 
 interface FloatingFilterBarProps {
@@ -7,9 +7,17 @@ interface FloatingFilterBarProps {
   maxBudget: number;
   selectedTypes: string[];
   kmRange: number;
+  isIndependent: boolean | null;
+  bachelorFriendly: boolean | null;
+  womenOnly: boolean | null;
+  isTopFloor: boolean | null;
   onBudgetChange: (min: number, max: number) => void;
   onTypesChange: (types: string[]) => void;
   onKmRangeChange: (km: number) => void;
+  onIndependentChange: (val: boolean | null) => void;
+  onBachelorFriendlyChange: (val: boolean | null) => void;
+  onWomenOnlyChange: (val: boolean | null) => void;
+  onTopFloorChange: (val: boolean | null) => void;
 }
 
 const PROPERTY_TYPES = [
@@ -30,9 +38,17 @@ export const FloatingFilterBar: React.FC<FloatingFilterBarProps> = ({
   maxBudget,
   selectedTypes,
   kmRange,
+  isIndependent,
+  bachelorFriendly,
+  womenOnly,
+  isTopFloor,
   onBudgetChange,
   onTypesChange,
   onKmRangeChange,
+  onIndependentChange,
+  onBachelorFriendlyChange,
+  onWomenOnlyChange,
+  onTopFloorChange,
 }) => {
   const [activeDropdown, setActiveDropdown] = useState<'budget' | 'bhk' | 'distance' | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -224,6 +240,57 @@ export const FloatingFilterBar: React.FC<FloatingFilterBarProps> = ({
           </div>
         )}
       </div>
+      {/* 4. Independent Property Pill */}
+      <button
+        onClick={() => onIndependentChange(isIndependent === null ? true : isIndependent ? false : null)}
+        className={`px-3.5 py-2.5 rounded-xl border text-xs font-bold transition-all duration-200 cursor-pointer shadow-md flex items-center space-x-1.5 active:scale-95 ${
+          isIndependent !== null
+            ? 'bg-primary border-primary text-white'
+            : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+        }`}
+      >
+        <Home className="h-3.5 w-3.5" />
+        <span>{isIndependent === null ? 'Independent' : isIndependent ? 'Independent' : 'Shared'}</span>
+      </button>
+
+      {/* 5. Bachelor Friendly Pill */}
+      <button
+        onClick={() => onBachelorFriendlyChange(bachelorFriendly === null ? true : bachelorFriendly ? false : null)}
+        className={`px-3.5 py-2.5 rounded-xl border text-xs font-bold transition-all duration-200 cursor-pointer shadow-md flex items-center space-x-1.5 active:scale-95 ${
+          bachelorFriendly !== null
+            ? 'bg-primary border-primary text-white'
+            : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+        }`}
+      >
+        <Users className="h-3.5 w-3.5" />
+        <span>{bachelorFriendly === null ? 'Bachelors' : bachelorFriendly ? 'Bachelor Friendly' : 'Family Only'}</span>
+      </button>
+
+      {/* 6. Women Only Pill */}
+      <button
+        onClick={() => onWomenOnlyChange(womenOnly === null ? true : womenOnly ? false : null)}
+        className={`px-3.5 py-2.5 rounded-xl border text-xs font-bold transition-all duration-200 cursor-pointer shadow-md flex items-center space-x-1.5 active:scale-95 ${
+          womenOnly !== null
+            ? 'bg-primary border-primary text-white'
+            : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+        }`}
+      >
+        <UserCheck className="h-3.5 w-3.5" />
+        <span>{womenOnly === null ? 'Women' : womenOnly ? 'Women Only' : 'Open to All'}</span>
+      </button>
+
+      {/* 7. Is Top Floor Pill */}
+      <button
+        onClick={() => onTopFloorChange(isTopFloor === null ? true : isTopFloor ? false : null)}
+        className={`px-3.5 py-2.5 rounded-xl border text-xs font-bold transition-all duration-200 cursor-pointer shadow-md flex items-center space-x-1.5 active:scale-95 ${
+          isTopFloor !== null
+            ? 'bg-primary border-primary text-white'
+            : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+        }`}
+      >
+        <Layers className="h-3.5 w-3.5" />
+        <span>{isTopFloor === null ? 'Floor' : isTopFloor ? 'Top Floor' : 'Other Floor'}</span>
+      </button>
     </div>
   );
 };

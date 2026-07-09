@@ -16,6 +16,10 @@ interface SearchProperty {
   description?: string;
   propertyType?: string;
   furnishing?: string;
+  isIndependent?: boolean;
+  bachelorFriendly?: boolean;
+  womenOnly?: boolean;
+  isTopFloor?: boolean;
 }
 
 interface SearchSidebarProps {
@@ -163,6 +167,28 @@ export const SearchSidebar: React.FC<SearchSidebarProps> = ({
                         <p className="text-[10px] text-slate-400 font-medium truncate">
                           {p.features}
                         </p>
+                        <div className="flex flex-wrap gap-1 mt-1.5">
+                          {p.isIndependent !== undefined && p.isIndependent !== null && (
+                            <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">
+                              {p.isIndependent ? 'Independent' : 'Shared'}
+                            </span>
+                          )}
+                          {p.bachelorFriendly !== undefined && p.bachelorFriendly !== null && (
+                            <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">
+                              {p.bachelorFriendly ? 'Bachelor Friendly' : 'Family Only'}
+                            </span>
+                          )}
+                          {p.womenOnly !== undefined && p.womenOnly !== null && (
+                            <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">
+                              {p.womenOnly ? 'Women Only' : 'Open to All'}
+                            </span>
+                          )}
+                          {p.isTopFloor !== undefined && p.isTopFloor !== null && (
+                            <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">
+                              {p.isTopFloor ? 'Top Floor' : 'Other Floor'}
+                            </span>
+                          )}
+                        </div>
                       </div>
 
                       {/* Footer */}

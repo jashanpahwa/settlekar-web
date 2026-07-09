@@ -22,6 +22,11 @@ export interface PropertyItem {
   pillars?: any;
   meta?: any;
   confidence?: number;
+  available?: boolean;
+  isIndependent?: boolean;
+  bachelorFriendly?: boolean;
+  womenOnly?: boolean;
+  isTopFloor?: boolean;
 }
 
 export interface InquiryItem {

@@ -7,8 +7,6 @@ import { userCollectionService } from '../services/userCollectionService';
 import { ownerBrokerService } from '../services/ownerBrokerService';
 import { propertyService } from '../services/propertyService';
 import { inquiryService } from '../services/inquiryService';
-import styles from '../styles/Dashboard.module.css';
-
 // Import refactored modules
 import { PropertyItem, InquiryItem } from '../components/Dashboard/types';
 import OverviewTab from '../components/Dashboard/OverviewTab';
@@ -113,7 +111,12 @@ const Dashboard: React.FC = () => {
           overallscore: prop.overallscore !== undefined ? prop.overallscore : prop.overallScore,
           pillars: prop.pillars || prop.neighborhoodPillars || null,
           meta: prop.meta || null,
-          confidence: prop.confidence !== undefined ? prop.confidence : prop.neighborhoodConfidence || null
+          confidence: prop.confidence !== undefined ? prop.confidence : prop.neighborhoodConfidence || null,
+          available: prop.available,
+          isIndependent: prop.isIndependent,
+          bachelorFriendly: prop.bachelorFriendly,
+          womenOnly: prop.womenOnly,
+          isTopFloor: prop.isTopFloor
         }));
         setProperties(loadedProps);
 
@@ -255,11 +258,11 @@ const Dashboard: React.FC = () => {
   // Loading Splash Screen
   if (loading || roleLoading) {
     return (
-      <div className={styles.loadingScreen}>
+      <div className="loadingScreen">
         {/* React 19 Document Metadata */}
         <title>SettleKar - Dashboard</title>
         <meta name="robots" content="noindex, nofollow" />
-        <div className={styles.spinner}></div>
+        <div className="spinner"></div>
         <p>Connecting to SettleKar...</p>
       </div>
     );
@@ -289,18 +292,18 @@ const Dashboard: React.FC = () => {
 
   // Authenticated Portal View
   return (
-    <div className={styles.dashboardLayout}>
+    <div className="dashboardLayout">
       {/* React 19 Document Metadata */}
       <title>SettleKar - Dashboard</title>
       <meta name="robots" content="noindex, nofollow" />
 
       {/* Mobile Sticky Header Bar */}
-      <div className={styles.mobileHeaderBar}>
-        <Link to="/" className={styles.mobileLogoLink}>
-          <img src="/logo.png" alt="SettleKar" className={styles.mobileLogoImage} />
+      <div className="mobileHeaderBar">
+        <Link to="/" className="mobileLogoLink">
+          <img src="/logo.png" alt="SettleKar" className="mobileLogoImage" />
         </Link>
-        <div className={styles.mobileHeaderRight}>
-          <span className={styles.mobilePortalBadge}>
+        <div className="mobileHeaderRight">
+          <span className="mobilePortalBadge">
             {userRole === 'broker'
               ? 'Broker'
               : userRole === 'firm'
@@ -310,14 +313,14 @@ const Dashboard: React.FC = () => {
               : 'Owner'}
           </span>
           <button 
-            className={styles.mobileMenuToggle}
+            className="mobileMenuToggle"
             onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
             aria-label="Toggle Menu"
             aria-expanded={isMobileSidebarOpen}
           >
-            <span className={`${styles.hamburgerLine} ${isMobileSidebarOpen ? styles.lineOpen1 : ''}`}></span>
-            <span className={`${styles.hamburgerLine} ${isMobileSidebarOpen ? styles.lineOpen2 : ''}`}></span>
-            <span className={`${styles.hamburgerLine} ${isMobileSidebarOpen ? styles.lineOpen3 : ''}`}></span>
+            <span className={`hamburgerLine ${isMobileSidebarOpen ? 'lineOpen1' : ''}`}></span>
+            <span className={`hamburgerLine ${isMobileSidebarOpen ? 'lineOpen2' : ''}`}></span>
+            <span className={`hamburgerLine ${isMobileSidebarOpen ? 'lineOpen3' : ''}`}></span>
           </button>
         </div>
       </div>
@@ -335,7 +338,7 @@ const Dashboard: React.FC = () => {
       />
 
       {/* Main Content Area */}
-      <main className={styles.mainContent}>
+      <main className="mainContent">
         <Header
           user={user}
           userRole={userRole}
@@ -343,7 +346,7 @@ const Dashboard: React.FC = () => {
         />
 
         {/* Dynamic Tab Body */}
-        <div className={styles.container}>
+        <div className="container">
           {activeTab === 'overview' && (
             <OverviewTab
               userRole={userRole}

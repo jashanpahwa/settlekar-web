@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { User } from 'firebase/auth';
 import { PropertyItem } from './types';
-import styles from '../../styles/Dashboard.module.css';
 import { wishlistService } from '../../services/wishlistService';
 
 interface WishlistTabProps {
@@ -59,52 +58,52 @@ const WishlistTab: React.FC<WishlistTabProps> = ({ user }) => {
 
   if (loading) {
     return (
-      <div className={styles.tabContent}>
+      <div className="tabContent">
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '200px' }}>
-          <div className={styles.spinner}></div>
+          <div className="spinner"></div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={styles.tabContent}>
-      <div className={styles.sectionHeader}>
+    <div className="tabContent">
+      <div className="sectionHeader">
         <h2>My Wishlisted Properties</h2>
         <p>Your saved properties for quick reference and future inquiries.</p>
       </div>
 
       {wishlistItems.length === 0 ? (
-        <div className={styles.emptyState}>
-          <div className={styles.emptyIcon}>❤️</div>
+        <div className="emptyState">
+          <div className="emptyIcon">❤️</div>
           <h2>Your Wishlist is Empty</h2>
           <p>No properties wishlisted yet. Start exploring properties to save your favorites!</p>
-          <a href="/" className={styles.emptyStateBtn} style={{ textDecoration: 'none', textAlign: 'center', display: 'inline-block' }}>
+          <a href="/" className="emptyStateBtn" style={{ textDecoration: 'none', textAlign: 'center', display: 'inline-block' }}>
             Browse Properties
           </a>
         </div>
       ) : (
-        <div className={styles.listedPropertiesGrid}>
+        <div className="listedPropertiesGrid">
           {wishlistItems.map((item) => (
-            <div key={item.id} className={styles.listedCard}>
-              <div className={styles.listedCardImgLink}>
-                <img src={item.property.image} alt={item.property.title} className={item.property.isUserAdded ? styles.listedCardImg : ''} style={{ width: '100%', height: '200px', objectFit: 'cover', borderRadius: '12px' }} />
+            <div key={item.id} className="listedCard">
+              <div className="listedCardImgLink">
+                <img src={item.property.image} alt={item.property.title} className={item.property.isUserAdded ? 'listedCardImg' : ''} style={{ width: '100%', height: '200px', objectFit: 'cover', borderRadius: '12px' }} />
               </div>
-              <div className={styles.listedCardBody}>
-                <div className={styles.listedCardHead}>
+              <div className="listedCardBody">
+                <div className="listedCardHead">
                   <h3>{item.property.title}</h3>
-                  <span className={styles.listedCardBadge}>{item.property.badge}</span>
+                  <span className="listedCardBadge">{item.property.badge}</span>
                 </div>
-                <p className={styles.listedCardAddr}>
+                <p className="listedCardAddr">
                   📍 {item.property.address || item.property.location || item.property.city}
                 </p>
-                <p className={styles.listedCardFeat}>{item.property.features}</p>
-                <div className={styles.listedCardFooter}>
-                  <span className={styles.listedCardPrice}>{item.property.price}</span>
-                  <div className={styles.actionBtns}>
+                <p className="listedCardFeat">{item.property.features}</p>
+                <div className="listedCardFooter">
+                  <span className="listedCardPrice">{item.property.price}</span>
+                  <div className="actionBtns">
                     <button
                       type="button"
-                      className={styles.deletePropBtn}
+                      className="deletePropBtn"
                       onClick={() => handleRemove(item.id)}
                       style={{ background: 'rgba(220, 38, 38, 0.1)', color: '#dc2626', border: '1px solid rgba(220, 38, 38, 0.2)' }}
                       aria-label={`Remove ${item.property.title}`}

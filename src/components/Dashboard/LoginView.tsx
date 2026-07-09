@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import styles from '../../styles/Dashboard.module.css';
 import logoImage from '/logo.png';
 
 interface LoginViewProps {
@@ -15,15 +14,15 @@ const LoginView: React.FC<LoginViewProps> = ({
   authError,
 }) => {
   return (
-    <div className={styles.signInContainer}>
+    <div className="signInContainer">
       <title>SettleKar - Owner Dashboard</title>
       <meta name="robots" content="noindex, nofollow" />
-      <div className={styles.signInCard}>
-        <div className={styles.signInHeader}>
+      <div className="signInCard">
+        <div className="signInHeader">
           <Link to="/">
-            <img src={logoImage} alt="SettleKar" className={styles.signInLogo} width={500} height={125} />
+            <img src={logoImage} alt="SettleKar" className="signInLogo" width={500} height={125} />
           </Link>
-          <span className={styles.signInBadge}>Dashboard Portal</span>
+          <span className="signInBadge">Dashboard Portal</span>
         </div>
         
         <h2>Manage Your Listings Hassle-Free</h2>
@@ -31,16 +30,16 @@ const LoginView: React.FC<LoginViewProps> = ({
           Sign in with your Google account to list apartments, review incoming inquiries from tenants in real-time, and settle deals directly without middle-men.
         </p>
 
-        <div className={styles.bullets}>
-          <div className={styles.bulletItem}>
-            <span className={styles.bulletIcon}>⚡</span>
+        <div className="bullets">
+          <div className="bulletItem">
+            <span className="bulletIcon">⚡</span>
             <div>
               <h4>Direct Connections</h4>
-              <p>Chat directly with verified tenants—no brokers, zero brokerage fees.</p>
+              <p>Connect directly with verified tenants—no middleman, zero commission fees.</p>
             </div>
           </div>
-          <div className={styles.bulletItem}>
-            <span className={styles.bulletIcon}>🌐</span>
+          <div className="bulletItem">
+            <span className="bulletIcon">🌐</span>
             <div>
               <h4>Multi-Platform Sync</h4>
               <p>Your listed properties and inquiries sync directly to SettleKar mobile apps instantly.</p>
@@ -48,19 +47,19 @@ const LoginView: React.FC<LoginViewProps> = ({
           </div>
         </div>
 
-        {authError && <div className={styles.authError}>{authError}</div>}
+        {authError && <div className="authError">{authError}</div>}
 
-        <button onClick={handleSignIn} className={styles.googleSignInBtn} disabled={authSubmitting}>
+        <button onClick={handleSignIn} className="googleSignInBtn" disabled={authSubmitting}>
           {authSubmitting ? (
-            <span className={styles.submittingSpan}>Signing in...</span>
+            <span className="submittingSpan">Signing in...</span>
           ) : (
             <>
-              <span className={styles.googleIcon}>G</span> Sign In with Google
+              <span className="googleIcon">G</span> Sign In with Google
             </>
           )}
         </button>
         
-        <Link to="/" className={styles.backHomeLink}>
+        <Link to="/" className="backHomeLink">
           ← Back to SettleKar Home
         </Link>
       </div>

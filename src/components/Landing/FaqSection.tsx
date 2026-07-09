@@ -20,7 +20,7 @@ const faqCategories: CategoryData[] = [
     faqs: [
       {
         question: 'Is SettleKar free to use for tenants?',
-        answer: 'Yes, SettleKar is 100% free for tenants! You can browse listings, filter by amenities, and connect with verified property owners directly without paying a single rupee of brokerage.',
+        answer: 'Yes, SettleKar is 100% free for tenants! You can browse listings, filter by amenities, and connect with verified property owners directly without paying a single rupee of commission.',
       },
       {
         question: 'What cities does SettleKar cover?',
@@ -109,12 +109,7 @@ const FaqSection: React.FC = () => {
         {/* Top Header Row */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-16">
           <div className="lg:col-span-7">
-            {/* Pill badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-[11px] font-medium text-white/80 tracking-wider uppercase mb-6 select-none">
-              <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
-              FAQ
-            </div>
-            
+                     
             <h2 className="text-white text-3xl md:text-5xl font-semibold leading-[1.15] tracking-tight max-w-[580px]">
               Answers to the questions that come up most.
             </h2>

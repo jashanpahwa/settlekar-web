@@ -317,7 +317,7 @@ const ArticlePage: React.FC = () => {
             {article.internalRentalLinks.length > 0 && (
               <section className={styles.linkingSection}>
                 <h3>Explore Verified Rentals on SettleKar</h3>
-                <p>Browse live, direct-owner properties near these hubs with zero brokerage fees:</p>
+                <p>Browse live, direct-owner properties near these hubs with zero commission fees:</p>
                 <div className={styles.linkButtonsGrid}>
                   {article.internalRentalLinks.map((link, idx) => (
                     <Link key={idx} to={link.url} className={styles.linkCta}>

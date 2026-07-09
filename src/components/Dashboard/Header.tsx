@@ -1,8 +1,6 @@
 import React from 'react';
 import { User } from 'firebase/auth';
 import { OwnerProfile, BrokerProfile, FirmProfile } from './RegistrationGate';
-import styles from '../../styles/Dashboard.module.css';
-
 interface HeaderProps {
   user: User;
   userRole: 'owner' | 'broker' | 'firm' | 'tenant';
@@ -47,20 +45,20 @@ const Header: React.FC<HeaderProps> = ({ user, userRole, userProfile }) => {
   const displayName = getHeaderDisplayName();
 
   return (
-    <header className={styles.topHeader}>
-      <div className={styles.headerInfo}>
+    <header className="topHeader">
+      <div className="headerInfo">
         <h1>Welcome Back, {displayName.split(' ')[0]}!</h1>
         <p>Logged in as {getHeaderRoleName()}.</p>
       </div>
-      <div className={styles.ownerProfile}>
+      <div className="ownerProfile">
         {user.photoURL ? (
-          <img src={user.photoURL} alt={displayName} className={styles.profileAvatarImg} width={40} height={40} />
+          <img src={user.photoURL} alt={displayName} className="profileAvatarImg" width={40} height={40} />
         ) : (
-          <div className={styles.profileAvatar}>
+          <div className="profileAvatar">
             {displayName.substring(0, 2).toUpperCase()}
           </div>
         )}
-        <div className={styles.profileDetails}>
+        <div className="profileDetails">
           <h4>{displayName}</h4>
           <span>{getHeaderSubtitleName()}</span>
         </div>
