@@ -6,6 +6,7 @@ import { SearchMapView, getPropertyCoords } from '../components/Search/SearchMap
 import { SearchSidebar } from '../components/Search/SearchSidebar';
 import { FloatingSearchBar } from '../components/Search/FloatingSearchBar';
 import { FloatingFilterBar } from '../components/Search/FloatingFilterBar';
+import { CompareView } from '../components/Search/CompareView';
 import { getRouteDistances, getHaversineDistance } from '../utils/routeDistance';
 
 interface SearchProperty {
@@ -29,32 +30,48 @@ interface SearchProperty {
   isVerified?: boolean;
   verifiedDetails?: string[];
   ratingCount?: number;
+  overallscore?: number;
+  petFriendly?: boolean;
 }
 
 export const SearchPage: React.FC = () => {
+  // Load initial search state from sessionStorage if it exists to preserve across navigation
+  const savedState = (() => {
+    try {
+      const saved = sessionStorage.getItem('settlekar_search_state');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  })();
+
   // Navigation View State
-  const [viewMode, setViewMode] = useState<'form' | 'map'>('form');
+  const [viewMode, setViewMode] = useState<'form' | 'map'>(savedState?.mode || 'form');
 
   // Script Load State
   const [mapsLoaded, setMapsLoaded] = useState(false);
 
   // Search Filter and Center States
-  const [searchAddress, setSearchAddress] = useState('');
-  const [searchCenter, setSearchCenter] = useState<{ lat: number; lng: number }>({
+  const [searchAddress, setSearchAddress] = useState(savedState?.address || '');
+  const [searchCenter, setSearchCenter] = useState<{ lat: number; lng: number }>(savedState?.center || {
     lat: 19.0760, // Mumbai Center default
     lng: 72.8777,
   });
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
 
   // Filter values
-  const [minBudget, setMinBudget] = useState(5000);
-  const [maxBudget, setMaxBudget] = useState(120000);
-  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
-  const [kmRange, setKmRange] = useState<number>(15);
-  const [isIndependentFilter, setIsIndependentFilter] = useState<boolean | null>(null);
-  const [bachelorFriendlyFilter, setBachelorFriendlyFilter] = useState<boolean | null>(null);
-  const [womenOnlyFilter, setWomenOnlyFilter] = useState<boolean | null>(null);
-  const [isTopFloorFilter, setIsTopFloorFilter] = useState<boolean | null>(null);
+  const [minBudget, setMinBudget] = useState(savedState?.minBudget !== undefined ? savedState.minBudget : 5000);
+  const [maxBudget, setMaxBudget] = useState(savedState?.maxBudget !== undefined ? savedState.maxBudget : 120000);
+  const [selectedTypes, setSelectedTypes] = useState<string[]>(savedState?.selectedTypes || []);
+  const [kmRange, setKmRange] = useState<number>(savedState?.kmRange !== undefined ? savedState.kmRange : 15);
+  const [isIndependentFilter, setIsIndependentFilter] = useState<boolean | null>(savedState?.isIndependentFilter !== undefined ? savedState.isIndependentFilter : null);
+  const [bachelorFriendlyFilter, setBachelorFriendlyFilter] = useState<boolean | null>(savedState?.bachelorFriendlyFilter !== undefined ? savedState.bachelorFriendlyFilter : null);
+  const [womenOnlyFilter, setWomenOnlyFilter] = useState<boolean | null>(savedState?.womenOnlyFilter !== undefined ? savedState.womenOnlyFilter : null);
+  const [isTopFloorFilter, setIsTopFloorFilter] = useState<boolean | null>(savedState?.isTopFloorFilter !== undefined ? savedState.isTopFloorFilter : null);
+  const [petFriendlyFilter, setPetFriendlyFilter] = useState<boolean | null>(savedState?.petFriendlyFilter !== undefined ? savedState.petFriendlyFilter : null);
+  const [relocationReadyFilter, setRelocationReadyFilter] = useState<boolean | null>(savedState?.relocationReadyFilter !== undefined ? savedState.relocationReadyFilter : null);
+  const [furnishingFilter, setFurnishingFilter] = useState<string | null>(savedState?.furnishingFilter !== undefined ? savedState.furnishingFilter : null);
+  const [safetyScoreFilter, setSafetyScoreFilter] = useState<number>(savedState?.safetyScoreFilter !== undefined ? savedState.safetyScoreFilter : 0);
 
   // Loaded Properties & Computed Route Distances
   const [properties, setProperties] = useState<SearchProperty[]>([]);
@@ -67,9 +84,69 @@ export const SearchPage: React.FC = () => {
   const [distancesLoading, setDistancesLoading] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
+  // Compare States
+  const [compareList, setCompareList] = useState<SearchProperty[]>([]);
+  const [isCompareViewOpen, setIsCompareViewOpen] = useState(false);
+
+  const handleToggleCompare = (property: SearchProperty) => {
+    setCompareList((prev) => {
+      const exists = prev.some((item) => item.id === property.id);
+      if (exists) {
+        return prev.filter((item) => item.id !== property.id);
+      }
+      if (prev.length >= 5) {
+        alert('You can compare a maximum of 5 properties.');
+        return prev;
+      }
+      return [...prev, property];
+    });
+  };
+
+  const handleRemoveCompare = (property: SearchProperty) => {
+    setCompareList((prev) => prev.filter((item) => item.id !== property.id));
+  };
+
+  // Automatically save state on updates
+  useEffect(() => {
+    const stateToSave = {
+      address: searchAddress,
+      center: searchCenter,
+      mode: viewMode,
+      minBudget,
+      maxBudget,
+      selectedTypes,
+      kmRange,
+      isIndependentFilter,
+      bachelorFriendlyFilter,
+      womenOnlyFilter,
+      isTopFloorFilter,
+      petFriendlyFilter,
+      relocationReadyFilter,
+      furnishingFilter,
+      safetyScoreFilter,
+    };
+    sessionStorage.setItem('settlekar_search_state', JSON.stringify(stateToSave));
+  }, [
+    searchAddress,
+    searchCenter,
+    viewMode,
+    minBudget,
+    maxBudget,
+    selectedTypes,
+    kmRange,
+    isIndependentFilter,
+    bachelorFriendlyFilter,
+    womenOnlyFilter,
+    isTopFloorFilter,
+    petFriendlyFilter,
+    relocationReadyFilter,
+    furnishingFilter,
+    safetyScoreFilter,
+  ]);
+
   // Load Google Maps Script
   useEffect(() => {
-    const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || 'AIzaSyD1bFpK1qmChgNVkhVwABceydgC4w55GYE';
+    const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY ;
     const unsubscribe = loadGoogleMaps(apiKey, () => {
       setMapsLoaded(true);
     });
@@ -107,10 +184,30 @@ export const SearchPage: React.FC = () => {
     });
   }, [mapsLoaded, userLocation]);
 
-  // Fetch all properties (live firestore only)
+  // Fetch all properties (live firestore only, with sessionStorage SWR caching)
   useEffect(() => {
     const loadProperties = async () => {
-      setLoading(true);
+      // 1. Try to load instantly from sessionStorage cache
+      const cached = sessionStorage.getItem('settlekar_cached_properties');
+      let hasCache = false;
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setProperties(parsed);
+            setLoading(false);
+            hasCache = true;
+          }
+        } catch (e) {
+          console.error('Error parsing cached properties:', e);
+        }
+      }
+
+      // If no cache, show loader; if we have cache, fetch silently in the background
+      if (!hasCache) {
+        setLoading(true);
+      }
+
       try {
         // Fetch live properties from Firestore using propertyService
         const liveProps = await propertyService.getAllProperties();
@@ -138,9 +235,12 @@ export const SearchPage: React.FC = () => {
           isVerified: p.isVerified,
           verifiedDetails: p.verifiedDetails,
           ratingCount: p.ratingCount,
+          overallscore: p.overallscore,
+          petFriendly: p.petFriendly,
         }));
 
         setProperties(formattedLive);
+        sessionStorage.setItem('settlekar_cached_properties', JSON.stringify(formattedLive));
       } catch (error) {
         console.error('Error fetching properties:', error);
       } finally {
@@ -252,6 +352,47 @@ export const SearchPage: React.FC = () => {
       result = result.filter((p: any) => p.isTopFloor === isTopFloorFilter);
     }
 
+    // 8. Pet Friendly Filter
+    if (petFriendlyFilter !== null) {
+      result = result.filter((p: any) => {
+        const descLower = (p.description || '').toLowerCase();
+        const featuresLower = (p.features || '').toLowerCase();
+        const hasPetKeywords = descLower.includes('pet') || descLower.includes('dog') || descLower.includes('cat') || featuresLower.includes('pet');
+        return p.petFriendly === petFriendlyFilter || (petFriendlyFilter ? hasPetKeywords : !hasPetKeywords);
+      });
+    }
+
+    // 9. Relocation Ready Filter (Furnished + Verified + Independent)
+    if (relocationReadyFilter !== null) {
+      result = result.filter((p: any) => {
+        const isFurnished = (p.furnishing || '').toLowerCase().includes('furnished') && !(p.furnishing || '').toLowerCase().includes('unfurnished');
+        const isVerified = p.isVerified === true;
+        const isIndependent = p.isIndependent !== false;
+        return relocationReadyFilter ? (isFurnished && isVerified && isIndependent) : true;
+      });
+    }
+
+    // 10. Safety Score Filter
+    if (safetyScoreFilter > 0) {
+      result = result.filter((p: any) => {
+        const score = p.overallscore !== undefined ? p.overallscore : parseFloat(p.rating || '0') * 20;
+        if (safetyScoreFilter === 2) return score >= 80;
+        if (safetyScoreFilter === 1) return score >= 60;
+        return true;
+      });
+    }
+
+    // 11. Furnishing Filter
+    if (furnishingFilter !== null) {
+      result = result.filter((p: any) => {
+        const furn = (p.furnishing || '').toLowerCase();
+        if (furnishingFilter === 'fully') return furn.includes('fully') || furn.includes('full');
+        if (furnishingFilter === 'semi') return furn.includes('semi');
+        if (furnishingFilter === 'unfurnished') return furn.includes('unfurnished') || furn === 'none' || furn === '';
+        return true;
+      });
+    }
+
     setFilteredProperties(result);
   }, [
     properties,
@@ -266,6 +407,10 @@ export const SearchPage: React.FC = () => {
     bachelorFriendlyFilter,
     womenOnlyFilter,
     isTopFloorFilter,
+    petFriendlyFilter,
+    relocationReadyFilter,
+    furnishingFilter,
+    safetyScoreFilter,
   ]);
 
   // Transition from Initial Form to Map View
@@ -277,6 +422,11 @@ export const SearchPage: React.FC = () => {
     maxBudget: number;
     selectedTypes: string[];
     kmRange: number;
+    bachelorFriendly: boolean | null;
+    petFriendly: boolean | null;
+    relocationReady: boolean | null;
+    isIndependent: boolean | null;
+    lifestyleId: string | null;
   }) => {
     setSearchAddress(searchData.address);
     setSearchCenter({ lat: searchData.lat, lng: searchData.lng });
@@ -284,6 +434,10 @@ export const SearchPage: React.FC = () => {
     setMaxBudget(searchData.maxBudget);
     setSelectedTypes(searchData.selectedTypes);
     setKmRange(searchData.kmRange);
+    setBachelorFriendlyFilter(searchData.bachelorFriendly);
+    setPetFriendlyFilter(searchData.petFriendly);
+    setRelocationReadyFilter(searchData.relocationReady);
+    setIsIndependentFilter(searchData.isIndependent);
     setViewMode('map');
   };
 
@@ -315,6 +469,9 @@ export const SearchPage: React.FC = () => {
         isOpen={isSidebarOpen}
         onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
         searchAddress={searchAddress}
+        compareList={compareList}
+        onToggleCompare={handleToggleCompare}
+        onOpenCompareView={() => setIsCompareViewOpen(true)}
       />
 
       {/* Map Content Area */}
@@ -337,6 +494,10 @@ export const SearchPage: React.FC = () => {
           bachelorFriendly={bachelorFriendlyFilter}
           womenOnly={womenOnlyFilter}
           isTopFloor={isTopFloorFilter}
+          petFriendly={petFriendlyFilter}
+          relocationReady={relocationReadyFilter}
+          furnishingFilter={furnishingFilter}
+          safetyScoreFilter={safetyScoreFilter}
           onBudgetChange={(min, max) => {
             setMinBudget(min);
             setMaxBudget(max);
@@ -347,6 +508,10 @@ export const SearchPage: React.FC = () => {
           onBachelorFriendlyChange={setBachelorFriendlyFilter}
           onWomenOnlyChange={setWomenOnlyFilter}
           onTopFloorChange={setIsTopFloorFilter}
+          onPetFriendlyChange={setPetFriendlyFilter}
+          onRelocationReadyChange={setRelocationReadyFilter}
+          onFurnishingFilterChange={setFurnishingFilter}
+          onSafetyScoreFilterChange={setSafetyScoreFilter}
         />
 
         {/* Google Map component */}
@@ -366,6 +531,14 @@ export const SearchPage: React.FC = () => {
           </div>
         )}
       </div>
+
+      {isCompareViewOpen && (
+        <CompareView
+          properties={compareList}
+          onRemove={handleRemoveCompare}
+          onClose={() => setIsCompareViewOpen(false)}
+        />
+      )}
     </div>
   );
 };

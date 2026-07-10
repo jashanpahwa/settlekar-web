@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import styles from '../styles/LocationPage.module.css';
-import { locationPages, MockProperty } from '../utils/locationPages';
+import { locationPages, MockProperty, getNeighborhoodIntel } from '../utils/locationPages';
+import { NeighborhoodIntelSection } from '../components/Landing/NeighborhoodIntelSection';
 import logoImage from '/logo.png';
 import NotFound from './NotFound';
 import { propertyService } from '../services/propertyService';
@@ -426,6 +427,15 @@ const LocationPage: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* Neighborhood Intelligence Section */}
+      {pageData && (
+        <NeighborhoodIntelSection
+          locality={pageData.locality}
+          city={pageData.city}
+          intel={getNeighborhoodIntel(pageData.slug, pageData.locality)}
+        />
+      )}
 
       {/* Property Listings Section */}
       <section id="listings" className={styles.listingsSection}>

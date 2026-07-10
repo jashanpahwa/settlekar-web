@@ -14,6 +14,11 @@ interface SearchInitialFormProps {
     maxBudget: number;
     selectedTypes: string[];
     kmRange: number;
+    bachelorFriendly: boolean | null;
+    petFriendly: boolean | null;
+    relocationReady: boolean | null;
+    isIndependent: boolean | null;
+    lifestyleId: string | null;
   }) => void;
 }
 
@@ -30,6 +35,94 @@ const PROPERTY_TYPES = [
   { id: 'shop', label: 'Shop' },
 ];
 
+const LIFESTYLES = [
+  {
+    id: 'office',
+    label: 'Office Commute',
+    description: 'Close to hubs, low transit time',
+    icon: '💼',
+    presets: {
+      kmRange: 5,
+      selectedTypes: ['1bhk', '2bhk', 'studio'],
+      bachelorFriendly: null,
+      petFriendly: null,
+      relocationReady: null,
+      independent: null,
+    }
+  },
+  {
+    id: 'family',
+    label: 'Family-Friendly',
+    description: 'Safe areas, spacious configurations',
+    icon: '👨‍👩‍👧‍👦',
+    presets: {
+      kmRange: 15,
+      selectedTypes: ['2bhk', '3bhk', '4bhk', 'villa'],
+      bachelorFriendly: false,
+      petFriendly: null,
+      relocationReady: null,
+      independent: true,
+    }
+  },
+  {
+    id: 'bachelor',
+    label: 'Bachelor-Friendly',
+    description: 'Societies open to single renters',
+    icon: '🙋‍♂️',
+    presets: {
+      kmRange: 10,
+      selectedTypes: ['1rk', '1bhk', 'studio', 'pg'],
+      bachelorFriendly: true,
+      petFriendly: null,
+      relocationReady: null,
+      independent: null,
+    }
+  },
+  {
+    id: 'pet',
+    label: 'Pet-Friendly',
+    description: 'Homes with pets allowed policies',
+    icon: '🐾',
+    presets: {
+      kmRange: 15,
+      selectedTypes: ['2bhk', '3bhk', 'villa', 'apartment'],
+      bachelorFriendly: null,
+      petFriendly: true,
+      relocationReady: null,
+      independent: null,
+    }
+  },
+  {
+    id: 'relocation',
+    label: 'Relocation Ready',
+    description: 'Verified direct owners, fully furnished',
+    icon: '📦',
+    presets: {
+      kmRange: 15,
+      selectedTypes: ['1bhk', '2bhk', 'apartment', 'studio'],
+      bachelorFriendly: null,
+      petFriendly: null,
+      relocationReady: true,
+      independent: null,
+    }
+  },
+  {
+    id: 'student',
+    label: 'Student / College',
+    description: 'Budget-friendly studio/PGs near campuses',
+    icon: '🎓',
+    presets: {
+      kmRange: 8,
+      selectedTypes: ['1rk', '1bhk', 'studio', 'pg'],
+      bachelorFriendly: true,
+      petFriendly: null,
+      relocationReady: null,
+      independent: null,
+      maxBudget: 25000,
+    }
+  }
+];
+
 export const SearchInitialForm: React.FC<SearchInitialFormProps> = ({
   mapsLoaded,
   initialAddress,
@@ -43,6 +136,13 @@ export const SearchInitialForm: React.FC<SearchInitialFormProps> = ({
   const [kmRange, setKmRange] = useState(15);
   const [error, setError] = useState('');
   const [locating, setLocating] = useState(false);
+
+  // Lifestyle Presets States
+  const [selectedLifestyle, setSelectedLifestyle] = useState<string | null>(null);
+  const [bachelorFriendly, setBachelorFriendly] = useState<boolean | null>(null);
+  const [petFriendly, setPetFriendly] = useState<boolean | null>(null);
+  const [relocationReady, setRelocationReady] = useState<boolean | null>(null);
+  const [isIndependent, setIsIndependent] = useState<boolean | null>(null);
 
   // Sync address with initialAddress from parent (e.g. silent GPS resolution)
   useEffect(() => {
@@ -130,12 +230,37 @@ export const SearchInitialForm: React.FC<SearchInitialFormProps> = ({
     );
   };
 
+  const handleLifestyleSelect = (life: typeof LIFESTYLES[number]) => {
+    if (selectedLifestyle === life.id) {
+      setSelectedLifestyle(null);
+      setBachelorFriendly(null);
+      setPetFriendly(null);
+      setRelocationReady(null);
+      setIsIndependent(null);
+    } else {
+      setSelectedLifestyle(life.id);
+      
+      // Apply presets
+      if (life.presets.kmRange !== undefined) setKmRange(life.presets.kmRange);
+      if (life.presets.selectedTypes !== undefined) setSelectedTypes(life.presets.selectedTypes);
+      if (life.presets.bachelorFriendly !== undefined) setBachelorFriendly(life.presets.bachelorFriendly);
+      if (life.presets.petFriendly !== undefined) setPetFriendly(life.presets.petFriendly);
+      if (life.presets.relocationReady !== undefined) setRelocationReady(life.presets.relocationReady);
+      if (life.presets.independent !== undefined) setIsIndependent(life.presets.independent);
+      if (life.id === 'student' && life.presets.maxBudget !== undefined) {
+        setMinBudget(5000);
+        setMaxBudget(life.presets.maxBudget);
+      }
+    }
+  };
+
   const handleTypeToggle = (typeId: string) => {
     setSelectedTypes((prev) =>
       prev.includes(typeId)
         ? prev.filter((id) => id !== typeId)
         : [...prev, typeId]
     );
+    setSelectedLifestyle(null); // Clear lifestyle preset if user manually deviates
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -161,6 +286,11 @@ export const SearchInitialForm: React.FC<SearchInitialFormProps> = ({
             maxBudget,
             selectedTypes,
             kmRange,
+            bachelorFriendly,
+            petFriendly,
+            relocationReady,
+            isIndependent,
+            lifestyleId: selectedLifestyle,
           });
         } else {
           setError('Could not verify this address. Please select one from the dropdown.');
@@ -180,6 +310,11 @@ export const SearchInitialForm: React.FC<SearchInitialFormProps> = ({
       maxBudget,
       selectedTypes,
       kmRange,
+      bachelorFriendly,
+      petFriendly,
+      relocationReady,
+      isIndependent,
+      lifestyleId: selectedLifestyle,
     });
   };
 
@@ -223,6 +358,53 @@ export const SearchInitialForm: React.FC<SearchInitialFormProps> = ({
           <div className="absolute bottom-0 left-0 w-32 h-32 bg-slate-200/20 rounded-full blur-3xl -ml-16 -mb-16 pointer-events-none"></div>
 
           <form onSubmit={handleSubmit} className="space-y-8 relative z-10">
+            {/* Lifestyle Selector */}
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <label className="block text-sm font-semibold text-slate-800">
+                  Select your Lifestyle Focus
+                </label>
+                {selectedLifestyle && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedLifestyle(null);
+                      setBachelorFriendly(null);
+                      setPetFriendly(null);
+                      setRelocationReady(null);
+                      setIsIndependent(null);
+                    }}
+                    className="text-xs text-primary font-bold hover:underline cursor-pointer"
+                  >
+                    Reset Preset
+                  </button>
+                )}
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {LIFESTYLES.map((life) => {
+                  const isSelected = selectedLifestyle === life.id;
+                  return (
+                    <button
+                      type="button"
+                      key={life.id}
+                      onClick={() => handleLifestyleSelect(life)}
+                      className={`p-4 rounded-2xl border text-left transition-all duration-300 cursor-pointer flex flex-col items-start space-y-2 group active:scale-[0.98] ${
+                        isSelected
+                          ? 'bg-[#0A2540] border-[#0A2540] text-white shadow-lg shadow-[#0A2540]/20'
+                          : 'bg-slate-50/50 hover:bg-slate-50 border-slate-200 text-slate-800'
+                      }`}
+                    >
+                      <span className="text-2xl group-hover:scale-110 transition-transform duration-200">{life.icon}</span>
+                      <div>
+                        <div className={`text-xs font-bold ${isSelected ? 'text-white' : 'text-slate-900'}`}>{life.label}</div>
+                        <div className={`text-[10px] leading-tight font-medium mt-0.5 ${isSelected ? 'text-slate-300' : 'text-slate-500'}`}>{life.description}</div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
             {/* Address Search Field */}
             <div className="space-y-2.5">
               <label className="block text-sm font-semibold text-slate-800">

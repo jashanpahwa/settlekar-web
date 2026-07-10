@@ -62,17 +62,13 @@ const DownloadSection: React.FC = () => {
 
         {/* Desktop View: Action Cards Grid */}
         <div className="hidden md:grid md:grid-cols-3 gap-6 md:gap-8 w-full max-w-[1200px] mb-16">
-          {cards.map((card, index) => {
+          {cards.map((card) => {
             const isExternal = card.actionUrl.startsWith('http');
             const LinkComponent = 'a';
 
             return (
               <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.1, ease: 'easeOut' }}
+               
                 className={`group relative bg-[#111113] rounded-[32px] border border-white/5 p-8 md:p-10 min-h-[360px] w-full flex flex-col justify-between overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:border-white/15 ${card.glowColor}`}
               >
                 {/* Glow Background gradient rising from bottom */}

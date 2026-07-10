@@ -3,6 +3,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { propertyService, PropertyData } from '../services/propertyService';
 import { inquiryService } from '../services/inquiryService';
 import { ratingService } from '../services/ratingService';
+import { wishlistService } from '../services/wishlistService';
 import { auth } from '../firebase';
 import logoImage from '/logo.png';
 import styles from '../styles/PropertyDetailPage.module.css';
@@ -360,6 +361,49 @@ const PropertyDetailPage: React.FC = () => {
   const [ratingCount, setRatingCount] = useState<number>(0);
   const [ratingAvg, setRatingAvg] = useState<string>('5.0');
   const [submittingRating, setSubmittingRating] = useState(false);
+  const [inWishlist, setInWishlist] = useState(false);
+  const [togglingWishlist, setTogglingWishlist] = useState(false);
+
+  // Listen to auth state to check if property is in wishlist
+  useEffect(() => {
+    if (!id) return;
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        try {
+          const res = await wishlistService.isInWishlist(user.uid, id);
+          setInWishlist(res.exists);
+        } catch (err) {
+          console.error('Error checking wishlist status:', err);
+        }
+      } else {
+        setInWishlist(false);
+      }
+    });
+    return () => unsubscribe();
+  }, [id]);
+
+  const handleToggleWishlist = async () => {
+    if (!id) return;
+    if (!auth.currentUser) {
+      alert('Please sign in to save properties to your wishlist.');
+      navigate('/dashboard');
+      return;
+    }
+    setTogglingWishlist(true);
+    try {
+      if (inWishlist) {
+        await wishlistService.removeFromWishlist(auth.currentUser.uid, id);
+        setInWishlist(false);
+      } else {
+        await wishlistService.addToWishlist(auth.currentUser.uid, id);
+        setInWishlist(true);
+      }
+    } catch (err: any) {
+      alert(err.message || 'Failed to update wishlist.');
+    } finally {
+      setTogglingWishlist(false);
+    }
+  };
 
   const openLightbox = (i: number) => { setLbIndex(i); setLbOpen(true); };
   const closeLightbox = () => setLbOpen(false);
@@ -656,7 +700,18 @@ const PropertyDetailPage: React.FC = () => {
                 </div>
               )}
 
-              <h1 className={styles.propertyTitle}>{property.title}</h1>
+              <div className={styles.titleWithWishlist}>
+                <h1 className={styles.propertyTitle}>{property.title}</h1>
+                <button
+                  onClick={handleToggleWishlist}
+                  disabled={togglingWishlist}
+                  className={`${styles.wishlistBtn} ${inWishlist ? styles.inWishlist : ''}`}
+                  title={inWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
+                >
+                  <span className={styles.wishlistIcon}>{inWishlist ? '❤️' : '🤍'}</span>
+                  <span>{inWishlist ? 'Wishlisted' : 'Save'}</span>
+                </button>
+              </div>
 
               <div className={styles.locationRow}>
                 <span>📍</span>

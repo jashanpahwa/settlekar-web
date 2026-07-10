@@ -36,6 +36,103 @@ export interface MockProperty {
   confidence?: number;
 }
 
+export interface NeighborhoodIntelData {
+  rentBand: { min: number; max: number };
+  commuteTimes: { label: string; minutes: number }[];
+  furnishingBreakdown: { fully: number; semi: number; unfurnished: number };
+  transitAccess: { metro: boolean; bus: boolean; auto: boolean; cab: boolean };
+  essentials: string[];
+  mapCenter: { lat: number; lng: number };
+}
+
+export const getNeighborhoodIntel = (slug: string, _locality: string): NeighborhoodIntelData => {
+  const s = slug.toLowerCase();
+  if (s.includes('vaishali') || s.includes('vaishali-nagar')) {
+    return {
+      rentBand: { min: 8000, max: 32000 },
+      commuteTimes: [
+        { label: 'C-Scheme Business Hub', minutes: 15 },
+        { label: 'Jaipur Junction Railway Station', minutes: 12 },
+        { label: 'Sindhi Camp Bus Stand', minutes: 14 }
+      ],
+      furnishingBreakdown: { fully: 35, semi: 50, unfurnished: 15 },
+      transitAccess: { metro: false, bus: true, auto: true, cab: true },
+      essentials: ['Nursery Schools', 'Hospitals (Shalby)', 'National Handloom Market', 'Gyms & Cafes'],
+      mapCenter: { lat: 26.9076, lng: 75.7363 }
+    };
+  }
+  if (s.includes('malviya') || s.includes('malviya-nagar')) {
+    return {
+      rentBand: { min: 9000, max: 38000 },
+      commuteTimes: [
+        { label: 'Sitapura Industrial Area', minutes: 10 },
+        { label: 'Jaipur Airport', minutes: 8 },
+        { label: 'WTP Mall', minutes: 3 }
+      ],
+      furnishingBreakdown: { fully: 45, semi: 40, unfurnished: 15 },
+      transitAccess: { metro: false, bus: true, auto: true, cab: true },
+      essentials: ['Apex Hospital', 'MNIT Campus', 'Gaurav Tower Market', 'Jawahar Circle Park'],
+      mapCenter: { lat: 26.8531, lng: 75.8041 }
+    };
+  }
+  if (s.includes('jagatpura')) {
+    return {
+      rentBand: { min: 7000, max: 28000 },
+      commuteTimes: [
+        { label: 'Sitapura Industrial Area', minutes: 8 },
+        { label: 'Jagatpura Railway Station', minutes: 5 },
+        { label: 'Jaipur Airport', minutes: 12 }
+      ],
+      furnishingBreakdown: { fully: 30, semi: 55, unfurnished: 15 },
+      transitAccess: { metro: false, bus: true, auto: true, cab: true },
+      essentials: ['JNU Hospital', 'SKIT College', 'D-Mart Store', 'Local Markets'],
+      mapCenter: { lat: 26.8239, lng: 75.8647 }
+    };
+  }
+  if (s.includes('c-scheme')) {
+    return {
+      rentBand: { min: 18000, max: 75000 },
+      commuteTimes: [
+        { label: 'M.I. Road Commercial Hub', minutes: 5 },
+        { label: 'Jaipur Junction Railway Station', minutes: 8 },
+        { label: 'Civil Lines Metro Station', minutes: 6 }
+      ],
+      furnishingBreakdown: { fully: 60, semi: 30, unfurnished: 10 },
+      transitAccess: { metro: true, bus: true, auto: true, cab: true },
+      essentials: ['Fortis Escorts', 'Central Park', 'Premium Boutiques', 'Fine Dining Lounges'],
+      mapCenter: { lat: 26.9116, lng: 75.8022 }
+    };
+  }
+  if (s.includes('mansarovar')) {
+    return {
+      rentBand: { min: 7500, max: 30000 },
+      commuteTimes: [
+        { label: 'Mansarovar Metro Station', minutes: 5 },
+        { label: 'RIICO Industrial Area', minutes: 10 },
+        { label: 'Sindhi Camp', minutes: 18 }
+      ],
+      furnishingBreakdown: { fully: 32, semi: 52, unfurnished: 16 },
+      transitAccess: { metro: true, bus: true, auto: true, cab: true },
+      essentials: ['Metro Station Access', 'Saket Hospital', 'St. Wilfred College', 'Mansarovar Plaza'],
+      mapCenter: { lat: 26.8770, lng: 75.7634 }
+    };
+  }
+
+  // General Jaipur Fallback
+  return {
+    rentBand: { min: 8000, max: 35000 },
+    commuteTimes: [
+      { label: 'Railway Station', minutes: 15 },
+      { label: 'City Center (C-Scheme)', minutes: 15 },
+      { label: 'Airport', minutes: 25 }
+    ],
+    furnishingBreakdown: { fully: 35, semi: 48, unfurnished: 17 },
+    transitAccess: { metro: s.includes('mansarovar') || s.includes('c-scheme') || s.includes('civil-lines'), bus: true, auto: true, cab: true },
+    essentials: ['Local Supermarkets', 'Hospitals', 'Parks', 'Schools'],
+    mapCenter: { lat: 26.9124, lng: 75.7873 }
+  };
+};
+
 export interface LocationPageData {
   slug: string;
   keyword: string;
@@ -50,6 +147,7 @@ export interface LocationPageData {
   faqs: FaqItem[];
   nearbyLinks: NearbyLink[];
   properties: MockProperty[];
+  neighborhoodIntel?: NeighborhoodIntelData;
 }
 
 export const locationPages: LocationPageData[] = [

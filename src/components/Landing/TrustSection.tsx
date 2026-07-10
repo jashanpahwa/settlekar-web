@@ -46,10 +46,7 @@ export const TrustSection: React.FC = () => {
         {/* ── Header ── */}
         <div className="mb-16">
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
             className="flex flex-col items-start gap-4"
           >
            
@@ -102,10 +99,7 @@ export const TrustSection: React.FC = () => {
 
         {/* ── CTA banner ── */}
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7, delay: 0.4 }}
+         
           className="relative rounded-[24px] overflow-hidden border border-red-950/50 bg-[#130a0a] flex flex-col md:flex-row items-center justify-between gap-6 px-8 py-7"
         >
           <div className="absolute inset-0 bg-gradient-to-r from-red-950/20 to-transparent pointer-events-none" />

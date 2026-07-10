@@ -258,32 +258,32 @@ const LandingPage: React.FC = () => {
         </div>
 
         {/* ---- HERO SPLIT LAYOUT ---- */}
-        <div className="absolute z-5 inset-0 grid grid-cols-1 grid-rows-1 items-center pt-20 px-6 pb-6 md:grid-cols-2 md:pt-[90px] md:px-10 md:pb-8 md:gap-10 lg:grid-cols-[55fr_45fr] lg:pt-[100px] lg:px-16 lg:pb-10 lg:gap-[60px]">
+        <div className="absolute z-5 inset-0 flex flex-col justify-between pt-40 px-6 pb-3 md:grid md:grid-cols-2 md:grid-rows-1 md:items-center md:pt-[90px] md:px-10 md:pb-8 md:gap-10 lg:grid-cols-[55fr_45fr] lg:pt-[100px] lg:px-16 lg:pb-10 lg:gap-[60px]">
 
           {/* LEFT: Text Content */}
           <div className="flex flex-col items-start justify-center">
 
-            <div className="flex items-center gap-2 text-white/70 text-[11px] sm:text-xs tracking-[0.22em] uppercase font-medium mb-3 sm:mb-4 animate-fade-up">
+            <div className="flex items-center gap-2 text-white/70 text-[11px] sm:text-xs tracking-[0.22em] uppercase font-medium mb-3 sm:mb-4 ">
               <MapPin className="text-white/60 shrink-0" size={16} />
               <span>India's 1st Rental-Only Platform</span>
             </div>
 
             {/* Main Heading */}
-            <h1 className="flex flex-col mb-4 sm:mb-5 p-0 font-extrabold text-white leading-[0.93] tracking-tight uppercase animate-fade-up [animation-delay:0.2s]">
+            <h1 className="flex flex-col mb-4 sm:mb-5 p-0 font-extrabold text-white leading-[0.93] tracking-tight uppercase  ">
               <span className="block text-[clamp(2.4rem,6.5vw,5.5rem)]">Find.</span>
               <span className="block text-[clamp(2.4rem,6.5vw,5.5rem)]">Connect.</span>
               <span className="block text-[clamp(2.4rem,6.5vw,5.5rem)]">Settle.</span>
             </h1>
 
             {/* Subtext */}
-            <p className="text-white/72 text-sm sm:text-[0.9375rem] leading-relaxed max-w-[480px] mb-4.5 sm:mb-6 animate-fade-up [animation-delay:0.4s]">
+            <p className="text-white/72 text-sm sm:text-[0.9375rem] leading-relaxed max-w-[480px] mb-4.5 sm:mb-6 ">
               We connect verified property owners with tenants<br />
               through smart location-based search —{' '}
               <strong className="text-white font-semibold">true transparency, zero hassle.</strong>
             </p>
 
             {/* CTA Row */}
-            <div className="flex flex-wrap items-center gap-2.5 sm:gap-3.5 mb-6 sm:mb-8 lg:mb-9 animate-fade-up [animation-delay:0.6s]">
+            <div className="flex flex-wrap items-center gap-2.5 sm:gap-3.5 mb-6 sm:mb-8 lg:mb-9 ">
               <Link
                 to="/search"
                 className="inline-flex items-center gap-2 no-underline text-[11px] sm:text-xs font-bold tracking-[0.14em] uppercase py-3.25 px-5.5 sm:py-3.75 sm:px-6.5 rounded transition-all duration-200 bg-white text-[#0a1628] hover:bg-white/92 hover:-translate-y-0.5 hover:shadow-lg"
@@ -305,7 +305,7 @@ const LandingPage: React.FC = () => {
             </div>
 
             {/* Stats Row */}
-            <div className="flex flex-wrap gap-5 sm:gap-9 lg:gap-13 animate-fade-up [animation-delay:0.8s]">
+            <div className="flex flex-wrap gap-5 sm:gap-9 lg:gap-13  ">
               <div className="flex flex-col">
                 <span className="text-[clamp(1.5rem,3.5vw,2.75rem)] font-bold text-white tracking-tight leading-none">10K+</span>
                 <span className="text-white/50 text-[9.6px] sm:text-[11px] tracking-widest uppercase font-medium mt-1.5">Properties Listed</span>
@@ -323,9 +323,9 @@ const LandingPage: React.FC = () => {
           </div>
 
           {/* RIGHT: Phone Mockup */}
-          <div className="hidden md:flex items-center justify-center relative animate-fade-up [animation-delay:0.4s]">
-            <div className="absolute w-[320px] h-[480px] bg-[radial-gradient(ellipse,rgba(37,99,235,0.4)_0%,transparent_70%)] rounded-full blur-[48px] z-0 pointer-events-none" />
-            <div className="relative z-1 animate-phone-float drop-shadow-[0_30px_60px_rgba(0,0,0,0.5)] drop-shadow-[0_0_40px_rgba(37,99,235,0.25)]">
+          <div className="flex justify-center items-start overflow-hidden h-[300px] sm:h-[300px] md:h-auto w-full md:w-auto relative scale-[0.7] sm:scale-[0.85] md:scale-100 origin-top z-0 md:z-1">
+            <div className="" />
+            <div className="relative z-1 ">
               <div className="w-[240px] h-[480px] lg:w-[280px] lg:h-[560px] xl:w-[300px] xl:h-[600px] bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f3460] rounded-[36px] p-2 shadow-[0_0_0_1.5px_rgba(255,255,255,0.08),0_0_0_3px_rgba(37,99,235,0.15),0_20px_40px_rgba(0,0,0,0.5),inset_0_1px_3px_rgba(255,255,255,0.12)] relative">
                 <div className="absolute top-2 left-1/2 -translate-x-1/2 w-[110px] h-6 bg-black rounded-b-2xl z-10"></div>
                 <div className="absolute top-[13px] left-1/2 -translate-x-1/2 w-[50px] h-[5px] bg-[#222] rounded-[3px] z-11"></div>
@@ -340,7 +340,7 @@ const LandingPage: React.FC = () => {
                     height={1024}
                   />
                 </div>
-                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-[120px] h-1 bg-white/25 rounded-[2px]"></div>
+                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[120px] h-1 bg-white/25 rounded-[2px]"></div>
               </div>
             </div>
           </div>
@@ -348,9 +348,9 @@ const LandingPage: React.FC = () => {
         </div>
 
         {/* Scroll hint */}
-        <div className="absolute bottom-7 right-8 md:bottom-9 md:right-14 z-5 flex flex-col items-center gap-1.5 animate-fade-in [animation-delay:1.2s]">
+        <div className="absolute bottom-7 right-8 md:bottom-9 md:right-14 z-5 flex flex-col items-center gap-1.5 ">
           <div className="w-[22px] h-9 border border-white/35 rounded-xl flex justify-center pt-1.5">
-            <div className="w-1 h-2 bg-white/60 rounded-sm animate-scroll-bounce" />
+            <div className="w-1 h-2 bg-white/60 rounded-sm " />
           </div>
         </div>
 

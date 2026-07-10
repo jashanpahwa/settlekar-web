@@ -253,6 +253,59 @@
 .tagOrange  { background: rgba(249,115,22,0.09); color: #ea580c; border-color: rgba(249,115,22,0.2); }
 .tagSlate   { background: rgba(100,116,139,0.09); color: #475569; border-color: rgba(100,116,139,0.2); }
 
+.titleWithWishlist {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.titleWithWishlist .propertyTitle {
+  margin: 0;
+  flex: 1;
+}
+
+.wishlistBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-radius: 10px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.wishlistBtn:hover {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+
+.wishlistBtn:active {
+  transform: scale(0.96);
+}
+
+.wishlistBtn.inWishlist {
+  background: #fee2e2;
+  border-color: #fca5a5;
+  color: #991b1b;
+}
+
+.wishlistBtn.inWishlist:hover {
+  background: #fecaca;
+}
+
+.wishlistIcon {
+  font-size: 1rem;
+}
+
 .propertyTitle {
   font-size: 1.9rem;
   font-weight: 800;

@@ -29,10 +29,7 @@ export const NeighborhoodScoreSection: React.FC = () => {
         {/* ── Header ── */}
         <div className="mb-16 grid grid-cols-1 md:grid-cols-2 gap-8 items-end">
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+           
           >
            
             <h2 className="text-white text-4xl md:text-[52px] font-extrabold tracking-tight leading-tight">
@@ -49,10 +46,7 @@ export const NeighborhoodScoreSection: React.FC = () => {
             </h2>
           </motion.div>
           <motion.p
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.1 }}
+           
             className="text-gray-400 text-sm md:text-base leading-relaxed md:text-right"
           >
             Every SettleKar listing is automatically scored across <strong className="text-gray-300">11 livability dimensions</strong> using real-time neighbourhood data with LiveableIndia® — so you move in with full confidence.

@@ -33,6 +33,9 @@ interface SearchSidebarProps {
   isOpen: boolean;
   onToggle: () => void;
   searchAddress: string;
+  compareList: SearchProperty[];
+  onToggleCompare: (property: SearchProperty) => void;
+  onOpenCompareView: () => void;
 }
 
 export const SearchSidebar: React.FC<SearchSidebarProps> = ({
@@ -43,6 +46,9 @@ export const SearchSidebar: React.FC<SearchSidebarProps> = ({
   isOpen,
   onToggle,
   searchAddress,
+  compareList,
+  onToggleCompare,
+  onOpenCompareView,
 }) => {
   const sidebarContentRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -175,10 +181,7 @@ export const SearchSidebar: React.FC<SearchSidebarProps> = ({
                         <h3 className="font-bold text-slate-800 text-xs md:text-sm line-clamp-1 group-hover:text-primary transition-colors duration-200">
                           {p.title}
                         </h3>
-                        <p className="text-[10px] text-slate-500 font-medium truncate flex items-center">
-                          <MapPin className="h-2.5 w-2.5 mr-0.5 shrink-0 text-slate-400" />
-                          <span>{p.address || p.location}</span>
-                        </p>
+                       
                         <p className="text-[10px] text-slate-400 font-medium truncate">
                           {p.features}
                         </p>
@@ -209,14 +212,30 @@ export const SearchSidebar: React.FC<SearchSidebarProps> = ({
                       {/* Footer */}
                       <div className="flex items-center justify-between border-t border-slate-50 pt-2.5">
                         <span className="font-bold text-sm text-slate-900">{displayPrice}</span>
-                        <Link
-                          to={`/property/${p.id.toString().replace('mock-', '')}`}
-                          onClick={(e) => e.stopPropagation()}
-                          className="flex items-center space-x-1 px-2.5 py-1.5 rounded-lg bg-primary/5 text-primary hover:bg-primary hover:text-white text-[10px] font-bold transition-all duration-200"
-                        >
-                          <MessageCircle className="h-3 w-3" />
-                          <span>Details</span>
-                        </Link>
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onToggleCompare(p);
+                            }}
+                            className={`px-2 py-1.5 rounded-lg border text-[10px] font-bold transition-all active:scale-95 cursor-pointer ${
+                              compareList.some((item) => item.id === p.id)
+                                ? 'bg-[#0a2540] border-[#0a2540] text-white'
+                                : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                            }`}
+                          >
+                            {compareList.some((item) => item.id === p.id) ? '✓ Added' : '+ Compare'}
+                          </button>
+                          <Link
+                            to={`/property/${p.id.toString().replace('mock-', '')}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-lg bg-primary/5 text-primary hover:bg-primary hover:text-white text-[10px] font-bold transition-all duration-200"
+                          >
+                            <MessageCircle className="h-3 w-3" />
+                            <span>Details</span>
+                          </Link>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -225,6 +244,23 @@ export const SearchSidebar: React.FC<SearchSidebarProps> = ({
             })
           )}
         </div>
+
+        {/* Sticky Compare Bar */}
+        {compareList.length > 0 && (
+          <div className="p-4 border-t border-slate-100 bg-slate-50 flex items-center justify-between animate-in slide-in-from-bottom duration-300">
+            <div className="flex flex-col">
+              <span className="text-xs font-bold text-slate-800">{compareList.length} selected</span>
+              <span className="text-[10px] text-slate-400 font-medium">Select 2 to 5</span>
+            </div>
+            <button
+              onClick={onOpenCompareView}
+              disabled={compareList.length < 2}
+              className="px-4 py-2 bg-[#0A2540] text-white hover:bg-[#0A2540]/90 text-xs font-bold rounded-xl shadow-md transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            >
+              Compare Side-by-Side →
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

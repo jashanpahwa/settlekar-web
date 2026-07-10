@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { IndianRupee, Home, MapPin, Users, UserCheck, Layers } from 'lucide-react';
+import { IndianRupee, Home, MapPin, Users, UserCheck, Layers, Shield, Heart, Package, Armchair } from 'lucide-react';
 import { DualRangeSlider } from './DualRangeSlider';
 
 interface FloatingFilterBarProps {
@@ -11,6 +11,10 @@ interface FloatingFilterBarProps {
   bachelorFriendly: boolean | null;
   womenOnly: boolean | null;
   isTopFloor: boolean | null;
+  petFriendly: boolean | null;
+  relocationReady: boolean | null;
+  furnishingFilter: string | null;
+  safetyScoreFilter: number;
   onBudgetChange: (min: number, max: number) => void;
   onTypesChange: (types: string[]) => void;
   onKmRangeChange: (km: number) => void;
@@ -18,6 +22,10 @@ interface FloatingFilterBarProps {
   onBachelorFriendlyChange: (val: boolean | null) => void;
   onWomenOnlyChange: (val: boolean | null) => void;
   onTopFloorChange: (val: boolean | null) => void;
+  onPetFriendlyChange: (val: boolean | null) => void;
+  onRelocationReadyChange: (val: boolean | null) => void;
+  onFurnishingFilterChange: (val: string | null) => void;
+  onSafetyScoreFilterChange: (val: number) => void;
 }
 
 const PROPERTY_TYPES = [
@@ -42,6 +50,10 @@ export const FloatingFilterBar: React.FC<FloatingFilterBarProps> = ({
   bachelorFriendly,
   womenOnly,
   isTopFloor,
+  petFriendly,
+  relocationReady,
+  furnishingFilter,
+  safetyScoreFilter,
   onBudgetChange,
   onTypesChange,
   onKmRangeChange,
@@ -49,8 +61,12 @@ export const FloatingFilterBar: React.FC<FloatingFilterBarProps> = ({
   onBachelorFriendlyChange,
   onWomenOnlyChange,
   onTopFloorChange,
+  onPetFriendlyChange,
+  onRelocationReadyChange,
+  onFurnishingFilterChange,
+  onSafetyScoreFilterChange,
 }) => {
-  const [activeDropdown, setActiveDropdown] = useState<'budget' | 'bhk' | 'distance' | null>(null);
+  const [activeDropdown, setActiveDropdown] = useState<'budget' | 'bhk' | 'distance' | 'furnishing' | 'safety' | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Close dropdown when clicking outside
@@ -72,7 +88,7 @@ export const FloatingFilterBar: React.FC<FloatingFilterBarProps> = ({
     );
   };
 
-  const isFilterActive = (type: 'budget' | 'bhk' | 'distance') => {
+  const isFilterActive = (type: 'budget' | 'bhk' | 'distance' | 'furnishing' | 'safety') => {
     if (type === 'budget') {
       return minBudget !== 5000 || maxBudget !== 120000;
     }
@@ -81,6 +97,12 @@ export const FloatingFilterBar: React.FC<FloatingFilterBarProps> = ({
     }
     if (type === 'distance') {
       return kmRange !== 15;
+    }
+    if (type === 'furnishing') {
+      return furnishingFilter !== null;
+    }
+    if (type === 'safety') {
+      return safetyScoreFilter > 0;
     }
     return false;
   };
@@ -291,6 +313,135 @@ export const FloatingFilterBar: React.FC<FloatingFilterBarProps> = ({
         <Layers className="h-3.5 w-3.5" />
         <span>{isTopFloor === null ? 'Floor' : isTopFloor ? 'Top Floor' : 'Other Floor'}</span>
       </button>
+
+      {/* 8. Pet Friendly Pill */}
+      <button
+        onClick={() => onPetFriendlyChange(petFriendly === null ? true : petFriendly ? false : null)}
+        className={`px-3.5 py-2.5 rounded-xl border text-xs font-bold transition-all duration-200 cursor-pointer shadow-md flex items-center space-x-1.5 active:scale-95 ${
+          petFriendly !== null
+            ? 'bg-primary border-primary text-white'
+            : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+        }`}
+      >
+        <Heart className="h-3.5 w-3.5" />
+        <span>{petFriendly === null ? 'Pets Allowed' : petFriendly ? 'Pet Friendly' : 'No Pets'}</span>
+      </button>
+
+      {/* 9. Relocation Ready Pill */}
+      <button
+        onClick={() => onRelocationReadyChange(relocationReady === null ? true : relocationReady ? false : null)}
+        className={`px-3.5 py-2.5 rounded-xl border text-xs font-bold transition-all duration-200 cursor-pointer shadow-md flex items-center space-x-1.5 active:scale-95 ${
+          relocationReady !== null
+            ? 'bg-primary border-primary text-white'
+            : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+        }`}
+      >
+        <Package className="h-3.5 w-3.5" />
+        <span>{relocationReady === null ? 'Relocation-Ready' : relocationReady ? 'Ready to Move' : 'Standard'}</span>
+      </button>
+
+      {/* 10. Furnishing Dropdown */}
+      <div className="relative">
+        <button
+          onClick={() => setActiveDropdown(activeDropdown === 'furnishing' ? null : 'furnishing')}
+          className={`px-3.5 py-2.5 rounded-xl border text-xs font-bold transition-all duration-200 cursor-pointer shadow-md flex items-center space-x-1.5 active:scale-95 ${
+            isFilterActive('furnishing') || activeDropdown === 'furnishing'
+              ? 'bg-primary border-primary text-white'
+              : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+          }`}
+        >
+          <Armchair className="h-3.5 w-3.5" />
+          <span>
+            {furnishingFilter === null
+              ? 'Furnishing'
+              : furnishingFilter === 'fully'
+              ? 'Fully Furnished'
+              : furnishingFilter === 'semi'
+              ? 'Semi Furnished'
+              : 'Unfurnished'}
+          </span>
+        </button>
+
+        {activeDropdown === 'furnishing' && (
+          <div className="absolute top-full left-0 mt-2 w-[calc(100vw-2rem)] sm:w-60 bg-white rounded-2xl border border-slate-100 shadow-xl p-3.5 z-50 space-y-1 flex flex-col">
+            <h4 className="font-bold text-slate-800 text-sm px-2 pb-1.5 border-b border-slate-50">Furnishing Status</h4>
+            {[
+              { id: null, label: 'Any Furnishing' },
+              { id: 'fully', label: 'Fully Furnished' },
+              { id: 'semi', label: 'Semi Furnished' },
+              { id: 'unfurnished', label: 'Unfurnished' },
+            ].map((option) => {
+              const isSelected = furnishingFilter === option.id;
+              return (
+                <button
+                  key={option.label || 'any'}
+                  onClick={() => {
+                    onFurnishingFilterChange(option.id);
+                    setActiveDropdown(null);
+                  }}
+                  className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold transition-all duration-150 cursor-pointer ${
+                    isSelected
+                      ? 'bg-primary/5 text-primary font-bold'
+                      : 'hover:bg-slate-50 text-slate-600'
+                  }`}
+                >
+                  {option.label}
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* 11. Safety/Score Dropdown */}
+      <div className="relative">
+        <button
+          onClick={() => setActiveDropdown(activeDropdown === 'safety' ? null : 'safety')}
+          className={`px-3.5 py-2.5 rounded-xl border text-xs font-bold transition-all duration-200 cursor-pointer shadow-md flex items-center space-x-1.5 active:scale-95 ${
+            isFilterActive('safety') || activeDropdown === 'safety'
+              ? 'bg-primary border-primary text-white'
+              : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+          }`}
+        >
+          <Shield className="h-3.5 w-3.5" />
+          <span>
+            {safetyScoreFilter === 0
+              ? 'Livability'
+              : safetyScoreFilter === 2
+              ? 'Highly Safe (80+)'
+              : 'Safe (60+)'}
+          </span>
+        </button>
+
+        {activeDropdown === 'safety' && (
+          <div className="absolute top-full left-0 mt-2 w-[calc(100vw-2rem)] sm:w-64 bg-white rounded-2xl border border-slate-100 shadow-xl p-3.5 z-50 space-y-1 flex flex-col">
+            <h4 className="font-bold text-slate-800 text-sm px-2 pb-1.5 border-b border-slate-50">Safety & Livability Score</h4>
+            {[
+              { id: 0, label: 'Any Rating' },
+              { id: 1, label: 'Standard Safe (60+ Score)' },
+              { id: 2, label: 'Premium Safe (80+ Score)' },
+            ].map((option) => {
+              const isSelected = safetyScoreFilter === option.id;
+              return (
+                <button
+                  key={option.label}
+                  onClick={() => {
+                    onSafetyScoreFilterChange(option.id);
+                    setActiveDropdown(null);
+                  }}
+                  className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold transition-all duration-150 cursor-pointer ${
+                    isSelected
+                      ? 'bg-primary/5 text-primary font-bold'
+                      : 'hover:bg-slate-50 text-slate-600'
+                  }`}
+                >
+                  {option.label}
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
