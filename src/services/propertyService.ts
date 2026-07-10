@@ -44,6 +44,10 @@ export interface PropertyData {
   pillars?: any | null;
   meta?: any | null;
   confidence?: any | null;
+  isVerified?: boolean;
+  verifiedDetails?: string[];
+  ratingCount?: number;
+  ratingSum?: number;
   createdBy?: string;
   createdAt?: any;
   updatedAt?: any;

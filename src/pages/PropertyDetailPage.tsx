@@ -2,10 +2,28 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { propertyService, PropertyData } from '../services/propertyService';
 import { inquiryService } from '../services/inquiryService';
+import { ratingService } from '../services/ratingService';
+import { auth } from '../firebase';
 import logoImage from '/logo.png';
 import styles from '../styles/PropertyDetailPage.module.css';
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
+
+const getFraudRiskDetails = (rating: number | string | undefined, score: number | null) => {
+  const numRating = rating ? parseFloat(String(rating)) : null;
+  const numScore = score != null ? Number(score) : null;
+
+  if ((numRating !== null && numRating >= 4.0) || (numScore !== null && numScore >= 75)) {
+    return { label: 'Verified & Secure', color: '#10b981', bg: 'rgba(16,185,129,0.1)', border: 'rgba(16,185,129,0.25)' };
+  }
+  if ((numRating !== null && numRating >= 3.0) || (numScore !== null && numScore >= 50)) {
+    return { label: 'Standard Check Required', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)', border: 'rgba(245,158,11,0.25)' };
+  }
+  if (numRating !== null || numScore !== null) {
+    return { label: 'Caution: High Risk Flag', color: '#ef4444', bg: 'rgba(239,68,68,0.1)', border: 'rgba(239,68,68,0.25)' };
+  }
+  return { label: 'Under Review', color: '#64748b', bg: 'rgba(100,116,139,0.1)', border: 'rgba(100,116,139,0.25)' };
+};
 
 // Returns a human-readable location string, stripping any raw Google Maps URLs
 const cleanLocation = (location?: string, address?: string, city?: string): string => {
@@ -52,96 +70,78 @@ interface SmartTag {
 
 const deriveSmartTags = (prop: PropertyData): SmartTag[] => {
   const tags: SmartTag[] = [];
-  const desc = (prop.description || '').toLowerCase();
-  const title = (prop.title || '').toLowerCase();
-  const combo = desc + ' ' + title;
+  const keywords: string[] = Array.isArray(prop.keywords) ? prop.keywords.map(k => String(k).toLowerCase()) : [];
   const type = (prop.propertyType || '').toLowerCase();
 
   // ── Property type tag ──
   if (type) {
-    const typeLabel = type.toUpperCase();
-    tags.push({ label: typeLabel, emoji: '🏠', variant: 'tagPurple' });
+    tags.push({ label: type.toUpperCase(), emoji: '🏠', variant: 'tagPurple' });
   }
 
   // ── Tenant-type tags ──
-  if (
-    combo.includes('bachelor') ||
-    combo.includes('boys') ||
-    combo.includes('males') ||
-    combo.includes('gents')
-  ) {
+  if (keywords.includes('bachelor friendly')) {
     tags.push({ label: 'Bachelor Friendly', emoji: '👨', variant: 'tagBlue' });
   }
 
-  if (
-    combo.includes('girls') ||
-    combo.includes('female') ||
-    combo.includes('ladies') ||
-    combo.includes('women')
-  ) {
-    tags.push({ label: 'Girls Friendly', emoji: '👩', variant: 'tagOrange' });
+  if (keywords.includes('women only') || keywords.includes('girls friendly') || keywords.includes('women')) {
+    tags.push({ label: 'Women Only', emoji: '👩', variant: 'tagOrange' });
   }
 
-  if (combo.includes('family') || combo.includes('families')) {
+  if (keywords.includes('family friendly') || keywords.includes('family')) {
     tags.push({ label: 'Family Friendly', emoji: '👨‍👩‍👧', variant: 'tagGreen' });
   }
 
-  if (combo.includes('student') || combo.includes('college') || combo.includes('university')) {
+  if (keywords.includes('student friendly') || keywords.includes('student')) {
     tags.push({ label: 'Student Friendly', emoji: '🎓', variant: 'tagBlue' });
   }
 
   // ── Brokerage tag ──
-  const brokerage = Number(prop.brokerage);
-  if (!isNaN(brokerage) && brokerage === 0) {
+  if (keywords.includes('zero brokerage') || keywords.includes('no brokerage') || Number(prop.brokerage) === 0) {
     tags.push({ label: 'Zero Brokerage', emoji: '🎉', variant: 'tagGreen' });
   }
 
   // ── Furnishing tag ──
-  const furnishing = (prop.furnishing || '').toLowerCase();
-  if (furnishing.includes('fully')) {
+  if (keywords.includes('fully furnished')) {
     tags.push({ label: 'Fully Furnished', emoji: '🛋️', variant: 'tagPurple' });
-  } else if (furnishing.includes('semi')) {
+  } else if (keywords.includes('semi-furnished') || keywords.includes('semi furnished')) {
     tags.push({ label: 'Semi-Furnished', emoji: '🪑', variant: 'tagSlate' });
-  } else if (furnishing.includes('unfurnished') || furnishing.includes('bare')) {
+  } else if (keywords.includes('unfurnished')) {
     tags.push({ label: 'Unfurnished', emoji: '📦', variant: 'tagSlate' });
   }
 
   // ── Independence tag ──
-  if (prop.isIndependent) {
+  if (keywords.includes('independent') || keywords.includes('independent house')) {
     tags.push({ label: 'Independent House', emoji: '🏡', variant: 'tagOrange' });
   }
 
-  // ── Amenity-based tags from description ──
-  if (combo.includes('parking') || combo.includes('car park')) {
+  // ── Location / Top Floor tag ──
+  if (keywords.includes('top floor')) {
+    tags.push({ label: 'Top Floor', emoji: '🏢', variant: 'tagPurple' });
+  }
+
+  // ── Amenity-based tags from keywords ──
+  if (keywords.includes('parking') || keywords.includes('car park')) {
     tags.push({ label: 'Parking Available', emoji: '🚗', variant: 'tagSlate' });
   }
 
-  if (combo.includes('lift') || combo.includes('elevator')) {
+  if (keywords.includes('lift') || keywords.includes('elevator')) {
     tags.push({ label: 'Lift', emoji: '🛗', variant: 'tagSlate' });
   }
 
-  if (combo.includes('wifi') || combo.includes('wi-fi') || combo.includes('internet')) {
+  if (keywords.includes('wifi') || keywords.includes('wi-fi') || keywords.includes('internet')) {
     tags.push({ label: 'WiFi Included', emoji: '📶', variant: 'tagBlue' });
   }
 
-  if (combo.includes('ac') || combo.includes('air condition') || combo.includes('air-condition')) {
+  if (keywords.includes('ac') || keywords.includes('air conditioned') || keywords.includes('air conditioning')) {
     tags.push({ label: 'Air Conditioned', emoji: '❄️', variant: 'tagBlue' });
   }
 
-  if (combo.includes('gym') || combo.includes('fitness')) {
+  if (keywords.includes('gym') || keywords.includes('fitness')) {
     tags.push({ label: 'Gym', emoji: '💪', variant: 'tagOrange' });
   }
 
-  if (combo.includes('pet') || combo.includes('dog') || combo.includes('cat')) {
+  if (keywords.includes('pet friendly') || keywords.includes('pets allowed')) {
     tags.push({ label: 'Pet Friendly', emoji: '🐾', variant: 'tagGreen' });
-  }
-
-  if (combo.includes('24') && (combo.includes('water') || combo.includes('supply'))) {
-    tags.push({ label: '24h Water Supply', emoji: '💧', variant: 'tagBlue' });
-  }
-
-  if (combo.includes('metro') || combo.includes('bus stop') || combo.includes('near market')) {
-    tags.push({ label: 'Near Transit', emoji: '🚇', variant: 'tagGreen' });
   }
 
   return tags;
@@ -354,6 +354,13 @@ const PropertyDetailPage: React.FC = () => {
   const [lbOpen, setLbOpen]   = useState(false);
   const [lbIndex, setLbIndex] = useState(0);
 
+  // Rating states
+  const [userRating, setUserRating] = useState<number | null>(null);
+  const [hoveredStar, setHoveredStar] = useState<number | null>(null);
+  const [ratingCount, setRatingCount] = useState<number>(0);
+  const [ratingAvg, setRatingAvg] = useState<string>('5.0');
+  const [submittingRating, setSubmittingRating] = useState(false);
+
   const openLightbox = (i: number) => { setLbIndex(i); setLbOpen(true); };
   const closeLightbox = () => setLbOpen(false);
 
@@ -363,10 +370,48 @@ const PropertyDetailPage: React.FC = () => {
     setLoading(true);
     propertyService
       .getPropertyById(id)
-      .then((data) => setProperty(data as Property))
+      .then((data) => {
+        setProperty(data as Property);
+        setRatingCount(Number(data.ratingCount) || 0);
+        setRatingAvg(data.rating || '5.0');
+      })
       .catch(() => setError('Property not found or an error occurred.'))
       .finally(() => setLoading(false));
   }, [id]);
+
+  // Listen to auth state to fetch user's rating dynamically
+  useEffect(() => {
+    if (!id) return;
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        const rating = await ratingService.getUserSubmittedRating(id, user.uid);
+        setUserRating(rating);
+      } else {
+        setUserRating(null);
+      }
+    });
+    return () => unsubscribe();
+  }, [id]);
+
+  const handleRateProperty = async (val: number) => {
+    if (!id || submittingRating || userRating !== null) return;
+    if (!auth.currentUser) {
+      alert('Please sign in to rate this listing.');
+      navigate('/dashboard');
+      return;
+    }
+    setSubmittingRating(true);
+    try {
+      const result = await ratingService.submitRating(id, val);
+      setUserRating(val);
+      setRatingAvg(result.average.toFixed(1));
+      setRatingCount(result.count);
+    } catch (err: any) {
+      alert(err.message || 'Failed to submit rating.');
+    } finally {
+      setSubmittingRating(false);
+    }
+  };
 
   // ── Collect all images ──────────────────────────────────────────────────────
   const allImages = useCallback((): string[] => {
@@ -481,6 +526,7 @@ const PropertyDetailPage: React.FC = () => {
   const overallScore = property.overallscore ?? property.overallScore ?? null;
   const sc           = overallScore != null ? scoreColor(overallScore) : null;
   const smartTags    = deriveSmartTags(property);
+  const riskDetails  = getFraudRiskDetails(ratingAvg, overallScore);
 
   const featuresList: string[] = Array.isArray(property.features)
     ? property.features
@@ -532,6 +578,66 @@ const PropertyDetailPage: React.FC = () => {
 
       {/* ── Main Content ──────────────────────────────────────────────────── */}
       <div className={styles.container}>
+
+        {/* Verified Trust Layer / Unverified Warning */}
+        {property.isVerified ? (
+          <div className={styles.verifiedTrustContainer}>
+            <div className={styles.verifiedHeader}>
+              <span className={styles.verifiedShield}>🛡️</span>
+              <div>
+                <h3 className={styles.verifiedHeading}>Verified by SettleKar</h3>
+                <p className={styles.verifiedSubheading}>This listing has been fully verified and authenticated by the SettleKar team.</p>
+              </div>
+            </div>
+            <div className={styles.verifiedChecklist}>
+              {(property.verifiedDetails && property.verifiedDetails.length > 0 ? property.verifiedDetails : [
+                "Owner identity and property titles cross-checked & confirmed",
+                "Physical location visited & photos authenticated on-site by our agent",
+                "Historical safety record and landlord reviews vetted",
+                "Fair pricing and Zero Brokerage terms verified"
+              ]).map((detail, idx) => (
+                <div key={idx} className={styles.checklistItem}>
+                  <span className={styles.checkIcon}>✓</span>
+                  <span>{detail}</span>
+                </div>
+              ))}
+            </div>
+            <div className={styles.verifiedFooter}>
+              <span>Something wrong with this listing?</span>
+              <a
+                href={`mailto:jashanphw@gmail.com?subject=Rapid%20Takedown%20Request%20-%20Property%20${property.id}&body=Hi%20SettleKar%20team,%20I%20would%20like%20to%20report%20property%20listing%20${property.id}%20(${window.location.href})%20for%20investigation.%20Reason:%20`}
+                className={styles.takedownLink}
+              >
+                ⚡ Request 48-Hour Rapid Takedown
+              </a>
+            </div>
+          </div>
+        ) : (
+          <div className={styles.unverifiedBanner}>
+            <span className={styles.unverifiedAlert}>⚠️</span>
+            <div>
+              <strong className={styles.unverifiedHeading}>Unverified Self-Listed Property</strong>
+              <p className={styles.unverifiedText}>
+                This listing was submitted directly by a user and has not undergone SettleKar's physical inspection. Always verify in person and do not pay any deposits in advance before visiting.
+              </p>
+              <div className={styles.unverifiedActions}>
+                <a
+                  href={`mailto:jashanphw@gmail.com?subject=Verification%20Request%20-%20Property%20${property.id}`}
+                  className={styles.verifyRequestLink}
+                >
+                  Request SettleKar Inspection →
+                </a>
+                <a
+                  href={`mailto:jashanphw@gmail.com?subject=Report%20Listing%20-%20Property%20${property.id}&body=Hi%20SettleKar%20team,%20I%20would%20like%20to%20report%20this%20unverified%20listing:%20${window.location.href}`}
+                  className={styles.reportListingLink}
+                >
+                  Report Suspicious Listing
+                </a>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className={styles.contentGrid}>
 
           {/* ── LEFT COLUMN ─────────────────────────────────────────────── */}
@@ -560,6 +666,18 @@ const PropertyDetailPage: React.FC = () => {
               <div className={styles.priceRow}>
                 <span className={styles.priceAmount}>{formatPrice(property.price)}</span>
                 <span className={styles.priceUnit}>/month</span>
+              </div>
+
+              {/* Fraud Risk Label */}
+              <div
+                className={styles.fraudRiskBadge}
+                style={{
+                  background: riskDetails.bg,
+                  color: riskDetails.color,
+                  border: `1px solid ${riskDetails.border}`,
+                }}
+              >
+                🛡️ Fraud Risk Status: <strong>{riskDetails.label}</strong>
               </div>
 
               {overallScore != null && sc && (
@@ -659,6 +777,69 @@ const PropertyDetailPage: React.FC = () => {
 
             {/* Neighbourhood pillars */}
             {property.pillars && renderPillars(property.pillars)}
+
+            {/* Community Rating & Review Input */}
+            <div className={styles.card}>
+              <h2 className={styles.cardTitle}>⭐ Community Ratings & Security Check</h2>
+              <div className={styles.ratingOverview}>
+                <div className={styles.ratingBigNumber}>{ratingAvg}</div>
+                <div className={styles.ratingMeta}>
+                  <div className={styles.starsDisplay}>
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <span
+                        key={star}
+                        className={star <= parseFloat(ratingAvg) ? styles.starFilled : styles.starEmpty}
+                      >
+                        ★
+                      </span>
+                    ))}
+                  </div>
+                  <div className={styles.ratingCountText}>
+                    Based on {ratingCount} user ratings & reports
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles.ratingActionBox}>
+                <h4 className={styles.ratingActionTitle}>
+                  {userRating !== null ? 'Feedback Submitted' : 'Help the community: Is this listing accurate?'}
+                </h4>
+                {userRating !== null ? (
+                  <p className={styles.ratingSuccessText}>
+                    Thank you! You rated this listing <strong>{userRating} / 5 stars</strong>. Your report helps keep SettleKar safe from fraud.
+                  </p>
+                ) : (
+                  <div>
+                    <p className={styles.ratingActionSub}>
+                      Rate based on photo accuracy, owner/broker behavior, and description correctness:
+                    </p>
+                    <div className={styles.starInputRow}>
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          type="button"
+                          className={`${styles.starInputBtn} ${
+                            star <= (hoveredStar ?? 0) ? styles.starInputHovered : ''
+                          }`}
+                          onMouseEnter={() => setHoveredStar(star)}
+                          onMouseLeave={() => setHoveredStar(null)}
+                          onClick={() => handleRateProperty(star)}
+                          disabled={submittingRating}
+                          aria-label={`Rate ${star} stars`}
+                        >
+                          ★
+                        </button>
+                      ))}
+                    </div>
+                    {!auth.currentUser && (
+                      <p style={{ fontSize: '0.75rem', color: '#b45309', marginTop: '10px', fontWeight: 500 }}>
+                        🔑 Note: You must be <Link to="/dashboard" style={{ textDecoration: 'underline', fontWeight: 700, color: 'inherit' }}>signed in</Link> to submit a rating.
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
 
           {/* ── RIGHT COLUMN – Sidebar ───────────────────────────────────── */}

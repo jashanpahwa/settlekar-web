@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Search, MapPin, ArrowLeft } from 'lucide-react';
+import { Search, MapPin, ArrowLeft, X } from 'lucide-react';
 import logoImage from '/logo.png';
 
 interface FloatingSearchBarProps {
@@ -86,6 +86,17 @@ export const FloatingSearchBar: React.FC<FloatingSearchBarProps> = ({
           disabled={!mapsLoaded}
           className="w-full bg-transparent border-none outline-none text-slate-800 text-xs md:text-sm font-semibold placeholder:text-slate-400 py-2"
         />
+
+        {address && (
+          <button
+            type="button"
+            onClick={() => setAddress('')}
+            className="p-1 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-all duration-200 cursor-pointer mr-1 shrink-0"
+            title="Clear search"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        )}
         
         <Search className="h-4.5 w-4.5 text-slate-400 ml-2 shrink-0 cursor-pointer hover:text-primary transition-colors duration-200" />
       </div>

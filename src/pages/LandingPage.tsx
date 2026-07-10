@@ -8,6 +8,8 @@ import FaqSection from '../components/Landing/FaqSection';
 import TestimonialsSection from '../components/Landing/TestimonialsSection';
 import HowItWorks from '../components/Landing/HowItWorks';
 import DownloadSection from '../components/Landing/DownloadSection';
+import { TrustSection } from '../components/Landing/TrustSection';
+import { NeighborhoodScoreSection } from '../components/Landing/NeighborhoodScoreSection';
 
 export interface WebPropertyItem {
   id: number;
@@ -358,6 +360,12 @@ const LandingPage: React.FC = () => {
       <div id="features">
         <FeaturesSection />
       </div>
+
+      {/* Trust & Fraud Prevention Promise */}
+      <TrustSection />
+
+      {/* Neighborhood Score Section */}
+      <NeighborhoodScoreSection />
 
       {/* How It Works Section */}
       <div id="how-it-works">

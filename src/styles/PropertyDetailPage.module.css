@@ -166,7 +166,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #0F172A;
+  background: #ced0d3;
   min-height: 200px;
   padding: 32px 24px;
 }
@@ -950,4 +950,276 @@
   .lbNext { right: 2px; }
   .lbThumb { width: 54px; height: 40px; }
   .lbImgWrap.lbZoomed .lbImg { transform: scale(1.8); }
+}
+
+/* ─── Trust and Fraud Verification Styles ──────────────────────── */
+.verifiedTrustContainer {
+  background: #0B192E;
+  color: #F8FAFC;
+  border-radius: 16px;
+  padding: 24px;
+  margin-top: 20px;
+  margin-bottom: 24px;
+  border: 1px solid #1E293B;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+.verifiedHeader {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.verifiedShield {
+  font-size: 2.25rem;
+  line-height: 1;
+}
+
+.verifiedHeading {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #10B981;
+  margin: 0;
+}
+
+.verifiedSubheading {
+  font-size: 0.875rem;
+  color: #94A3B8;
+  margin: 4px 0 0 0;
+}
+
+.verifiedChecklist {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 16px;
+  background: rgba(16, 185, 129, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(16, 185, 129, 0.15);
+}
+
+@media (min-width: 768px) {
+  .verifiedChecklist {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.checklistItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: #E2E8F0;
+}
+
+.checkIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background: #10B981;
+  color: #FFFFFF;
+  font-size: 0.75rem;
+  font-weight: 900;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.verifiedFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid #1E293B;
+  font-size: 0.85rem;
+  color: #94A3B8;
+}
+
+.takedownLink {
+  color: #F87171;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.takedownLink:hover {
+  color: #EF4444;
+  text-decoration: underline;
+}
+
+/* Unverified Styling */
+.unverifiedBanner {
+  background: #FFFBEB;
+  border: 1px solid #FDE68A;
+  border-radius: 16px;
+  padding: 20px;
+  margin-top: 20px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.unverifiedAlert {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.unverifiedHeading {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #92400E;
+}
+
+.unverifiedText {
+  font-size: 0.875rem;
+  color: #78350F;
+  margin: 6px 0 14px 0;
+  line-height: 1.5;
+}
+
+.unverifiedActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.verifyRequestLink, .reportListingLink {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.verifyRequestLink {
+  background: #D97706;
+  color: #FFFFFF;
+}
+
+.verifyRequestLink:hover {
+  background: #B45309;
+}
+
+.reportListingLink {
+  background: #F3F4F6;
+  color: #4B5563;
+  border: 1px solid #E5E7EB;
+}
+
+.reportListingLink:hover {
+  background: #E5E7EB;
+  color: #1F2937;
+}
+
+/* Fraud Risk Badge */
+.fraudRiskBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-top: 8px;
+}
+
+/* Community Rating styles */
+.ratingOverview {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid #F1F5F9;
+  margin-bottom: 16px;
+}
+
+.ratingBigNumber {
+  font-size: 3rem;
+  font-weight: 800;
+  color: #0F172A;
+  line-height: 1;
+}
+
+.ratingMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.starsDisplay {
+  display: flex;
+  gap: 2px;
+  font-size: 1.15rem;
+}
+
+.starFilled {
+  color: #F59E0B;
+}
+
+.starEmpty {
+  color: #CBD5E1;
+}
+
+.ratingCountText {
+  font-size: 0.8rem;
+  color: #64748B;
+}
+
+.ratingActionBox {
+  background: #F8FAFC;
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid #E2E8F0;
+}
+
+.ratingActionTitle {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #334155;
+  margin: 0 0 8px 0;
+}
+
+.ratingActionSub {
+  font-size: 0.8rem;
+  color: #64748B;
+  margin: 0 0 12px 0;
+  line-height: 1.4;
+}
+
+.ratingSuccessText {
+  font-size: 0.85rem;
+  color: #15803D;
+  background: #DCFCE7;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin: 0;
+}
+
+.starInputRow {
+  display: flex;
+  gap: 6px;
+}
+
+.starInputBtn {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #E2E8F0;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.15s ease;
+  line-height: 1;
+}
+
+.starInputBtn:hover, .starInputBtn.starInputHovered {
+  color: #F59E0B;
+  transform: scale(1.15);
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MapPin, Home, Search, Navigation } from 'lucide-react';
+import { MapPin, Home, Search, Navigation, X } from 'lucide-react';
 import { DualRangeSlider } from './DualRangeSlider';
 import logoImage from '/logo.png';
 
@@ -234,7 +234,12 @@ export const SearchInitialForm: React.FC<SearchInitialFormProps> = ({
                   type="text"
                   ref={autocompleteInputRef}
                   value={address}
-                  onChange={(e) => setAddress(e.target.value)}
+                  onChange={(e) => {
+                    setAddress(e.target.value);
+                    if (!e.target.value) {
+                      setCoords(null);
+                    }
+                  }}
                   placeholder={
                     mapsLoaded
                       ? 'Search for a society, locality, or landmark in India...'
@@ -243,6 +248,20 @@ export const SearchInitialForm: React.FC<SearchInitialFormProps> = ({
                   disabled={!mapsLoaded && !locating}
                   className="w-full pl-12 pr-32 py-4 rounded-2xl border border-slate-200 bg-slate-50/50 hover:bg-slate-50 focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none text-slate-800 text-sm font-medium transition-all duration-300 placeholder:text-slate-400 shadow-sm"
                 />
+
+                {address && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAddress('');
+                      setCoords(null);
+                    }}
+                    className="absolute right-24 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-all duration-200 cursor-pointer"
+                    title="Clear address"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
 
                 <button
                   type="button"

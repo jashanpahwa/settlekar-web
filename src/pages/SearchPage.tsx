@@ -26,6 +26,9 @@ interface SearchProperty {
   bachelorFriendly?: boolean;
   womenOnly?: boolean;
   isTopFloor?: boolean;
+  isVerified?: boolean;
+  verifiedDetails?: string[];
+  ratingCount?: number;
 }
 
 export const SearchPage: React.FC = () => {
@@ -132,6 +135,9 @@ export const SearchPage: React.FC = () => {
           bachelorFriendly: p.bachelorFriendly,
           womenOnly: p.womenOnly,
           isTopFloor: p.isTopFloor,
+          isVerified: p.isVerified,
+          verifiedDetails: p.verifiedDetails,
+          ratingCount: p.ratingCount,
         }));
 
         setProperties(formattedLive);

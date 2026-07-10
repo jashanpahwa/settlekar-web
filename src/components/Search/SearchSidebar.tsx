@@ -20,6 +20,9 @@ interface SearchProperty {
   bachelorFriendly?: boolean;
   womenOnly?: boolean;
   isTopFloor?: boolean;
+  isVerified?: boolean;
+  verifiedDetails?: string[];
+  ratingCount?: number;
 }
 
 interface SearchSidebarProps {
@@ -143,19 +146,31 @@ export const SearchSidebar: React.FC<SearchSidebarProps> = ({
                       <span className="absolute top-2 left-2 bg-primary text-white text-[9px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider">
                         {p.badge}
                       </span>
+                      {p.isVerified && (
+                        <span className="absolute bottom-2 left-2 bg-[#10b981] text-white text-[8px] font-extrabold px-1.5 py-0.5 rounded uppercase tracking-wider shadow-sm flex items-center gap-0.5">
+                          ✓ Verified
+                        </span>
+                      )}
                     </div>
 
                     {/* Content */}
                     <div className="w-2/3 p-3.5 flex flex-col justify-between">
                       <div className="space-y-1">
                         <div className="flex items-center justify-between">
-                          <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide truncate max-w-[130px]">
+                          <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide truncate max-w-[90px]">
                             {p.propertyType || p.badge}
                           </span>
-                          <span className="flex items-center text-[10px] font-bold text-amber-500">
-                            <Star className="h-3 w-3 fill-amber-500 mr-0.5" />
-                            {p.rating || '4.8'}
-                          </span>
+                          <div className="flex items-center gap-1.5">
+                            {p.isVerified && (
+                              <span className="text-[9px] font-bold text-[#10b981] flex items-center shrink-0">
+                                🛡️ Verified
+                              </span>
+                            )}
+                            <span className="flex items-center text-[10px] font-bold text-amber-500 shrink-0">
+                              <Star className="h-3 w-3 fill-amber-500 mr-0.5" />
+                              {p.rating || '4.8'}
+                            </span>
+                          </div>
                         </div>
                         <h3 className="font-bold text-slate-800 text-xs md:text-sm line-clamp-1 group-hover:text-primary transition-colors duration-200">
                           {p.title}
