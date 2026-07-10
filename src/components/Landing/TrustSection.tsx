@@ -115,7 +115,7 @@ export const TrustSection: React.FC = () => {
             </div>
           </div>
           <a
-            href="mailto:jashanphw@gmail.com?subject=Fraud%20Listing%20Report&body=Hi%20SettleKar%20team,%20I%20want%20to%20report%20a%20listing.%20Details:%20"
+            href="mailto:hello@settlekar.com?subject=Fraud%20Listing%20Report&body=Hi%20SettleKar%20team,%20I%20want%20to%20report%20a%20listing.%20Details:%20"
             className="relative shrink-0 inline-flex items-center gap-2 bg-red-600 hover:bg-red-500 text-white text-xs font-bold tracking-widest uppercase py-3.5 px-7 rounded-xl transition-all duration-200 shadow-lg hover:shadow-red-500/20"
           >
             🚨 File Rapid Report
