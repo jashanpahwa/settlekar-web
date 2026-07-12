@@ -1,94 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-WXMJKMSJ');</script>
-<!-- End Google Tag Manager -->
-    <meta charset="utf-8" />
-    <link rel="icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <meta name="theme-color" content="#6c47ff" />
 
-    <!-- Primary Meta Tags -->
-    <meta
-      name="description"
-      content="SettleKar - Discover your perfect rental home with location-based search, verified property owners, and real-time updates. Connect property owners with tenants through our smart, secure platform."
-    />
-    <meta name="robots" content="index, follow" />
+<head>
+  <!-- Meta Pixel Code -->
+  <script>
+    !function (f, b, e, v, n, t, s) {
+      if (f.fbq) return; n = f.fbq = function () {
+        n.callMethod ?
+        n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+      };
+      if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+      n.queue = []; t = b.createElement(e); t.async = !0;
+      t.src = v; s = b.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t, s)
+    }(window, document, 'script',
+      'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1046430871061306');
+    fbq('track', 'PageView');
+  </script>
 
-    <!-- Canonical (static fallback for root) -->
-    <link rel="canonical" href="https://settlekar.in/" />
+  <!-- End Meta Pixel Code -->
+  <!-- Google Tag Manager -->
+  <script>(function (w, d, s, l, i) {
+      w[l] = w[l] || []; w[l].push({
+        'gtm.start':
+          new Date().getTime(), event: 'gtm.js'
+      }); var f = d.getElementsByTagName(s)[0],
+        j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+          'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+    })(window, document, 'script', 'dataLayer', 'GTM-WXMJKMSJ');</script>
+  <!-- End Google Tag Manager -->
+  <meta charset="utf-8" />
+  <link rel="icon" href="/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#6c47ff" />
 
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://settlekar.in/" />
-    <meta property="og:site_name" content="SettleKar" />
-    <meta property="og:title" content="SettleKar - Find Your Perfect Rental Home" />
-    <meta property="og:description" content="Discover your perfect rental home with location-based search, verified property owners, and real-time updates. True Transparency, direct owner communication." />
-    <meta property="og:image" content="https://settlekar.in/logo.png" />
-    <meta property="og:image:width" content="512" />
-    <meta property="og:image:height" content="512" />
-    <meta property="og:locale" content="en_IN" />
+  <!-- Primary Meta Tags -->
+  <meta name="description"
+    content="SettleKar - Discover your perfect rental home with location-based search, verified property owners, and real-time updates. Connect property owners with tenants through our smart, secure platform." />
+  <meta name="robots" content="index, follow" />
 
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="SettleKar - Find Your Perfect Rental Home" />
-    <meta name="twitter:description" content="Discover your perfect rental home with location-based search, verified property owners, and real-time updates." />
-    <meta name="twitter:image" content="https://settlekar.in/logo.png" />
+  <!-- Canonical (static fallback for root) -->
+  <link rel="canonical" href="https://settlekar.in/" />
 
-    <!-- PWA / App -->
-    <link rel="apple-touch-icon" href="/logo192.png" />
-    <link rel="manifest" href="/manifest.json" />
-    <title>SettleKar - Find Your Perfect Rental Home</title>
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://settlekar.in/" />
+  <meta property="og:site_name" content="SettleKar" />
+  <meta property="og:title" content="SettleKar - Find Your Perfect Rental Home" />
+  <meta property="og:description"
+    content="Discover your perfect rental home with location-based search, verified property owners, and real-time updates. True Transparency, direct owner communication." />
+  <meta property="og:image" content="https://settlekar.in/logo.png" />
+  <meta property="og:image:width" content="512" />
+  <meta property="og:image:height" content="512" />
+  <meta property="og:locale" content="en_IN" />
 
-    <!-- Performance: Preconnect to external origins -->
-    <link rel="preconnect" href="https://images.unsplash.com" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preconnect" href="https://d8j0ntlcm91z4.cloudfront.net" />
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="SettleKar - Find Your Perfect Rental Home" />
+  <meta name="twitter:description"
+    content="Discover your perfect rental home with location-based search, verified property owners, and real-time updates." />
+  <meta name="twitter:image" content="https://settlekar.in/logo.png" />
 
-    <!-- Google Fonts: Inter + DM Sans + Caveat -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&family=Caveat:wght@500;600;700&display=swap"
-      rel="stylesheet"
-    />
+  <!-- PWA / App -->
+  <link rel="apple-touch-icon" href="/logo192.png" />
+  <link rel="manifest" href="/manifest.json" />
+  <title>SettleKar - Find Your Perfect Rental Home</title>
 
-    <!-- DNS Prefetch for Firebase -->
-    <link rel="dns-prefetch" href="https://firebaseapp.com" />
-    <link rel="dns-prefetch" href="https://firestore.googleapis.com" />
-    <link rel="dns-prefetch" href="https://identitytoolkit.googleapis.com" />
+  <!-- Performance: Preconnect to external origins -->
+  <link rel="preconnect" href="https://images.unsplash.com" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://d8j0ntlcm91z4.cloudfront.net" />
 
-    <!-- Single Page Apps for GitHub Pages -->
-    <script type="text/javascript">
-      // Single Page Apps for GitHub Pages
-      // MIT License
-      // https://github.com/rafgraph/spa-github-pages
-      (function(l) {
-        if (l.search[1] === '/' ) {
-          var decoded = l.search.slice(1).split('&').map(function(s) { 
-            return s.replace(/~and~/g, '&')
-          }).join('?');
-          window.history.replaceState(null, null,
-              l.pathname.slice(0, -1) + decoded + l.hash
-          );
-        }
-      }(window.location))
-    </script>
-    <!-- End Single Page Apps for GitHub Pages -->
-    <script type="module" crossorigin src="/assets/index-CrPV-jen.js"></script>
-    <link rel="modulepreload" crossorigin href="/assets/react-vendor-BN9Zr31a.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-CrM8YFjx.css">
-  </head>
-  <body>
-    <!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WXMJKMSJ"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-  </body>
+  <!-- Google Fonts: Inter + DM Sans + Caveat -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&family=Caveat:wght@500;600;700&display=swap"
+    rel="stylesheet" />
+
+  <!-- DNS Prefetch for Firebase -->
+  <link rel="dns-prefetch" href="https://firebaseapp.com" />
+  <link rel="dns-prefetch" href="https://firestore.googleapis.com" />
+  <link rel="dns-prefetch" href="https://identitytoolkit.googleapis.com" />
+
+  <!-- Single Page Apps for GitHub Pages -->
+  <script type="text/javascript">
+    // Single Page Apps for GitHub Pages
+    // MIT License
+    // https://github.com/rafgraph/spa-github-pages
+    (function (l) {
+      if (l.search[1] === '/') {
+        var decoded = l.search.slice(1).split('&').map(function (s) {
+          return s.replace(/~and~/g, '&')
+        }).join('?');
+        window.history.replaceState(null, null,
+          l.pathname.slice(0, -1) + decoded + l.hash
+        );
+      }
+    }(window.location))
+  </script>
+  <!-- End Single Page Apps for GitHub Pages -->
+  <script type="module" crossorigin src="/assets/index-CrPV-jen.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/react-vendor-BN9Zr31a.js">
+  <link rel="stylesheet" crossorigin href="/assets/index-CrM8YFjx.css">
+</head>
+
+<body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WXMJKMSJ" height="0" width="0"
+      style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+  <!-- Meta Pixel noscript -->
+  <noscript>
+    <img height="1" width="1" style="display:none"
+      src="https://www.facebook.com/tr?id=1046430871061306&ev=PageView&noscript=1" />
+  </noscript>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <div id="root"></div>
+</body>
+
 </html>
