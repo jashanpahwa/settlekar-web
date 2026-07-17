@@ -1,9 +1,32 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
-@import "./Dashboard.css";
 
 @theme {
+  /* #93c5fc */
   --color-primary: #0A2540;
+  --color-primary-accent: #93c5fc;
+  --color-primary-light: #93C5FD;
+  --color-secondary: #8B5CF6;
+  --color-secondary-dark: #7C3AED;
+  --color-accent: #EC4899;
+  --color-success: #10B900;
+  --color-warning: #F59E0B;
+  --color-error: #EF4444;
+  --color-background: #F8FAFC;
+  --color-surface: #f6fafdff;
+  --color-surface-elevated: #FFFFFF;
+  --color-text-primary: #0F172A;
+  --color-text-secondary: #64748B;
+  --color-text-tertiary: #9CA3AF;
+  --color-border: #E2E8F0;
+  --color-border-light: #F3F4F6;
+  --color-shadow: #000000;
+  --color-overlay: rgba(0, 0, 0, 0.5);
+  --color-milky: #f9f7f5ff;
+
+  --font-head: 'Space Grotesk', -apple-system, sans-serif;
+  --font-body: 'Inter', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
   
   --animate-phone-float: phonefloat 5s ease-in-out infinite;
   --animate-scroll-bounce: scrollBounce 1.8s ease-in-out infinite;

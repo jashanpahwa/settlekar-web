@@ -18,6 +18,7 @@ import LoginView from '../components/Dashboard/LoginView';
 import RegistrationGate, { OwnerProfile, BrokerProfile, FirmProfile } from '../components/Dashboard/RegistrationGate';
 import Sidebar from '../components/Dashboard/Sidebar';
 import Header from '../components/Dashboard/Header';
+import { trackMetaEvent } from '../utils/metaPixel';
 
 export type { OwnerProfile, BrokerProfile, FirmProfile };
 
@@ -176,6 +177,9 @@ const Dashboard: React.FC = () => {
   const handleRegisterSuccess = (role: 'owner' | 'broker' | 'firm' | 'tenant', profile: any) => {
     setUserRole(role);
     setUserProfile(profile);
+    trackMetaEvent("CompleteRegistration",{
+      role: role
+    });
   };
 
   const handleSwitchRole = () => {
@@ -258,12 +262,12 @@ const Dashboard: React.FC = () => {
   // Loading Splash Screen
   if (loading || roleLoading) {
     return (
-      <div className="loadingScreen">
+      <div className="fixed inset-0 bg-background flex flex-col items-center justify-center gap-5 font-body">
         {/* React 19 Document Metadata */}
         <title>SettleKar - Dashboard</title>
         <meta name="robots" content="noindex, nofollow" />
-        <div className="spinner"></div>
-        <p>Connecting to SettleKar...</p>
+        <div className="w-10 h-10 border-2 border-border rounded-full border-t-primary-accent animate-spin"></div>
+        <p className="text-sm text-text-secondary font-semibold">Connecting to SettleKar...</p>
       </div>
     );
   }
@@ -292,18 +296,18 @@ const Dashboard: React.FC = () => {
 
   // Authenticated Portal View
   return (
-    <div className="dashboardLayout">
+    <div className="font-body grid grid-cols-1 md:grid-cols-[260px_1fr] min-h-screen bg-background text-text-primary">
       {/* React 19 Document Metadata */}
       <title>SettleKar - Dashboard</title>
       <meta name="robots" content="noindex, nofollow" />
 
       {/* Mobile Sticky Header Bar */}
-      <div className="mobileHeaderBar">
-        <Link to="/" className="mobileLogoLink">
-          <img src="/logo.png" alt="SettleKar" className="mobileLogoImage" />
+      <div className="flex md:hidden items-center justify-between px-5 py-4 bg-surface-elevated border-b border-border sticky top-0 z-30 shadow-sm">
+        <Link to="/" className="flex items-center shrink-0">
+          <img src="/logo.png" alt="SettleKar" className="h-8 w-auto object-contain" />
         </Link>
-        <div className="mobileHeaderRight">
-          <span className="mobilePortalBadge">
+        <div className="flex items-center gap-4">
+          <span className="px-2.5 py-1 bg-primary-accent/10 border border-primary-accent/18 text-primary-accent font-head text-[10px] font-bold uppercase tracking-wider rounded-full">
             {userRole === 'broker'
               ? 'Broker'
               : userRole === 'firm'
@@ -313,14 +317,14 @@ const Dashboard: React.FC = () => {
               : 'Owner'}
           </span>
           <button 
-            className="mobileMenuToggle"
+            className="flex flex-col justify-center items-center gap-1.5 w-8 h-8 rounded border border-border bg-surface cursor-pointer relative z-40 transition-colors hover:bg-border-light"
             onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
             aria-label="Toggle Menu"
             aria-expanded={isMobileSidebarOpen}
           >
-            <span className={`hamburgerLine ${isMobileSidebarOpen ? 'lineOpen1' : ''}`}></span>
-            <span className={`hamburgerLine ${isMobileSidebarOpen ? 'lineOpen2' : ''}`}></span>
-            <span className={`hamburgerLine ${isMobileSidebarOpen ? 'lineOpen3' : ''}`}></span>
+            <span className={`w-5 h-[2px] bg-primary rounded transition-all duration-200 ${isMobileSidebarOpen ? 'transform translate-y-[8px] rotate-45' : ''}`}></span>
+            <span className={`w-5 h-[2px] bg-primary rounded transition-all duration-200 ${isMobileSidebarOpen ? 'opacity-0' : ''}`}></span>
+            <span className={`w-5 h-[2px] bg-primary rounded transition-all duration-200 ${isMobileSidebarOpen ? 'transform -translate-y-[8px] -rotate-45' : ''}`}></span>
           </button>
         </div>
       </div>
@@ -338,7 +342,7 @@ const Dashboard: React.FC = () => {
       />
 
       {/* Main Content Area */}
-      <main className="mainContent">
+      <main className="py-9 px-6 md:p-10 overflow-y-auto h-screen">
         <Header
           user={user}
           userRole={userRole}
@@ -346,7 +350,7 @@ const Dashboard: React.FC = () => {
         />
 
         {/* Dynamic Tab Body */}
-        <div className="container">
+        <div className="max-w-[1060px] mx-auto">
           {activeTab === 'overview' && (
             <OverviewTab
               userRole={userRole}

@@ -840,43 +840,44 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
   const calculatedTotalAdvance = (advanceRentMonths * parsedPrice) + parsedSecurity + parsedBrokerage;
 
   return (
-    <div className="tabContent">
-      <div className="listHeaderWrapper">
-        <h2>{editingProperty ? '✏️ Edit Listed Property' : 'List Property'}</h2>
-        <p>{editingProperty ? 'Modify and update your listed property configurations inside the live database.' : 'Register your property directly on the SettleKar database live, matching native app configurations.'}</p>
+    <div className="space-y-6">
+      <div className="mb-6 space-y-1 text-left">
+        <h2 className="font-head text-2xl font-bold text-text-primary tracking-tight">{editingProperty ? '✏️ Edit Listed Property' : 'List Property'}</h2>
+        <p className="text-sm text-text-secondary">{editingProperty ? 'Modify and update your listed property configurations inside the live database.' : 'Register your property directly on the SettleKar database live, matching native app configurations.'}</p>
       </div>
 
       {formSuccess && (
-        <div className="formSuccessMsg">
+        <div className="bg-success/10 border border-success/18 text-success text-sm p-4 rounded-xl mb-6 text-left">
           🎉 Property {editingProperty ? 'Updated' : 'Listed'} Successfully! Redirecting to My Listings...
         </div>
       )}
 
-      {formError && <div className="formErrorMsg">{formError}</div>}
+      {formError && <div className="bg-error/10 border border-error/18 text-error text-sm p-4 rounded-xl mb-6 text-left">{formError}</div>}
 
-      <form onSubmit={handleListProperty} className="listingForm">
+      <form onSubmit={handleListProperty} className="space-y-6">
         
         {/* CARD 1: Basic Information */}
-        <div className="appCard">
-          <div className="appCardHeader">
-            <span className="appCardIcon">🏠</span>
-            <h3 className="appCardTitle">Basic Information</h3>
+        <div className="bg-surface-elevated border border-border rounded-2xl p-6 shadow-sm">
+          <div className="flex items-center gap-2 pb-4 border-b border-border-light mb-5 text-left">
+            <span className="text-xl">🏠</span>
+            <h3 className="font-head text-base font-bold text-text-primary">Basic Information</h3>
           </div>
 
-          <div className="formGroup">
-            <label htmlFor="prop-title">Property Title *</label>
+          <div className="flex flex-col gap-1.5 flex-1 mb-4 text-left">
+            <label htmlFor="prop-title" className="text-xs font-semibold text-text-primary">Property Title *</label>
             <input
               id="prop-title"
               type="text"
               placeholder="e.g. Modern 1 BHK Apartment"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
+              className="w-full bg-surface border border-border hover:border-border-light focus:border-primary-accent rounded-lg p-2.5 text-sm outline-none transition-colors"
               required
             />
           </div>
 
-          <div className="formGroup">
-            <label htmlFor="prop-desc">Description</label>
+          <div className="flex flex-col gap-1.5 flex-1 mb-4 text-left">
+            <label htmlFor="prop-desc" className="text-xs font-semibold text-text-primary">Description</label>
             <textarea
               id="prop-desc"
               placeholder="Property highlights (each new line will automatically become a bullet point)"
@@ -889,62 +890,67 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
                   .join('\n');
                 setDescription(formatted);
               }}
+              className="w-full bg-surface border border-border hover:border-border-light focus:border-primary-accent rounded-lg p-2.5 text-sm outline-none transition-colors"
               rows={5}
             />
           </div>
 
-          <div className="formRow">
-            <div className="formGroup">
-              <label htmlFor="prop-price">Rent Per Month *</label>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col gap-1.5 flex-1 mb-4 text-left">
+              <label htmlFor="prop-price" className="text-xs font-semibold text-text-primary">Rent Per Month *</label>
               <input
                 id="prop-price"
                 type="text"
                 placeholder="e.g. 20000"
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
+                className="w-full bg-surface border border-border hover:border-border-light focus:border-primary-accent rounded-lg p-2.5 text-sm outline-none transition-colors"
                 required
               />
             </div>
 
-            <div className="formGroup">
-              <label htmlFor="prop-sqft">Area (sq ft)</label>
+            <div className="flex flex-col gap-1.5 flex-1 mb-4 text-left">
+              <label htmlFor="prop-sqft" className="text-xs font-semibold text-text-primary">Area (sq ft)</label>
               <input
                 id="prop-sqft"
                 type="number"
                 placeholder="500"
                 value={sqft}
                 onChange={(e) => setSqft(e.target.value)}
+                className="w-full bg-surface border border-border hover:border-border-light focus:border-primary-accent rounded-lg p-2.5 text-sm outline-none transition-colors"
               />
             </div>
           </div>
         </div>
 
         {/* CARD 1.5: Financial Details */}
-        <div className="appCard">
-          <div className="appCardHeader">
-            <span className="appCardIcon">💰</span>
-            <h3 className="appCardTitle">Financial Details ({userRole === 'broker' ? 'Broker' : userRole === 'firm' ? 'Firm' : 'Owner'})</h3>
+        <div className="bg-surface-elevated border border-border rounded-2xl p-6 shadow-sm">
+          <div className="flex items-center gap-2 pb-4 border-b border-border-light mb-5 text-left">
+            <span className="text-xl">💰</span>
+            <h3 className="font-head text-base font-bold text-text-primary">Financial Details ({userRole === 'broker' ? 'Broker' : userRole === 'firm' ? 'Firm' : 'Owner'})</h3>
           </div>
 
-          <div className="formRow">
-            <div className="formGroup">
-              <label htmlFor="prop-security">Security Deposit / Fees (₹) *</label>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col gap-1.5 flex-1 mb-4 text-left">
+              <label htmlFor="prop-security" className="text-xs font-semibold text-text-primary">Security Deposit / Fees (₹) *</label>
               <input
                 id="prop-security"
                 type="text"
                 placeholder="e.g. 40000"
                 value={securityFees}
                 onChange={(e) => setSecurityFees(e.target.value)}
+                className="w-full bg-surface border border-border hover:border-border-light focus:border-primary-accent rounded-lg p-2.5 text-sm outline-none transition-colors"
                 required
               />
             </div>
 
-            <div className="formGroup">
-              <label htmlFor="prop-advance-months">Advance Rent (Months) *</label>
+            <div className="flex flex-col gap-1.5 flex-1 mb-4 text-left">
+              <label htmlFor="prop-advance-months" className="text-xs font-semibold text-text-primary">Advance Rent (Months) *</label>
               <select
                 id="prop-advance-months"
                 value={advanceRentMonths}
                 onChange={(e) => setAdvanceRentMonths(parseInt(e.target.value))}
+                className="w-full bg-surface border border-border hover:border-border-light focus:border-primary-accent rounded-lg p-2.5 text-sm outline-none transition-colors"
                 required
               >
                 <option value={1}>1 Month Rent</option>
@@ -954,15 +960,16 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
           </div>
 
           {userRole === 'broker' && (
-            <div className="formRow">
-              <div className="formGroup">
-                <label htmlFor="prop-brokerage">Brokerage Fees (₹) *</label>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col gap-1.5 flex-1 mb-4 text-left">
+                <label htmlFor="prop-brokerage" className="text-xs font-semibold text-text-primary">Brokerage Fees (₹) *</label>
                 <input
                   id="prop-brokerage"
                   type="text"
                   placeholder="e.g. 10000"
                   value={brokerage}
                   onChange={(e) => setBrokerage(e.target.value)}
+                  className="w-full bg-surface border border-border hover:border-border-light focus:border-primary-accent rounded-lg p-2.5 text-sm outline-none transition-colors"
                   required
                 />
               </div>
@@ -970,31 +977,32 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
           )}
 
           {/* Real-time Calculated Total Advance Panel */}
-          <div className="financialSummaryCard">
-            <div className="financialSummaryHeader">
-              <span>Calculated Total Advance</span>
-              <strong>₹{calculatedTotalAdvance.toLocaleString('en-IN')}</strong>
+          <div className="bg-surface border border-border rounded-2xl p-5 mt-4 text-left">
+            <div className="flex justify-between items-center mb-3">
+              <span className="text-sm font-semibold text-text-secondary">Calculated Total Advance</span>
+              <strong className="text-lg font-bold text-text-primary font-mono">₹{calculatedTotalAdvance.toLocaleString('en-IN')}</strong>
             </div>
-            <div className="financialSummaryFormula">
+            <div className="text-xs text-text-tertiary mt-2 font-medium">
               Formula: ({advanceRentMonths} × Rent [₹{(parsedPrice || 0).toLocaleString('en-IN')}]) + Security [₹{(parsedSecurity || 0).toLocaleString('en-IN')}] {userRole === 'broker' ? `+ Brokerage [₹${(parsedBrokerage || 0).toLocaleString('en-IN')}]` : ''}
             </div>
           </div>
         </div>
 
         {/* CARD 2: Property Details */}
-        <div className="appCard">
-          <div className="appCardHeader">
-            <span className="appCardIcon">⚙️</span>
-            <h3 className="appCardTitle">Property Details</h3>
+        <div className="bg-surface-elevated border border-border rounded-2xl p-6 shadow-sm">
+          <div className="flex items-center gap-2 pb-4 border-b border-border-light mb-5 text-left">
+            <span className="text-xl">⚙️</span>
+            <h3 className="font-head text-base font-bold text-text-primary">Property Details</h3>
           </div>
 
-          <div className="formRow">
-            <div className="formGroup">
-              <label htmlFor="prop-type">Property Type *</label>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col gap-1.5 flex-1 mb-4 text-left">
+              <label htmlFor="prop-type" className="text-xs font-semibold text-text-primary">Property Type *</label>
               <select
                 id="prop-type"
                 value={propertyType}
                 onChange={(e) => setPropertyType(e.target.value)}
+                className="w-full bg-surface border border-border hover:border-border-light focus:border-primary-accent rounded-lg p-2.5 text-sm outline-none transition-colors"
                 required
               >
                 <option value="">Select Property Type *</option>
@@ -1011,12 +1019,13 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
               </select>
             </div>
 
-            <div className="formGroup">
-              <label htmlFor="prop-furnish">Furnishing Status</label>
+            <div className="flex flex-col gap-1.5 flex-1 mb-4 text-left">
+              <label htmlFor="prop-furnish" className="text-xs font-semibold text-text-primary">Furnishing Status</label>
               <select
                 id="prop-furnish"
                 value={furnishing}
                 onChange={(e) => setFurnishing(e.target.value)}
+                className="w-full bg-surface border border-border hover:border-border-light focus:border-primary-accent rounded-lg p-2.5 text-sm outline-none transition-colors"
               >
                 <option value="Semi-Furnished">Semi-Furnished</option>
                 <option value="Furnished">Furnished</option>
@@ -1025,7 +1034,7 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-2 mt-2.5 ">
+          <div className="grid grid-cols-1 gap-2 mt-2.5">
             <SegmentedControl
               label="Available for Rent"
               value={available}
@@ -1084,21 +1093,20 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
         </div>
 
         {/* CARD 3: Location Details */}
-        <div className="appCard">
-          <div className="appCardHeader">
-            <span className="appCardIcon">📍</span>
-            <h3 className="appCardTitle">Property Location</h3>
+        <div className="bg-surface-elevated border border-border rounded-2xl p-6 shadow-sm">
+          <div className="flex items-center gap-2 pb-4 border-b border-border-light mb-5 text-left">
+            <span className="text-xl">📍</span>
+            <h3 className="font-head text-base font-bold text-text-primary">Property Location</h3>
           </div>
 
           {/* Single Search Location Input */}
-          <div className="formRow">
-            <div className={`formGroup flex-1`}>
-              <label htmlFor="prop-search-loc">Search Property Location *</label>
-              <div className="mapSearchRow">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col gap-1.5 flex-1 mb-4 text-left">
+              <label htmlFor="prop-search-loc" className="text-xs font-semibold text-text-primary">Search Property Location *</label>
+              <div className="flex gap-2 mb-3 w-full">
                 <input
                   id="prop-search-loc"
                   type="text"
-                  className="mapSearchInput"
                   placeholder="e.g. Phoenix Marketcity Pune or Indiranagar Bangalore"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -1108,13 +1116,14 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
                       handleMapSearch();
                     }
                   }}
+                  className="w-full bg-surface border border-border hover:border-border-light focus:border-primary-accent rounded-lg p-2.5 text-sm outline-none transition-colors"
                   required
                 />
                 <button
                   type="button"
-                  className="mapSearchBtn"
                   onClick={() => handleMapSearch()}
                   disabled={searchingMap}
+                  className="px-4 py-2 bg-primary-accent hover:bg-primary-accent/90 text-white rounded-lg text-sm font-semibold transition-colors cursor-pointer shrink-0 disabled:opacity-55 disabled:cursor-not-allowed"
                 >
                   {searchingMap ? 'Searching...' : '🔍 Search'}
                 </button>
@@ -1123,13 +1132,13 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
           </div>
 
           {locationWarning && (
-            <div className="bg-red-500/8 border border-red-500/15 text-red-500 py-2.5 px-3.5 rounded-lg text-[0.85rem] font-semibold mb-4 flex items-center gap-2">
+            <div className="bg-error/10 border border-error/18 text-error py-2.5 px-3.5 rounded-lg text-[0.85rem] font-semibold mb-4 flex items-center gap-2 text-left">
               {locationWarning}
             </div>
           )}
 
           {coords && (
-            <div className="bg-green-500/8 border border-green-500/15 text-green-600 py-2.5 px-3.5 rounded-lg text-[0.85rem] font-semibold mb-4 flex flex-col gap-1">
+            <div className="bg-success/10 border border-success/18 text-success py-2.5 px-3.5 rounded-lg text-[0.85rem] font-semibold mb-4 flex flex-col gap-1 text-left">
               <div className="flex items-center gap-1.5">
                 <span>✅ Resolved Location:</span>
                 <strong>{locationStr || 'Unknown location'}</strong>
@@ -1140,18 +1149,18 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
             </div>
           )}
 
-          <div className="formGroup" style={{ marginTop: '5px' }}>
-            <label className="flex justify-between items-center mb-2 flex-wrap gap-2">
+          <div className="flex flex-col gap-1.5 flex-1 mb-4 text-left" style={{ marginTop: '5px' }}>
+            <label className="flex justify-between items-center mb-2 flex-wrap gap-2 text-xs font-semibold text-text-primary">
               <span>Select/Adjust on Map *</span>
               <div className="flex items-center gap-3">
                 <button 
                   type="button" 
                   onClick={getCurrentLocation}
-                  className="bg-blue-600/8 text-blue-600 border border-blue-600/15 rounded-lg py-1.5 px-3 text-[0.8rem] font-semibold cursor-pointer flex items-center gap-1.5 transition-all duration-200"
+                  className="bg-primary-accent/10 text-primary-accent border border-primary-accent/18 rounded-lg py-1.5 px-3 text-[0.8rem] font-semibold cursor-pointer flex items-center gap-1.5 transition-all duration-200"
                 >
                   📍 Use My Location
                 </button>
-                <span className="uploadSubtitle">
+                <span className="text-xs text-text-secondary">
                   {coords ? `📌 Pinned: ${coords.lat.toFixed(5)}, ${coords.lng.toFixed(5)}` : '⚠️ No location pinned yet'}
                 </span>
               </div>
@@ -1160,15 +1169,14 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
               id="map-picker" 
               className="h-[320px] w-full rounded-2xl border border-slate-300 shadow-[0_4px_12px_rgba(0,0,0,0.04)] relative z-1"
             ></div>
-            <span className={`uploadSubtitle mt-2 block italic`}>
+            <span className="text-xs text-text-tertiary mt-2 block italic text-left">
               💡 Search above or click on the map to pin your property. SettleKar will reverse-geocode your pin and auto-fill the search bar!
             </span>
 
             {/* Neighborhood Score Section */}
-            {/* Neighborhood Score Section */}
-            <div className="mt-5 border-t border-dashed border-white/8 pt-3.5">
+            <div className="mt-5 border-t border-dashed border-border pt-3.5 text-left">
               <div className="flex items-center justify-between flex-wrap gap-3">
-                <span className="uploadSubtitle">
+                <span className="text-xs text-text-secondary">
                   {isScoreFetched 
                     ? '✅ Neighborhood rating successfully loaded.' 
                     : coords 
@@ -1177,54 +1185,54 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
                 </span>
                 <button
                   type="button"
-                  className={`scoreFetchBtn ${isScoreFetched ? 'scoreFetchBtnSuccess' : ''}`}
+                  className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer disabled:opacity-55 disabled:cursor-not-allowed ${isScoreFetched ? 'bg-success hover:bg-success/90 text-white' : 'bg-primary-accent hover:bg-primary-accent/90 text-white'}`}
                   onClick={fetchNeighborhoodScore}
                   disabled={!coords || fetchingScore}
                 >
                   {fetchingScore 
                     ? '⚡ Fetching Score...' 
                     : isScoreFetched 
-                      ? '🔄 Refresh Neighborhood Score' 
+                      ? '🔄 Refresh Score' 
                       : '🔍 Fetch Neighborhood Score'}
                 </button>
               </div>
 
               {scoreError && (
-                <div className="bg-red-500/8 border border-red-500/15 text-red-500 py-2.5 px-3.5 rounded-lg text-[0.85rem] font-semibold mt-3">
+                <div className="bg-error/10 border border-error/18 text-error py-2.5 px-3.5 rounded-lg text-[0.85rem] font-semibold mt-3 text-left">
                   ❌ {scoreError}
                 </div>
               )}
 
               {fetchingScore && (
-                <div className="text-center py-7 px-5 text-slate-400">
-                  <div className="inline-block w-7.5 h-7.5 border-3 border-slate-800/10 border-t-primary rounded-full animate-spin mb-3"></div>
+                <div className="text-center py-7 px-5 text-text-tertiary">
+                  <div className="inline-block w-7.5 h-7.5 border-3 border-border border-t-primary-accent rounded-full animate-spin mb-3"></div>
                   <p className="text-[0.9rem] m-0">Querying LivableIndia APIs and mapping compound neighborhood pillars...</p>
                 </div>
               )}
 
               {!fetchingScore && isScoreFetched && neighborhoodScore !== null && (
-                <div className="scoreCard">
-                  <div className="scoreHeader">
-                    <div className="scoreBadgeContainer">
-                      <span className="overallScoreLabel">LIVABILITY SCORE</span>
-                      <span className="overallScoreValue">{neighborhoodScore}/100</span>
-                      <span className={`scoreIndicatorBadge ${
+                <div className="bg-surface border border-border rounded-2xl p-5 mt-4 flex flex-col gap-4 text-left">
+                  <div className="flex justify-between items-start mb-2">
+                    <div className="flex flex-col gap-1.5">
+                      <span className="text-[10px] font-bold text-text-tertiary tracking-wider font-head uppercase">LIVABILITY SCORE</span>
+                      <span className="text-2xl font-bold text-text-primary font-mono">{neighborhoodScore}/100</span>
+                      <span className={`px-2 py-0.5 text-xs font-bold rounded-full w-fit border ${
                         neighborhoodScore >= 80 
-                          ? 'scoreBadgeHigh' 
+                          ? 'bg-success/10 text-success border-success/18' 
                           : neighborhoodScore >= 60 
-                            ? 'scoreBadgeMedium' 
-                            : 'scoreBadgeLow'
+                            ? 'bg-warning/10 text-warning border-warning/18' 
+                            : 'bg-error/10 text-error border-error/18'
                       }`}>
                         {neighborhoodScore >= 80 ? '🟢 Excellent' : neighborhoodScore >= 60 ? '🟡 Moderate' : '🔴 Poor'} Livability
                       </span>
                     </div>
-                    <div style={{ textAlign: 'right', fontSize: '0.8rem', color: '#64748b' }}>
+                    <div style={{ textAlign: 'right', fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
                       Data source: <strong>LivableIndia API</strong>
                     </div>
                   </div>
 
                   {neighborhoodPillars && (
-                    <div className="scorePillarsGrid">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-3">
                       {Object.entries(neighborhoodPillars).map(([key, value]: [string, any]) => {
                         const emojis: Record<string, string> = {
                           water: '💧',
@@ -1240,23 +1248,23 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
                           dining: '🍔'
                         };
                         const scoreColorClass = value.score >= 80 
-                          ? 'scoreTextGreen' 
+                          ? 'text-success' 
                           : value.score >= 60 
-                            ? 'scoreTextOrange' 
-                            : 'scoreTextRed';
+                            ? 'text-warning' 
+                            : 'text-error';
                         return (
-                          <div key={key} className="scorePillarCard">
-                            <div className="pillarHeader">
-                              <span className="pillarName">
+                          <div key={key} className="bg-surface-elevated border border-border p-4 rounded-xl shadow-sm flex flex-col gap-1 text-left">
+                            <div className="flex justify-between items-center mb-1">
+                              <span className="text-sm font-semibold text-text-primary">
                                 {emojis[key] || '📍'} {key.charAt(0).toUpperCase() + key.slice(1)}
                               </span>
-                              <span className={`pillarScore ${scoreColorClass}`}>
+                              <span className={`text-sm font-bold font-mono ${scoreColorClass}`}>
                                 {value.score}
                               </span>
                             </div>
-                            <div className="pillarCategory">{value.category}</div>
-                            <div className="pillarCategory">{value.geography}</div>
-                            <div className="pillarDesc">{value.description}</div>
+                            <div className="text-[10px] text-text-tertiary font-medium font-head uppercase tracking-wider">{value.category}</div>
+                            <div className="text-[10px] text-text-tertiary font-medium font-head uppercase tracking-wider">{value.geography}</div>
+                            <div className="text-xs text-text-secondary leading-relaxed mt-1.5">{value.description}</div>
                           </div>
                         );
                       })}
@@ -1269,27 +1277,28 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
         </div>
 
         {/* CARD 4: Owner Details */}
-        <div className="appCard">
-          <div className="appCardHeader">
-            <span className="appCardIcon">👤</span>
-            <h3 className="appCardTitle">Owner Details</h3>
+        <div className="bg-surface-elevated border border-border rounded-2xl p-6 shadow-sm">
+          <div className="flex items-center gap-2 pb-4 border-b border-border-light mb-5 text-left">
+            <span className="text-xl">👤</span>
+            <h3 className="font-head text-base font-bold text-text-primary">Owner/Lister Details</h3>
           </div>
 
-          <div className="formRow">
-            <div className="formGroup">
-              <label htmlFor="prop-owner-name">Owner Name *</label>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col gap-1.5 flex-1 mb-4 text-left">
+              <label htmlFor="prop-owner-name" className="text-xs font-semibold text-text-primary">Name *</label>
               <input
                 id="prop-owner-name"
                 type="text"
                 placeholder="Full Name"
                 value={ownerName}
                 onChange={(e) => setOwnerName(e.target.value)}
+                className="w-full bg-surface border border-border hover:border-border-light focus:border-primary-accent rounded-lg p-2.5 text-sm outline-none transition-colors"
                 required
               />
             </div>
 
-            <div className="formGroup">
-              <label htmlFor="prop-owner-contact">Owner Contact Number *</label>
+            <div className="flex flex-col gap-1.5 flex-1 mb-4 text-left">
+              <label htmlFor="prop-owner-contact" className="text-xs font-semibold text-text-primary">Contact Number *</label>
               <input
                 id="prop-owner-contact"
                 type="tel"
@@ -1303,6 +1312,7 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
                   setOwnerContact(text.substring(0, 13));
                 }}
                 maxLength={13}
+                className="w-full bg-surface border border-border hover:border-border-light focus:border-primary-accent rounded-lg p-2.5 text-sm outline-none transition-colors"
                 required
               />
             </div>
@@ -1310,46 +1320,46 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
         </div>
 
         {/* CARD 5: Property Images */}
-        <div className="appCard">
-          <div className="appCardHeader">
-            <span className="appCardIcon">🖼️</span>
-            <h3 className="appCardTitle">Property Images</h3>
+        <div className="bg-surface-elevated border border-border rounded-2xl p-6 shadow-sm">
+          <div className="flex items-center gap-2 pb-4 border-b border-border-light mb-5 text-left">
+            <span className="text-xl">🖼️</span>
+            <h3 className="font-head text-base font-bold text-text-primary">Property Images</h3>
           </div>
 
-          <div className="multiUploadContainer">
+          <div className="flex flex-col gap-6">
             {/* 1. Indoor Images Section */}
-            <div className="formGroup">
+            <div className="flex flex-col gap-1.5 flex-1 mb-4 text-left">
               <label style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span>Indoor Images</span>
-                <span className="uploadSubtitle">{indoorFiles.length} selected</span>
+                <span className="text-xs font-semibold text-text-primary">Indoor Images</span>
+                <span className="text-xs text-text-secondary">{indoorFiles.length} selected</span>
               </label>
               
-              <div className="fileUploadZone">
+              <div className="relative w-full rounded-2xl border-2 border-dashed border-border hover:border-primary-accent transition-colors bg-surface cursor-pointer overflow-hidden p-6">
                 <input
                   type="file"
                   id="prop-indoor-upload"
                   accept="image/*"
                   multiple
                   onChange={handleIndoorFilesChange}
-                  className="fileInputHidden"
+                  className="hidden"
                 />
-                <label htmlFor="prop-indoor-upload" className="fileUploadLabel">
-                  <div className="uploadPlaceholder">
-                    <span className="uploadIcon">🚪</span>
-                    <span className="uploadTitle">Choose Indoor Images</span>
-                    <span className="uploadSubtitle">Upload multiple photos of rooms, kitchen, washrooms</span>
+                <label htmlFor="prop-indoor-upload" className="cursor-pointer block w-full">
+                  <div className="flex flex-col items-center justify-center text-center gap-1.5">
+                    <span className="text-3xl mb-1">🚪</span>
+                    <span className="text-sm font-semibold text-text-primary">Choose Indoor Images</span>
+                    <span className="text-xs text-text-secondary">Upload multiple photos of rooms, kitchen, washrooms</span>
                   </div>
                 </label>
               </div>
 
               {indoorPreviews.length > 0 && (
-                <div className="previewsGrid">
+                <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3 mt-4">
                   {indoorPreviews.map((preview, idx) => (
-                    <div key={`indoor-pre-${idx}`} className="previewThumbWrapper">
-                      <img src={preview} alt={`Indoor preview ${idx + 1}`} className="previewThumb" />
+                    <div key={`indoor-pre-${idx}`} className="relative aspect-video rounded-xl overflow-hidden border border-border shadow-sm group">
+                      <img src={preview} alt={`Indoor preview ${idx + 1}`} className="w-full h-full object-cover" />
                       <button
                         type="button"
-                        className="deleteThumbBtn"
+                        className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white transition-opacity duration-150 border-0 cursor-pointer text-xs font-bold"
                         onClick={() => removeIndoorImage(idx)}
                         title="Remove Image"
                       >
@@ -1362,38 +1372,38 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
             </div>
 
             {/* 2. Outdoor Images Section */}
-            <div className="formGroup">
+            <div className="flex flex-col gap-1.5 flex-1 mb-4 text-left">
               <label style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span>Outdoor/Surrounding Images</span>
-                <span className="uploadSubtitle">{outdoorFiles.length} selected</span>
+                <span className="text-xs font-semibold text-text-primary">Outdoor/Surrounding Images</span>
+                <span className="text-xs text-text-secondary">{outdoorFiles.length} selected</span>
               </label>
               
-              <div className="fileUploadZone">
+              <div className="relative w-full rounded-2xl border-2 border-dashed border-border hover:border-primary-accent transition-colors bg-surface cursor-pointer overflow-hidden p-6">
                 <input
                   type="file"
                   id="prop-outdoor-upload"
                   accept="image/*"
                   multiple
                   onChange={handleOutdoorFilesChange}
-                  className="fileInputHidden"
+                  className="hidden"
                 />
-                <label htmlFor="prop-outdoor-upload" className="fileUploadLabel">
-                  <div className="uploadPlaceholder">
-                    <span className="uploadIcon">🌳</span>
-                    <span className="uploadTitle">Choose Outdoor Images</span>
-                    <span className="uploadSubtitle">Upload photos of society, entry gate, surroundings, or building front</span>
+                <label htmlFor="prop-outdoor-upload" className="cursor-pointer block w-full">
+                  <div className="flex flex-col items-center justify-center text-center gap-1.5">
+                    <span className="text-3xl mb-1">🌳</span>
+                    <span className="text-sm font-semibold text-text-primary">Choose Outdoor Images</span>
+                    <span className="text-xs text-text-secondary">Upload photos of society, entry gate, surroundings, or building front</span>
                   </div>
                 </label>
               </div>
 
               {outdoorPreviews.length > 0 && (
-                <div className="previewsGrid">
+                <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3 mt-4">
                   {outdoorPreviews.map((preview, idx) => (
-                    <div key={`outdoor-pre-${idx}`} className="previewThumbWrapper">
-                      <img src={preview} alt={`Outdoor preview ${idx + 1}`} className="previewThumb" />
+                    <div key={`outdoor-pre-${idx}`} className="relative aspect-video rounded-xl overflow-hidden border border-border shadow-sm group">
+                      <img src={preview} alt={`Outdoor preview ${idx + 1}`} className="w-full h-full object-cover" />
                       <button
                         type="button"
-                        className="deleteThumbBtn"
+                        className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white transition-opacity duration-150 border-0 cursor-pointer text-xs font-bold"
                         onClick={() => removeOutdoorImage(idx)}
                         title="Remove Image"
                       >
@@ -1408,17 +1418,16 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
         </div>
 
         {coords && !isScoreFetched && (
-          <div className="scoreValidationWarning">
+          <div className="bg-warning/10 border border-warning/18 text-warning text-sm p-4 rounded-xl mb-4 text-left">
             ⚠️ <strong>Action Required:</strong> Please click "Fetch Neighborhood Score" in the Location Details card above before publishing.
           </div>
         )}
 
-        <div style={{ display: 'flex', gap: '15px', marginTop: '10px' }}>
+        <div className="flex gap-4 mt-8">
           <button 
             type="submit" 
-            className="submitFormBtn" 
+            className="flex-1 px-5 py-3.5 bg-primary-accent hover:bg-primary-accent/90 text-white rounded-xl text-sm font-bold transition-colors shadow-md cursor-pointer border-0 disabled:opacity-55 disabled:cursor-not-allowed" 
             disabled={formSuccess || uploadProgress || (coords !== null && !isScoreFetched)} 
-            style={{ flex: 1 }}
           >
             {uploadProgress 
               ? '📤 Uploading Images to Storage...' 
@@ -1429,17 +1438,7 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
           <button
             type="button"
             onClick={onCancel}
-            style={{
-              background: '#f1f5f9',
-              color: '#475569',
-              border: '1px solid #cbd5e1',
-              borderRadius: '14px',
-              padding: '12px 24px',
-              fontSize: '1rem',
-              fontWeight: 700,
-              cursor: 'pointer',
-              transition: 'all 0.2s ease'
-            }}
+            className="px-5 py-3.5 bg-surface hover:bg-border-light text-text-secondary border border-border rounded-xl text-sm font-bold transition-colors cursor-pointer"
           >
             Cancel
           </button>

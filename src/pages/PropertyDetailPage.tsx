@@ -9,6 +9,7 @@ import { wishlistService } from '../services/wishlistService';
 import { auth } from '../firebase';
 import logoImage from '/logo.png';
 import styles from '../styles/PropertyDetailPage.module.css';
+import { trackMetaEvent } from '../utils/metaPixel';
 
 // Sub-components
 import PropertyHeroGallery from '../components/PropertyDetail/PropertyHeroGallery';
@@ -58,6 +59,20 @@ const PropertyDetailPage: React.FC = () => {
   const [inWishlist, setInWishlist] = useState(false);
   const [togglingWishlist, setTogglingWishlist] = useState(false);
 
+  useEffect(() => {
+    if (!property) return;
+
+    trackMetaEvent("ViewContent", {
+        content_type: "property",
+        content_name: property.title,
+        content_category: property.propertyType,
+        value: property.rent,
+        currency: "INR"
+    });
+
+}, [property]);
+  
+  
   // ── Auth-dependent effects ──────────────────────────────────────────────────
 
   useEffect(() => {

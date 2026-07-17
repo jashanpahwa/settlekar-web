@@ -176,68 +176,68 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
 
   if (regStep === 'select') {
     return (
-      <div className="signInContainer">
+      <div className="min-h-screen bg-background flex items-center justify-center p-6 font-body">
         <title>SettleKar - Setup Profile</title>
         <meta name="robots" content="noindex, nofollow" />
-        <div className="signInCard" style={{ maxWidth: '600px' }}>
-          <div className="signInHeader">
+        <div className="bg-surface-elevated border border-border rounded-2xl p-10 w-full max-w-[600px] shadow-lg">
+          <div className="flex flex-col gap-3 mb-6">
             <Link to="/">
-              <img src={logoImage} alt="SettleKar" className="signInLogo" width={500} height={125} />
+              <img src={logoImage} alt="SettleKar" className="h-[34px] w-auto object-contain" width={500} height={125} />
             </Link>
-            <span className="signInBadge">Account setup</span>
+            <span className="bg-primary-accent/10 border border-primary-accent/18 text-primary-accent font-head text-[11px] font-bold uppercase tracking-[0.08em] px-2.5 py-1 rounded-full w-fit">Account setup</span>
           </div>
 
-          <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '8px' }}>Select your account type</h2>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.925rem', marginBottom: '24px' }}>
+          <h2 className="font-head text-2xl font-bold text-text-primary mb-2 tracking-tight">Select your account type</h2>
+          <p className="text-text-secondary text-sm leading-relaxed mb-6 text-left">
             Before listing a property or managing inquiries, please specify if you are an Owner, Broker, Firm, or Tenant.
           </p>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '32px' }}>
+          <div className="flex flex-col gap-4 mb-8">
             {/* Owner Option */}
             <div 
               onClick={() => setSelectedRegRole('owner')}
-              className={`roleOptionCard ${selectedRegRole === 'owner' ? 'roleOptionCardActive' : ''}`}
+              className={`flex items-center gap-4 p-4 rounded-xl cursor-pointer transition-all border text-left ${selectedRegRole === 'owner' ? 'border-primary-accent bg-primary-accent/10 text-text-primary shadow-sm' : 'bg-surface border-border text-text-primary hover:bg-border-light'}`}
             >
-              <div className="roleOptionIcon">🏠</div>
-              <div className="roleOptionDetails">
-                <h4>Property Owner</h4>
-                <p>I own the apartment or house and want to list it directly with no brokerage.</p>
+              <div className="text-2xl shrink-0">🏠</div>
+              <div>
+                <h4 className="text-text-primary font-head text-base font-bold mb-0.5">Property Owner</h4>
+                <p className="text-text-secondary text-xs leading-normal">I own the apartment or house and want to list it directly with no brokerage.</p>
               </div>
             </div>
 
             {/* Broker Option */}
             <div 
               onClick={() => setSelectedRegRole('broker')}
-              className={`roleOptionCard ${selectedRegRole === 'broker' ? 'roleOptionCardActive' : ''}`}
+              className={`flex items-center gap-4 p-4 rounded-xl cursor-pointer transition-all border text-left ${selectedRegRole === 'broker' ? 'border-primary-accent bg-primary-accent/10 text-text-primary shadow-sm' : 'bg-surface border-border text-text-primary hover:bg-border-light'}`}
             >
-              <div className="roleOptionIcon">🏢</div>
-              <div className="roleOptionDetails">
-                <h4>Real Estate Broker</h4>
-                <p>I am a broker listing properties on behalf of landlords and want to specify brokerage fees.</p>
+              <div className="text-2xl shrink-0">🏢</div>
+              <div>
+                <h4 className="text-text-primary font-head text-base font-bold mb-0.5">Real Estate Broker</h4>
+                <p className="text-text-secondary text-xs leading-normal">I am a broker listing properties on behalf of landlords and want to specify brokerage fees.</p>
               </div>
             </div>
 
             {/* Firm Option */}
             <div 
               onClick={() => setSelectedRegRole('firm')}
-              className={`roleOptionCard ${selectedRegRole === 'firm' ? 'roleOptionCardActive' : ''}`}
+              className={`flex items-center gap-4 p-4 rounded-xl cursor-pointer transition-all border text-left ${selectedRegRole === 'firm' ? 'border-primary-accent bg-primary-accent/10 text-text-primary shadow-sm' : 'bg-surface border-border text-text-primary hover:bg-border-light'}`}
             >
-              <div className="roleOptionIcon">🏢🏢</div>
-              <div className="roleOptionDetails">
-                <h4>Real Estate Firm / Developer</h4>
-                <p>We are a building firm, builder, developer, or commercial property management company.</p>
+              <div className="text-2xl shrink-0">🏢🏢</div>
+              <div>
+                <h4 className="text-text-primary font-head text-base font-bold mb-0.5">Real Estate Firm / Developer</h4>
+                <p className="text-text-secondary text-xs leading-normal">We are a building firm, builder, developer, or commercial property management company.</p>
               </div>
             </div>
 
             {/* Tenant Option */}
             <div 
               onClick={() => setSelectedRegRole('tenant')}
-              className={`roleOptionCard ${selectedRegRole === 'tenant' ? 'roleOptionCardActive' : ''}`}
+              className={`flex items-center gap-4 p-4 rounded-xl cursor-pointer transition-all border text-left ${selectedRegRole === 'tenant' ? 'border-primary-accent bg-primary-accent/10 text-text-primary shadow-sm' : 'bg-surface border-border text-text-primary hover:bg-border-light'}`}
             >
-              <div className="roleOptionIcon">👤</div>
-              <div className="roleOptionDetails">
-                <h4>Tenant / House Hunter</h4>
-                <p>I want to browse verified properties and find roommates or apartments to rent.</p>
+              <div className="text-2xl shrink-0">👤</div>
+              <div>
+                <h4 className="text-text-primary font-head text-base font-bold mb-0.5">Tenant / House Hunter</h4>
+                <p className="text-text-secondary text-xs leading-normal">I want to browse verified properties and find roommates or apartments to rent.</p>
               </div>
             </div>
           </div>
@@ -253,17 +253,15 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
                 setRegStep('form');
               }
             }}
-            className="googleSignInBtn" 
+            className="w-full bg-primary-accent hover:bg-primary-accent/90 text-white border-0 text-sm font-bold font-head py-3.5 px-4 rounded-xl cursor-pointer flex items-center justify-center gap-2.5 transition-colors disabled:opacity-55 disabled:cursor-not-allowed mb-4 shadow-sm" 
             disabled={!selectedRegRole || registering}
-            style={{ background: '#2563eb', color: '#ffffff', fontWeight: 700 }}
           >
             {selectedRegRole === 'tenant' ? (registering ? 'Setting up Profile...' : 'Confirm Tenant Selection') : 'Continue to Registration'}
           </button>
 
           <button 
             onClick={handleSignOut} 
-            className="backHomeLink"
-            style={{ background: 'none', border: 'none', cursor: 'pointer', width: '100%', marginTop: '10px' }}
+            className="block text-center text-text-secondary hover:text-text-primary text-[0.85rem] no-underline transition-colors bg-none border-none cursor-pointer w-full mt-2.5"
           >
             ← Sign Out
           </button>
@@ -272,37 +270,37 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
     );
   } else {
     return (
-      <div className="signInContainer">
+      <div className="min-h-screen bg-background flex items-center justify-center p-6 font-body">
         <title>SettleKar - Complete Profile Registration</title>
         <meta name="robots" content="noindex, nofollow" />
-        <div className="signInCard" style={{ maxWidth: '600px', width: '100%' }}>
-          <div className="signInHeader">
+        <div className="bg-surface-elevated border border-border rounded-2xl p-10 w-full max-w-[600px] shadow-lg text-left">
+          <div className="flex flex-col gap-3 mb-6">
             <Link to="/">
-              <img src={logoImage} alt="SettleKar" className="signInLogo" width={500} height={125} />
+              <img src={logoImage} alt="SettleKar" className="h-[34px] w-auto object-contain" width={500} height={125} />
             </Link>
-            <span className="signInBadge">Complete Registration</span>
+            <span className="bg-primary-accent/10 border border-primary-accent/18 text-primary-accent font-head text-[11px] font-bold uppercase tracking-[0.08em] px-2.5 py-1 rounded-full w-fit">Complete Registration</span>
           </div>
 
           <button 
             onClick={() => setRegStep('select')} 
-            style={{ background: 'none', border: 'none', color: 'var(--primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.875rem', marginBottom: '16px', padding: 0 }}
+            className="bg-transparent border-none text-primary cursor-pointer flex items-center gap-1.5 text-sm mb-4 p-0 hover:underline"
           >
             ← Back to role selection
           </button>
 
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '8px' }}>
+          <h2 className="font-head text-2xl font-bold text-text-primary mb-2 tracking-tight">
             {selectedRegRole === 'owner' ? 'Owner Profile Registration' : selectedRegRole === 'broker' ? 'Broker Profile Registration' : 'Firm Profile Registration'}
           </h2>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '24px' }}>
-            Please fill out the form below to register your business profile on SettleKar.
+          <p className="text-text-secondary text-sm leading-relaxed mb-6">
+            Please fill out the form below to register your SettleKar dashboard profile.
           </p>
 
-          <form onSubmit={handleRegisterRole} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <form onSubmit={handleRegisterRole} className="flex flex-col gap-5">
             {/* Common Fields */}
-            <div className="formRow">
-              <div className="formGroup">
-                <label htmlFor="fullName">
-                  {selectedRegRole === 'firm' ? 'Contact Person Name' : 'Full Name'} <span style={{ color: '#ef4444' }}>*</span>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col gap-1.5 flex-1">
+                <label htmlFor="fullName" className="text-xs font-semibold text-text-primary">
+                  {selectedRegRole === 'firm' ? 'Contact Person Name' : 'Full Name'} <span style={{ color: 'var(--color-error)' }}>*</span>
                 </label>
                 <input
                   type="text"
@@ -310,42 +308,44 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="Enter full name"
+                  className="w-full bg-surface border border-border hover:border-border-light focus:border-primary-accent rounded-lg p-2.5 text-sm outline-none transition-colors"
                   required
                 />
               </div>
-              <div className="formGroup">
-                <label htmlFor="phone">Phone Number <span style={{ color: '#ef4444' }}>*</span></label>
+              <div className="flex flex-col gap-1.5 flex-1">
+                <label htmlFor="phone" className="text-xs font-semibold text-text-primary">Phone Number <span style={{ color: 'var(--color-error)' }}>*</span></label>
                 <input
                   type="tel"
                   id="phone"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="10-digit mobile number"
+                  className="w-full bg-surface border border-border hover:border-border-light focus:border-primary-accent rounded-lg p-2.5 text-sm outline-none transition-colors"
                   required
                 />
               </div>
             </div>
 
-            <div className="formRow">
-              <div className="formGroup">
-                <label htmlFor="email">Email Address</label>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col gap-1.5 flex-1">
+                <label htmlFor="email" className="text-xs font-semibold text-text-primary">Email Address</label>
                 <input
                   type="email"
                   id="email"
                   value={user?.email || ''}
                   disabled
-                  style={{ opacity: 0.6, cursor: 'not-allowed' }}
+                  className="w-full bg-surface border border-border rounded-lg p-2.5 text-sm outline-none cursor-not-allowed opacity-60"
                 />
               </div>
-              <div className="formGroup">
-                <label htmlFor="city">City of Operation <span style={{ color: '#ef4444' }}>*</span></label>
+              <div className="flex flex-col gap-1.5 flex-1">
+                <label htmlFor="city" className="text-xs font-semibold text-text-primary">City of Operation <span style={{ color: 'var(--color-error)' }}>*</span></label>
                 <select 
                   id="city" 
                   value={city} 
                   onChange={(e) => setCity(e.target.value)}
+                  className="w-full bg-surface border border-border hover:border-border-light focus:border-primary-accent rounded-lg p-2.5 text-sm outline-none transition-colors"
                   required
                 >
-                  
                   <option value="Mumbai">Jaipur</option>
                   <option value="Bangalore">Bangalore</option>
                   <option value="Pune">Pune</option>
@@ -357,15 +357,16 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
 
             {/* Owner-specific Fields */}
             {selectedRegRole === 'owner' && (
-              <div style={{ background: 'rgba(15, 23, 42, 0.01)', padding: '20px', borderRadius: '16px', border: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <h4 style={{ color: 'var(--text-primary)', margin: '0', fontSize: '0.95rem', fontWeight: 600 }}>Government ID (Optional — builds trust)</h4>
-                <div className="formRow">
-                  <div className="formGroup">
-                    <label htmlFor="govtIdType">ID Type</label>
+              <div className="bg-surface p-5 rounded-2xl border border-border flex flex-col gap-4">
+                <h4 className="text-text-primary text-sm font-semibold">Government ID (Optional — builds trust)</h4>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <div className="flex flex-col gap-1.5 flex-1">
+                    <label htmlFor="govtIdType" className="text-xs font-semibold text-text-primary">ID Type</label>
                     <select
                       id="govtIdType"
                       value={govtIdType}
                       onChange={(e) => setGovtIdType(e.target.value)}
+                      className="w-full bg-surface border border-border hover:border-border-light focus:border-primary-accent rounded-lg p-2.5 text-sm outline-none transition-colors"
                     >
                       <option value="Aadhaar">Aadhaar</option>
                       <option value="PAN">PAN</option>
@@ -374,14 +375,15 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
                       <option value="Driving Licence">Driving Licence</option>
                     </select>
                   </div>
-                  <div className="formGroup">
-                    <label htmlFor="govtIdNumber">ID Number</label>
+                  <div className="flex flex-col gap-1.5 flex-1">
+                    <label htmlFor="govtIdNumber" className="text-xs font-semibold text-text-primary">ID Number</label>
                     <input
                       type="text"
                       id="govtIdNumber"
                       value={govtIdNumber}
                       onChange={(e) => setGovtIdNumber(e.target.value)}
                       placeholder={`Enter ${govtIdType} number`}
+                      className="w-full bg-surface border border-border hover:border-border-light focus:border-primary-accent rounded-lg p-2.5 text-sm outline-none transition-colors"
                     />
                   </div>
                 </div>
@@ -391,38 +393,40 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
             {/* Broker-specific Fields */}
             {selectedRegRole === 'broker' && (
               <>
-                <div className="formRow">
-                  <div className="formGroup">
-                    <label htmlFor="agencyName">Agency / Firm Name (Optional)</label>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <div className="flex flex-col gap-1.5 flex-1">
+                    <label htmlFor="agencyName" className="text-xs font-semibold text-text-primary">Agency / Firm Name (Optional)</label>
                     <input
                       type="text"
                       id="agencyName"
                       value={agencyName}
                       onChange={(e) => setAgencyName(e.target.value)}
                       placeholder="e.g. Skyline Realtors"
+                      className="w-full bg-surface border border-border hover:border-border-light focus:border-primary-accent rounded-lg p-2.5 text-sm outline-none transition-colors"
                     />
                   </div>
-                  <div className="formGroup">
-                    <label htmlFor="experience">Years of Experience (Optional)</label>
+                  <div className="flex flex-col gap-1.5 flex-1">
+                    <label htmlFor="experience" className="text-xs font-semibold text-text-primary">Years of Experience (Optional)</label>
                     <input
                       type="number"
                       id="experience"
                       value={experience}
                       onChange={(e) => setExperience(e.target.value)}
                       placeholder="e.g. 5"
+                      className="w-full bg-surface border border-border hover:border-border-light focus:border-primary-accent rounded-lg p-2.5 text-sm outline-none transition-colors"
                     />
                   </div>
                 </div>
-                <div className="formGroup">
-                  <label htmlFor="reraNumber">RERA Registration Number </label>
-                  <span style={{ fontSize: '0.775rem', color: '#6366F1', marginTop: '-4px', marginBottom: '4px' }}>🛡️ RERA number is required for individual brokers</span>
+                <div className="flex flex-col gap-1.5">
+                  <label htmlFor="reraNumber" className="text-xs font-semibold text-text-primary">RERA Registration Number </label>
+                  <span className="text-[11px] text-primary-accent -mt-1 mb-1 font-medium">🛡️ RERA number is required for individual brokers</span>
                   <input
                     type="text"
                     id="reraNumber"
                     value={reraNumber}
                     onChange={(e) => setReraNumber(e.target.value)}
                     placeholder="e.g. A51800012345"
-                    
+                    className="w-full bg-surface border border-border hover:border-border-light focus:border-primary-accent rounded-lg p-2.5 text-sm outline-none transition-colors"
                   />
                 </div>
               </>
@@ -431,73 +435,78 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
             {/* Firm-specific Fields */}
             {selectedRegRole === 'firm' && (
               <>
-                <div className="formRow">
-                  <div className="formGroup">
-                    <label htmlFor="firmName">Company / Firm Name <span style={{ color: '#ef4444' }}>*</span></label>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <div className="flex flex-col gap-1.5 flex-1">
+                    <label htmlFor="firmName" className="text-xs font-semibold text-text-primary">Company / Firm Name <span style={{ color: 'var(--color-error)' }}>*</span></label>
                     <input
                       type="text"
                       id="firmName"
                       value={firmName}
                       onChange={(e) => setFirmName(e.target.value)}
                       placeholder="e.g. DLF Limited"
+                      className="w-full bg-surface border border-border hover:border-border-light focus:border-primary-accent rounded-lg p-2.5 text-sm outline-none transition-colors"
                       required
                     />
                   </div>
-                  <div className="formGroup">
-                    <label htmlFor="reraNumberFirm">Firm RERA Number <span style={{ color: '#ef4444' }}>*</span></label>
-                    <span style={{ fontSize: '0.775rem', color: '#F59E0B', marginTop: '-4px', marginBottom: '4px' }}>🛡️ RERA registration is mandatory for all real estate firms</span>
+                  <div className="flex flex-col gap-1.5 flex-1">
+                    <label htmlFor="reraNumberFirm" className="text-xs font-semibold text-text-primary">Firm RERA Number <span style={{ color: 'var(--color-error)' }}>*</span></label>
+                    <span className="text-[11px] text-warning -mt-1 mb-1 font-medium">🛡️ RERA registration is mandatory for all real estate firms</span>
                     <input
                       type="text"
                       id="reraNumberFirm"
                       value={reraNumber}
                       onChange={(e) => setReraNumber(e.target.value)}
                       placeholder="e.g. P52100054321"
+                      className="w-full bg-surface border border-border hover:border-border-light focus:border-primary-accent rounded-lg p-2.5 text-sm outline-none transition-colors"
                       required
                     />
                   </div>
                 </div>
-                <div className="formRow">
-                  <div className="formGroup">
-                    <label htmlFor="gstNumber">GSTIN (Optional)</label>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <div className="flex flex-col gap-1.5 flex-1">
+                    <label htmlFor="gstNumber" className="text-xs font-semibold text-text-primary">GSTIN (Optional)</label>
                     <input
                       type="text"
                       id="gstNumber"
                       value={gstNumber}
                       onChange={(e) => setGstNumber(e.target.value)}
                       placeholder="e.g. 27AAAAA0000A1Z5"
+                      className="w-full bg-surface border border-border hover:border-border-light focus:border-primary-accent rounded-lg p-2.5 text-sm outline-none transition-colors"
                     />
                   </div>
-                  <div className="formGroup">
-                    <label htmlFor="totalAgents">Total Agents / Employees (Optional)</label>
+                  <div className="flex flex-col gap-1.5 flex-1">
+                    <label htmlFor="totalAgents" className="text-xs font-semibold text-text-primary">Total Agents / Employees (Optional)</label>
                     <input
                       type="number"
                       id="totalAgents"
                       value={totalAgents}
                       onChange={(e) => setTotalAgents(e.target.value)}
                       placeholder="e.g. 15"
+                      className="w-full bg-surface border border-border hover:border-border-light focus:border-primary-accent rounded-lg p-2.5 text-sm outline-none transition-colors"
                     />
                   </div>
                 </div>
-                <div className="formGroup">
-                  <label htmlFor="website">Website URL (Optional)</label>
+                <div className="flex flex-col gap-1.5">
+                  <label htmlFor="website" className="text-xs font-semibold text-text-primary">Website URL (Optional)</label>
                   <input
                     type="url"
                     id="website"
                     value={website}
                     onChange={(e) => setWebsite(e.target.value)}
                     placeholder="e.g. https://company.com"
+                    className="w-full bg-surface border border-border hover:border-border-light focus:border-primary-accent rounded-lg p-2.5 text-sm outline-none transition-colors"
                   />
                 </div>
-                <div className="formGroup">
-                  <label htmlFor="officeAddress">Office Address <span style={{ color: '#ef4444' }}>*</span></label>
+                <div className="flex flex-col gap-1.5">
+                  <label htmlFor="officeAddress" className="text-xs font-semibold text-text-primary">Office Address <span style={{ color: 'var(--color-error)' }}>*</span></label>
                   <textarea
                     id="officeAddress"
                     value={officeAddress}
                     onChange={(e) => setOfficeAddress(e.target.value)}
                     placeholder="Enter full office/corporate address"
                     rows={2}
+                    className="w-full bg-surface border border-border hover:border-border-light focus:border-primary-accent rounded-lg p-2.5 text-sm outline-none transition-colors resize-y"
                     required
-                    style={{ resize: 'vertical' }}
                   />
                 </div>
               </>
@@ -505,9 +514,8 @@ const RegistrationGate: React.FC<RegistrationGateProps> = ({
 
             <button 
               type="submit" 
-              className="googleSignInBtn" 
+              className="w-full bg-primary-accent hover:bg-primary-accent/90 text-white border-0 text-sm font-bold font-head py-3.5 px-4 rounded-xl cursor-pointer flex items-center justify-center gap-2.5 transition-colors disabled:opacity-55 disabled:cursor-not-allowed mt-3 shadow-sm" 
               disabled={registering}
-              style={{ background: '#2563eb', color: '#ffffff', fontWeight: 700, marginTop: '12px' }}
             >
               {registering ? 'Creating Profile...' : 'Complete Profile Registration'}
             </button>

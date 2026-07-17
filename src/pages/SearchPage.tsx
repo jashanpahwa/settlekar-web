@@ -8,6 +8,7 @@ import { FloatingSearchBar } from '../components/Search/FloatingSearchBar';
 import { FloatingFilterBar } from '../components/Search/FloatingFilterBar';
 import { CompareView } from '../components/Search/CompareView';
 import { getRouteDistances, getHaversineDistance } from '../utils/routeDistance';
+import { trackMetaEvent } from '../utils/metaPixel';
 
 interface SearchProperty {
   id: string;
@@ -439,6 +440,10 @@ export const SearchPage: React.FC = () => {
     setRelocationReadyFilter(searchData.relocationReady);
     setIsIndependentFilter(searchData.isIndependent);
     setViewMode('map');
+    trackMetaEvent("Search", {
+    city: searchData.address,
+    property_type: searchData.selectedTypes.join(", "),
+});
   };
 
   // Re-run search from Floating Bar

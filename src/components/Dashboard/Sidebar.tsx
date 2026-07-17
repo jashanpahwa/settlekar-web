@@ -69,13 +69,6 @@ const Icons = {
   ),
 };
 
-const ROLE_LABEL: Record<string, string> = {
-  broker: 'Broker Portal',
-  firm: 'Firm Portal',
-  tenant: 'Tenant Portal',
-  owner: 'Owner Portal',
-};
-
 const Sidebar: React.FC<SidebarProps> = ({
   userRole,
   activeTab,
@@ -105,100 +98,98 @@ const Sidebar: React.FC<SidebarProps> = ({
   return (
     <>
       <div
-        className={`sidebarOverlay ${isOpen ? 'overlayVisible' : ''}`}
+        className={`fixed inset-0 bg-primary/30 transition-opacity duration-300 z-40 md:hidden ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
         onClick={onClose}
       />
 
-      <aside className={`sidebar ${isOpen ? 'sidebarOpen' : ''}`}>
+      <aside className={`bg-surface-elevated border-r border-border p-7 flex flex-col z-50 transition-transform duration-300 w-[260px] h-screen overflow-y-auto shrink-0 md:sticky md:top-0 fixed left-0 top-0 bottom-0 ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
         {/* Logo & Portal Badge */}
-        <div className="sidebarHeader">
-          <div className="sidebarLogoRow">
-            <Link to="/" className="logoLink" onClick={onClose}>
-              <img src={logoImage} alt="SettleKar" className="logoImage" />
+        <div className="mb-8 ">
+          <div className="flex items-center justify-between ">
+            <Link to="/" className="inline-flex items-center" onClick={onClose}>
+              <img src={logoImage} alt="SettleKar" className="h-18 w-auto object-contain" />
             </Link>
-            <button className="drawerCloseBtn" onClick={onClose} aria-label="Close menu">
+            <button className="md:hidden p-1.5 rounded-lg text-text-tertiary hover:text-text-secondary hover:bg-surface transition-colors cursor-pointer" onClick={onClose} aria-label="Close menu" color="#0a2540">
               <Icons.Close />
             </button>
           </div>
-          <span className="portalBadge">
-            {ROLE_LABEL[userRole] ?? 'Portal'}
-          </span>
+         
         </div>
 
         {/* Navigation */}
-        <nav className="menu" aria-label="Dashboard navigation">
-          <div className="menuSection">
-            <span className="menuSectionLabel">Main</span>
+        <nav className="flex flex-col gap-0.5 flex-grow" aria-label="Dashboard navigation">
+          <div className="flex flex-col gap-0.5">
+            <span className="font-head text-[10px] font-bold uppercase tracking-wider text-text-tertiary px-3 mb-1.5 block">Main</span>
 
             <button
-              className={`menuItem ${activeTab === 'overview' ? 'activeMenu' : ''}`}
+              className={`bg-transparent border-0 border-l-2 text-text-secondary font-body text-sm font-medium text-left py-2 px-3 rounded-r flex items-center gap-2.5 cursor-pointer transition-colors w-full ${activeTab === 'overview' ? 'border-l-primary-accent bg-primary-accent/10 text-primary-accent font-semibold' : 'border-transparent hover:bg-surface hover:text-text-primary'}`}
               onClick={() => handleTabClick('overview')}
             >
-              <span className="menuItemIcon"><Icons.Overview /></span>
-              <span className="menuItemLabel">Overview</span>
+              <span className="flex items-center shrink-0 color-inherit"><Icons.Overview /></span>
+              <span className="flex-1">Overview</span>
             </button>
 
             {userRole !== 'tenant' && (
               <>
                 <button
-                  className={`menuItem ${activeTab === 'list' ? 'activeMenu' : ''}`}
+                  className={`bg-transparent border-0 border-l-2 text-text-secondary font-body text-sm font-medium text-left py-2 px-3 rounded-r flex items-center gap-2.5 cursor-pointer transition-colors w-full ${activeTab === 'list' ? 'border-l-primary-accent bg-primary-accent/10 text-primary-accent font-semibold' : 'border-transparent hover:bg-surface hover:text-text-primary'}`}
                   onClick={() => handleTabClick('list')}
                 >
-                  <span className="menuItemIcon"><Icons.ListProperty /></span>
-                  <span className="menuItemLabel">List Property</span>
+                  <span className="flex items-center shrink-0 color-inherit"><Icons.ListProperty /></span>
+                  <span className="flex-1">List Property</span>
                 </button>
 
                 <button
-                  className={`menuItem ${activeTab === 'properties' ? 'activeMenu' : ''}`}
+                  className={`bg-transparent border-0 border-l-2 text-text-secondary font-body text-sm font-medium text-left py-2 px-3 rounded-r flex items-center gap-2.5 cursor-pointer transition-colors w-full ${activeTab === 'properties' ? 'border-l-primary-accent bg-primary-accent/10 text-primary-accent font-semibold' : 'border-transparent hover:bg-surface hover:text-text-primary'}`}
                   onClick={() => handleTabClick('properties')}
                 >
-                  <span className="menuItemIcon"><Icons.Properties /></span>
-                  <span className="menuItemLabel">My Properties</span>
+                  <span className="flex items-center shrink-0 color-inherit"><Icons.Properties /></span>
+                  <span className="flex-1">My Properties</span>
                   {propertiesCount > 0 && (
-                    <span className="badgeCount">{propertiesCount}</span>
+                    <span className="ml-auto font-mono text-[11px] font-bold px-1.5 py-0.5 rounded-full bg-surface text-text-secondary border border-border">{propertiesCount}</span>
                   )}
                 </button>
 
                 <button
-                  className={`menuItem ${activeTab === 'inquiries' ? 'activeMenu' : ''}`}
+                  className={`bg-transparent border-0 border-l-2 text-text-secondary font-body text-sm font-medium text-left py-2 px-3 rounded-r flex items-center gap-2.5 cursor-pointer transition-colors w-full ${activeTab === 'inquiries' ? 'border-l-primary-accent bg-primary-accent/10 text-primary-accent font-semibold' : 'border-transparent hover:bg-surface hover:text-text-primary'}`}
                   onClick={() => handleTabClick('inquiries')}
                 >
-                  <span className="menuItemIcon"><Icons.Inquiries /></span>
-                  <span className="menuItemLabel">Inquiries</span>
+                  <span className="flex items-center shrink-0 color-inherit"><Icons.Inquiries /></span>
+                  <span className="flex-1">Inquiries</span>
                   {inquiriesCount > 0 && (
-                    <span className="badgeCountBlue">{inquiriesCount}</span>
+                    <span className="ml-auto font-mono text-[11px] font-bold px-1.5 py-0.5 rounded-full bg-primary-accent/10 text-primary-accent border border-primary-accent/18">{inquiriesCount}</span>
                   )}
                 </button>
               </>
             )}
 
             <button
-              className={`menuItem ${activeTab === 'wishlist' ? 'activeMenu' : ''}`}
+              className={`bg-transparent border-0 border-l-2 text-text-secondary font-body text-sm font-medium text-left py-2 px-3 rounded-r flex items-center gap-2.5 cursor-pointer transition-colors w-full ${activeTab === 'wishlist' ? 'border-l-primary-accent bg-primary-accent/10 text-primary-accent font-semibold' : 'border-transparent hover:bg-surface hover:text-text-primary'}`}
               onClick={() => handleTabClick('wishlist')}
             >
-              <span className="menuItemIcon"><Icons.Wishlist /></span>
-              <span className="menuItemLabel">Wishlist</span>
+              <span className="flex items-center shrink-0 color-inherit"><Icons.Wishlist /></span>
+              <span className="flex-1">Wishlist</span>
             </button>
           </div>
 
-          <div className="menuSection menuSectionBottom">
-            <span className="menuSectionLabel">Account</span>
+          <div className="flex flex-col gap-0.5 mt-3 pt-3 border-t border-border">
+            <span className="font-head text-[10px] font-bold uppercase tracking-wider text-text-tertiary px-3 mb-1.5 block">Account</span>
 
-            <button className="menuItem" onClick={handleSwitchClick}>
-              <span className="menuItemIcon"><Icons.SwitchRole /></span>
-              <span className="menuItemLabel">Switch Role</span>
+            <button className="bg-transparent border-0 border-l-2 border-transparent text-text-secondary font-body text-sm font-medium text-left py-2 px-3 rounded-r flex items-center gap-2.5 cursor-pointer transition-colors hover:bg-surface hover:text-text-primary w-full" onClick={handleSwitchClick}>
+              <span className="flex items-center shrink-0 color-inherit"><Icons.SwitchRole /></span>
+              <span className="flex-1">Switch Role</span>
             </button>
 
-            <button className={`menuItem mobileSignOut`} onClick={handleSignOutClick}>
-              <span className="menuItemIcon"><Icons.SignOut /></span>
-              <span className="menuItemLabel">Sign Out</span>
+            <button className="md:hidden bg-transparent border-0 border-l-2 border-transparent text-text-secondary font-body text-sm font-medium text-left py-2 px-3 rounded-r flex items-center gap-2.5 cursor-pointer transition-colors hover:bg-surface hover:text-text-primary w-full" onClick={handleSignOutClick}>
+              <span className="flex items-center shrink-0 color-inherit"><Icons.SignOut /></span>
+              <span className="flex-1">Sign Out</span>
             </button>
           </div>
         </nav>
 
         {/* Desktop Footer */}
-        <div className="sidebarFooter">
-          <button onClick={handleSignOutClick} className="signOutBtn">
+        <div className="pt-4 border-t border-border mt-2">
+          <button onClick={handleSignOutClick} className="bg-transparent border border-border text-text-secondary font-body text-sm font-medium py-2.5 px-3.5 w-full rounded-lg cursor-pointer flex items-center gap-2 transition-colors hover:bg-error/10 hover:text-error hover:border-error/20">
             <Icons.SignOut />
             <span>Sign Out</span>
           </button>

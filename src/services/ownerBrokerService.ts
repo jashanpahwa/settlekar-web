@@ -1,11 +1,4 @@
-import {
-  doc,
-  getDoc,
-  serverTimestamp,
-  setDoc,
-  updateDoc,
-} from 'firebase/firestore';
-import { db } from '../firebase';
+import { ownerBrokerRepo } from '../repositories';
 
 export interface OwnerProfile {
   userId: string;
@@ -49,130 +42,35 @@ export const ownerBrokerService = {
   // ─── OWNER ────────────────────────────────────────────────────────────────
 
   createOwnerProfile: async (userId: string, ownerData: Omit<OwnerProfile, 'userId'>) => {
-    try {
-      const ownerRef = doc(db, 'owners', userId);
-      const snap = await getDoc(ownerRef);
-      if (snap.exists()) {
-        await updateDoc(ownerRef, {
-          ...ownerData,
-          updatedAt: serverTimestamp(),
-        });
-      } else {
-        await setDoc(ownerRef, {
-          userId,
-          ...ownerData,
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp(),
-        });
-      }
-
-      // Update role in users/{uid}
-      const userRef = doc(db, 'users', userId);
-      await updateDoc(userRef, { role: 'owner', updatedAt: serverTimestamp() });
-
-      return { success: true };
-    } catch (error) {
-      console.error('Error creating owner profile:', error);
-      throw error;
-    }
+    return ownerBrokerRepo.createOwnerProfile(userId, ownerData);
   },
 
   getOwnerProfile: async (userId: string): Promise<OwnerProfile | null> => {
-    try {
-      const snap = await getDoc(doc(db, 'owners', userId));
-      return snap.exists() ? (snap.data() as OwnerProfile) : null;
-    } catch (error) {
-      console.error('Error getting owner profile:', error);
-      throw error;
-    }
+    return ownerBrokerRepo.getOwnerProfile(userId);
   },
 
   // ─── BROKER ───────────────────────────────────────────────────────────────
 
   createBrokerProfile: async (userId: string, brokerData: Omit<BrokerProfile, 'userId'>) => {
-    try {
-      const brokerRef = doc(db, 'brokers', userId);
-      const snap = await getDoc(brokerRef);
-      if (snap.exists()) {
-        await updateDoc(brokerRef, {
-          ...brokerData,
-          updatedAt: serverTimestamp(),
-        });
-      } else {
-        await setDoc(brokerRef, {
-          userId,
-          ...brokerData,
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp(),
-        });
-      }
-
-      const userRef = doc(db, 'users', userId);
-      await updateDoc(userRef, { role: 'broker', updatedAt: serverTimestamp() });
-
-      return { success: true };
-    } catch (error) {
-      console.error('Error creating broker profile:', error);
-      throw error;
-    }
+    return ownerBrokerRepo.createBrokerProfile(userId, brokerData);
   },
 
   getBrokerProfile: async (userId: string): Promise<BrokerProfile | null> => {
-    try {
-      const snap = await getDoc(doc(db, 'brokers', userId));
-      return snap.exists() ? (snap.data() as BrokerProfile) : null;
-    } catch (error) {
-      console.error('Error getting broker profile:', error);
-      throw error;
-    }
+    return ownerBrokerRepo.getBrokerProfile(userId);
   },
 
   // ─── FIRM ─────────────────────────────────────────────────────────────────
 
   createFirmProfile: async (userId: string, firmData: Omit<FirmProfile, 'userId'>) => {
-    try {
-      const firmRef = doc(db, 'firms', userId);
-      const snap = await getDoc(firmRef);
-      if (snap.exists()) {
-        await updateDoc(firmRef, {
-          ...firmData,
-          updatedAt: serverTimestamp(),
-        });
-      } else {
-        await setDoc(firmRef, {
-          userId,
-          ...firmData,
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp(),
-        });
-      }
-
-      const userRef = doc(db, 'users', userId);
-      await updateDoc(userRef, { role: 'firm', updatedAt: serverTimestamp() });
-
-      return { success: true };
-    } catch (error) {
-      console.error('Error creating firm profile:', error);
-      throw error;
-    }
+    return ownerBrokerRepo.createFirmProfile(userId, firmData);
   },
 
   getFirmProfile: async (userId: string): Promise<FirmProfile | null> => {
-    try {
-      const snap = await getDoc(doc(db, 'firms', userId));
-      return snap.exists() ? (snap.data() as FirmProfile) : null;
-    } catch (error) {
-      console.error('Error getting firm profile:', error);
-      throw error;
-    }
+    return ownerBrokerRepo.getFirmProfile(userId);
   },
 
   // ─── GENERIC HELPER ───────────────────────────────────────────────────────
 
-  /**
-   * Fetch the professional profile for a user given their role.
-   * Returns null for tenants (no sub-collection document).
-   */
   getProfileByRole: async (userId: string, role: 'owner' | 'broker' | 'firm' | 'tenant' | string): Promise<any | null> => {
     if (role === 'owner') return ownerBrokerService.getOwnerProfile(userId);
     if (role === 'broker') return ownerBrokerService.getBrokerProfile(userId);

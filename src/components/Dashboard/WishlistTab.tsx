@@ -58,54 +58,51 @@ const WishlistTab: React.FC<WishlistTabProps> = ({ user }) => {
 
   if (loading) {
     return (
-      <div className="tabContent">
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '200px' }}>
-          <div className="spinner"></div>
-        </div>
+      <div className="flex justify-center items-center min-h-[200px]">
+        <div className="w-8 h-8 border-2 border-border rounded-full border-t-primary-accent animate-spin"></div>
       </div>
     );
   }
 
   return (
-    <div className="tabContent">
-      <div className="sectionHeader">
-        <h2>My Wishlisted Properties</h2>
-        <p>Your saved properties for quick reference and future inquiries.</p>
+    <div className="space-y-6 text-left">
+      <div className="mb-6 space-y-1">
+        <h2 className="font-head text-xl font-bold text-text-primary tracking-tight">My Wishlisted Properties</h2>
+        <p className="text-xs text-text-secondary">Your saved properties for quick reference and future inquiries.</p>
       </div>
 
       {wishlistItems.length === 0 ? (
-        <div className="emptyState">
-          <div className="emptyIcon">❤️</div>
-          <h2>Your Wishlist is Empty</h2>
-          <p>No properties wishlisted yet. Start exploring properties to save your favorites!</p>
-          <a href="/" className="emptyStateBtn" style={{ textDecoration: 'none', textAlign: 'center', display: 'inline-block' }}>
+        <div className="flex flex-col items-center justify-center text-center p-12 bg-surface-elevated rounded-2xl border border-border shadow-sm">
+          <div className="text-4xl mb-4">❤️</div>
+          <h2 className="text-lg font-semibold text-text-primary mb-1">Your Wishlist is Empty</h2>
+          <p className="text-sm text-text-secondary max-w-sm mb-6">No properties wishlisted yet. Start exploring properties to save your favorites!</p>
+          <a href="/" className="px-4 py-2 bg-primary-accent hover:bg-primary-accent/90 text-white rounded-lg text-sm font-semibold transition-colors shadow-sm cursor-pointer no-underline text-center inline-block">
             Browse Properties
           </a>
         </div>
       ) : (
-        <div className="listedPropertiesGrid">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {wishlistItems.map((item) => (
-            <div key={item.id} className="listedCard">
-              <div className="listedCardImgLink">
-                <img src={item.property.image} alt={item.property.title} className={item.property.isUserAdded ? 'listedCardImg' : ''} style={{ width: '100%', height: '200px', objectFit: 'cover', borderRadius: '12px' }} />
+            <div key={item.id} className="bg-surface-elevated rounded-2xl border border-border overflow-hidden shadow-sm flex flex-col">
+              <div className="block relative h-48 overflow-hidden">
+                <img src={item.property.image} alt={item.property.title} className="w-full h-full object-cover transition-transform duration-300 hover:scale-105" />
               </div>
-              <div className="listedCardBody">
-                <div className="listedCardHead">
-                  <h3>{item.property.title}</h3>
-                  <span className="listedCardBadge">{item.property.badge}</span>
+              <div className="p-5 flex-1 flex flex-col justify-between">
+                <div className="flex justify-between items-start gap-4 mb-2">
+                  <h3 className="text-base font-semibold text-text-primary text-left">{item.property.title}</h3>
+                  <span className="px-2.5 py-0.5 bg-primary-accent/10 text-primary-accent border border-primary-accent/18 rounded-full text-xs font-semibold uppercase tracking-wider whitespace-nowrap">{item.property.badge}</span>
                 </div>
-                <p className="listedCardAddr">
+                <p className="text-sm text-text-secondary mb-2 flex items-center flex-wrap gap-1.5 text-left">
                   📍 {item.property.address || item.property.location || item.property.city}
                 </p>
-                <p className="listedCardFeat">{item.property.features}</p>
-                <div className="listedCardFooter">
-                  <span className="listedCardPrice">{item.property.price}</span>
-                  <div className="actionBtns">
+                <p className="text-xs text-text-tertiary mb-4 text-left">{item.property.features}</p>
+                <div className="flex items-center justify-between gap-4 mt-auto pt-4 border-t border-border-light">
+                  <span className="text-lg font-bold text-text-primary font-mono">{item.property.price}</span>
+                  <div className="flex gap-2">
                     <button
                       type="button"
-                      className="deletePropBtn"
+                      className="px-3 py-1.5 text-xs font-semibold text-error hover:bg-error/10 border border-error/30 hover:border-error/50 rounded-lg transition-all cursor-pointer bg-transparent"
                       onClick={() => handleRemove(item.id)}
-                      style={{ background: 'rgba(220, 38, 38, 0.1)', color: '#dc2626', border: '1px solid rgba(220, 38, 38, 0.2)' }}
                       aria-label={`Remove ${item.property.title}`}
                     >
                       ❤️ Remove

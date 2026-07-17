@@ -9,10 +9,10 @@ interface HeaderProps {
 }
 
 const ROLE_DISPLAY: Record<string, { label: string; color: string; bg: string; dot: string }> = {
-  broker: { label: 'Real Estate Broker', color: '#a78bfa', bg: 'rgba(139,92,246,0.12)', dot: '#8b5cf6' },
-  firm:   { label: 'Real Estate Firm',   color: '#fb923c', bg: 'rgba(251,146,60,0.12)',  dot: '#f97316' },
-  tenant: { label: 'Tenant',             color: '#34d399', bg: 'rgba(52,211,153,0.12)',  dot: '#10b981' },
-  owner:  { label: 'Property Owner',     color: '#38bdf8', bg: 'rgba(56,189,248,0.12)',  dot: '#0ea5e9' },
+  broker: { label: 'Real Estate Broker', color: 'var(--color-primary)', bg: 'rgba(139, 92, 246, 0.12)', dot: 'var(--color-primary)' },
+  firm:   { label: 'Real Estate Firm',   color: 'var(--color-primary)', bg: 'rgba(245, 158, 11, 0.12)',  dot: 'var(--color-primary)' },
+  tenant: { label: 'Tenant',             color: 'var(--color-primary)', bg: 'rgba(16, 185, 129, 0.12)',  dot: 'var(--color-primary)' },
+  owner:  { label: 'Property Owner',     color: 'var(--color-primary)', bg: 'rgba(37, 99, 235, 0.12)',  dot: 'var(--color-primary)' },
 };
 
 const Header: React.FC<HeaderProps> = ({ user, userRole, userProfile }) => {
@@ -49,46 +49,45 @@ const Header: React.FC<HeaderProps> = ({ user, userRole, userProfile }) => {
     .join('')
     .toUpperCase();
 
-  const now = new Date();
-  const hour = now.getHours();
+  const hour = new Date().getHours();
   const greeting =
     hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
 
   return (
-    <header className="topHeader">
-      <div className="headerInfo">
-        <p className="headerGreeting">{greeting},</p>
-        <h1 className="headerTitle">{displayName.split(' ')[0]}</h1>
-        <div className="headerRolePill" style={{ background: roleInfo.bg }}>
-          <span className="headerRoleDot" style={{ background: roleInfo.dot }} />
+    <header className="flex justify-between items-end pb-7 border-b border-border mb-9">
+      <div className="flex flex-col gap-1.5 text-left">
+        <p className="text-[0.8rem] font-head uppercase tracking-wider text-text-secondary font-semibold">{greeting},</p>
+        <h1 className="font-head text-3xl font-bold text-text-primary tracking-tight leading-none">{displayName.split(' ')[0]}</h1>
+        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold font-head w-fit mt-0.5" style={{ background: roleInfo.bg }}>
+          <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: roleInfo.dot }} />
           <span style={{ color: roleInfo.color }}>{roleInfo.label}</span>
         </div>
       </div>
 
-      <div className="ownerProfile">
-        <div className="profileCard">
+      <div className="flex items-center">
+        <div className="flex items-center gap-3 bg-surface-elevated py-2.5 px-4 rounded-xl border border-border shadow-sm">
           {user.photoURL ? (
             <img
               src={user.photoURL}
               alt={displayName}
-              className="profileAvatarImg"
+              className="w-11 h-11 rounded-full object-cover border-2 border-border shrink-0"
               width={44}
               height={44}
             />
           ) : (
-            <div className="profileAvatar" aria-label={displayName}>
+            <div className="w-11 h-11 rounded-full bg-surface text-text-secondary flex items-center justify-center font-bold text-sm shrink-0 border-2 border-border" aria-label={displayName}>
               {initials}
             </div>
           )}
-          <div className="profileDetails">
-            <h4 className="profileName">{displayName}</h4>
-            <span className="profileSub">{getSubtitle()}</span>
+          <div className="flex flex-col text-left">
+            <h4 className="text-text-primary text-sm font-semibold mb-0.5 leading-none">{displayName}</h4>
+            <span className="text-text-secondary text-xs font-medium">{getSubtitle()}</span>
           </div>
-          <div className="profileVerifiedBadge" title="Google Verified">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+          <div className="shrink-0" title="Google Verified">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="text-success">
               <path
                 d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                stroke="#10b981"
+                stroke="currentColor"
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"

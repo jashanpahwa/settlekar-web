@@ -79,41 +79,40 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
 }) => {
   if (userRole === 'tenant') {
     return (
-      <div className="tabContent">
-        <div className="overviewHero tenantHero">
-          <div className="overviewHeroText">
-            <span className="heroBadge">Tenant Portal</span>
-            <h2>Find Your Next Home on SettleKar</h2>
-            <p>
+      <div className="space-y-8">
+        <div className="relative bg-primary rounded-2xl p-8 md:p-10 flex flex-col md:flex-row justify-between items-center gap-8 overflow-hidden text-white">
+          <div className="flex-1 flex flex-col gap-3 relative z-10 text-left">
+            <span className="bg-primary-accent text-white border border-primary-accent/80 font-head text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full w-fit">Tenant Portal</span>
+            <h2 className="font-head text-2xl md:text-3xl font-bold tracking-tight text-white leading-tight">Find Your Next Home on SettleKar</h2>
+            <p className="text-white/80 text-sm md:text-base leading-relaxed max-w-xl">
               Search verified listings, connect directly with property owners, and settle down — completely free from middlemen.
             </p>
             <a
               href="/"
-              className="listPromoBtn heroCta"
-              style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}
+              className="inline-flex items-center gap-2 px-5 py-3 bg-primary-accent hover:bg-primary-accent/90 text-white rounded-xl text-sm font-semibold transition-all hover:scale-[1.02] shadow-md border-0 w-fit cursor-pointer no-underline"
             >
               <SearchIcon />
               Browse Listings
             </a>
           </div>
-          <div className="overviewHeroGraphic heroGraphicTenant">
+          <div className="hidden md:flex justify-center items-center shrink-0 w-44 h-44 bg-white/5 rounded-full border border-white/10 text-white/20 relative">
             <HomeIcon />
           </div>
         </div>
 
-        <div className="recentActivity">
-          <div className="sectionHeader">
-            <div>
-              <h2>Mobile App</h2>
-              <p>Get instant notifications on the go</p>
+        <div className="space-y-4">
+          <div className="flex justify-between items-end mb-4">
+            <div className="text-left">
+              <h2 className="font-head text-xl font-bold text-text-primary tracking-tight">Mobile App</h2>
+              <p className="text-xs text-text-secondary">Get instant notifications on the go</p>
             </div>
           </div>
-          <div className="emptyCard appCard tenantAppCard">
-            <div className="tenantAppCardInner">
-              <div className="tenantAppIcon"><PhoneIcon /></div>
+          <div className="bg-surface-elevated border border-border rounded-2xl p-6 shadow-sm flex flex-col gap-4 relative overflow-hidden transition-all duration-300">
+            <div className="flex flex-col sm:flex-row items-center gap-5 text-left w-full">
+              <div className="shrink-0 p-3 bg-surface border border-border rounded-2xl text-text-primary"><PhoneIcon /></div>
               <div>
-                <h3 className="tenantAppTitle">Download SettleKar</h3>
-                <p className="tenantAppDesc">
+                <h3 className="font-head text-base font-bold text-text-primary">Download SettleKar</h3>
+                <p className="text-text-secondary text-sm leading-relaxed mt-1">
                   Get instant notifications, chat in real-time, and complete rental agreements directly on the SettleKar mobile app — available on Android and iOS.
                 </p>
               </div>
@@ -139,117 +138,117 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
       : 'Manage and market housing societies or corporate co-living setups directly to verified professionals.';
 
   return (
-    <div className="tabContent">
+    <div className="space-y-8">
       {/* Bento Stat Cards */}
-      <div className="gridStats">
-        <div className="statCard statCardPrimary">
-          <div className="statCardHeader">
-            <div className="statIcon statIconBlue">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-surface-elevated border border-border rounded-2xl p-6 shadow-sm flex flex-col gap-4 relative overflow-hidden transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
+          <div className="flex justify-between items-center">
+            <div className="p-2.5 rounded-xl bg-primary-accent/10 text-primary-accent border border-primary-accent/18">
               <BuildingIcon />
             </div>
-            <span className="statTrend statTrendBlue">Active</span>
+            <span className="text-[10px] font-bold uppercase tracking-wider rounded-full px-2.5 py-0.5 font-head bg-primary-accent/10 text-primary-accent border border-primary-accent/18">Active</span>
           </div>
-          <div className="statData">
-            <h3>{properties.length}</h3>
-            <p>Listed Properties</p>
+          <div className="flex flex-col text-left">
+            <h3 className="font-mono text-3xl font-bold text-text-primary tracking-tight">{properties.length}</h3>
+            <p className="text-xs text-text-secondary font-medium uppercase tracking-wider font-head mt-1">Listed Properties</p>
           </div>
         </div>
 
-        <div className="statCard statCardSecondary">
-          <div className="statCardHeader">
-            <div className="statIcon statIconGreen">
+        <div className="bg-surface-elevated border border-border rounded-2xl p-6 shadow-sm flex flex-col gap-4 relative overflow-hidden transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
+          <div className="flex justify-between items-center">
+            <div className="p-2.5 rounded-xl bg-success/10 text-success border border-success/18">
               <InquiryIcon />
             </div>
-            <span className="statTrend statTrendGreen">Incoming</span>
+            <span className="text-[10px] font-bold uppercase tracking-wider rounded-full px-2.5 py-0.5 font-head bg-success/10 text-success border border-success/18">Incoming</span>
           </div>
-          <div className="statData">
-            <h3>{inquiries.length}</h3>
-            <p>Active Inquiries</p>
+          <div className="flex flex-col text-left">
+            <h3 className="font-mono text-3xl font-bold text-text-primary tracking-tight">{inquiries.length}</h3>
+            <p className="text-xs text-text-secondary font-medium uppercase tracking-wider font-head mt-1">Active Inquiries</p>
           </div>
         </div>
 
-        <div className="statCard statCardTertiary">
-          <div className="statCardHeader">
-            <div className="statIcon statIconAmber">
+        <div className="bg-surface-elevated border border-border rounded-2xl p-6 shadow-sm flex flex-col gap-4 relative overflow-hidden transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
+          <div className="flex justify-between items-center">
+            <div className="p-2.5 rounded-xl bg-warning/10 text-warning border border-warning/18">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
                 <polyline points="22 4 12 14.01 9 11.01" />
               </svg>
             </div>
-            <span className="statTrend statTrendAmber">Live</span>
+            <span className="text-[10px] font-bold uppercase tracking-wider rounded-full px-2.5 py-0.5 font-head bg-warning/10 text-warning border border-warning/18">Live</span>
           </div>
-          <div className="statData">
-            <h3>{properties.filter(p => p.available !== false).length}</h3>
-            <p>Available Now</p>
+          <div className="flex flex-col text-left">
+            <h3 className="font-mono text-3xl font-bold text-text-primary tracking-tight">{properties.filter(p => p.available !== false).length}</h3>
+            <p className="text-xs text-text-secondary font-medium uppercase tracking-wider font-head mt-1">Available Now</p>
           </div>
         </div>
       </div>
 
       {/* Hero CTA Banner */}
-      <div className="overviewHero">
-        <div className="overviewHeroText">
-          <span className="heroBadge">
+      <div className="relative bg-primary rounded-2xl p-8 md:p-10 flex flex-col md:flex-row justify-between items-center gap-8 overflow-hidden text-white">
+        <div className="flex-1 flex flex-col gap-3 relative z-10 text-left">
+          <span className="bg-primary-accent text-white border border-primary-accent/80 font-head text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full w-fit">
             {userRole === 'owner' ? 'Owner Portal' : userRole === 'broker' ? 'Broker Portal' : 'Firm Portal'}
           </span>
-          <h2>{roleHeadline}</h2>
-          <p>{roleDescription}</p>
-          <button className="listPromoBtn heroCta" onClick={() => setActiveTab('list')}>
+          <h2 className="font-head text-2xl md:text-3xl font-bold tracking-tight text-white leading-tight">{roleHeadline}</h2>
+          <p className="text-white/80 text-sm md:text-base leading-relaxed max-w-xl">{roleDescription}</p>
+          <button className="inline-flex items-center gap-2 px-5 py-3 bg-primary-accent hover:bg-primary-accent/90 text-white rounded-xl text-sm font-semibold transition-all hover:scale-[1.02] shadow-md border-0 w-fit cursor-pointer" onClick={() => setActiveTab('list')}>
             <PlusIcon />
             List a New Property
           </button>
         </div>
-        <div className="overviewHeroGraphic">
-          <div className="heroGraphicInner">
+        <div className="hidden md:flex justify-center items-center shrink-0 w-44 h-44 bg-white/5 rounded-full border border-white/10 text-white/20 relative">
+          <div className="absolute inset-4 rounded-full bg-white/5 border border-white/15 flex items-center justify-center">
             <HomeIcon />
           </div>
         </div>
       </div>
 
       {/* Recent Inquiries */}
-      <div className="recentActivity">
-        <div className="sectionHeader">
+      <div className="space-y-4 text-left">
+        <div className="flex justify-between items-end mb-4">
           <div>
-            <h2>Recent Inquiries</h2>
-            <p>Latest tenant messages about your listings</p>
+            <h2 className="font-head text-xl font-bold text-text-primary tracking-tight">Recent Inquiries</h2>
+            <p className="text-xs text-text-secondary">Latest tenant messages about your listings</p>
           </div>
-          <button className="viewAllBtn" onClick={() => setActiveTab('inquiries')}>
+          <button className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary-accent hover:text-primary-accent/90 bg-transparent border-0 cursor-pointer" onClick={() => setActiveTab('inquiries')}>
             View all
             <ArrowRightIcon />
           </button>
         </div>
 
         {inquiries.length === 0 ? (
-          <div className="emptyCard">
-            <div className="emptyInquiryIcon"><InquiryIcon /></div>
-            <p>No inquiries yet. Once tenants contact you about listed properties, they will appear here.</p>
+          <div className="bg-surface-elevated border border-border rounded-2xl p-8 text-center text-text-secondary flex flex-col items-center justify-center gap-3">
+            <div className="text-3xl p-3 bg-surface border border-border rounded-2xl mb-1"><InquiryIcon /></div>
+            <p className="text-sm text-text-secondary max-w-sm">No inquiries yet. Once tenants contact you about listed properties, they will appear here.</p>
           </div>
         ) : (
-          <div className="inquiriesList">
+          <div className="space-y-4">
             {inquiries.slice(0, 2).map((inq: InquiryItem) => (
-              <div key={inq.id} className="inquiryCard">
-                <div className="inquiryCardLeft">
-                  <div className="inquirerAvatar">
+              <div key={inq.id} className="flex items-start gap-4 bg-surface-elevated border border-border rounded-2xl p-5 shadow-sm transition-all hover:shadow-md">
+                <div className="shrink-0">
+                  <div className="w-10 h-10 bg-primary-accent/10 text-primary-accent border border-primary-accent/18 flex items-center justify-center font-bold text-sm rounded-full">
                     {inq.tenantName.charAt(0).toUpperCase()}
                   </div>
                 </div>
-                <div className="inquiryCardBody">
-                  <div className="inquiryHeader">
-                    <div className="inquirerInfo">
-                      <h3>{inq.tenantName}</h3>
-                      <span>
+                <div className="flex-1 min-w-0">
+                  <div className="flex justify-between items-start gap-3 mb-2">
+                    <div className="flex flex-col text-left">
+                      <h3 className="text-sm font-semibold text-text-primary">{inq.tenantName}</h3>
+                      <span className="text-xs text-text-tertiary font-medium">
                         {inq.propertyTitle}{' '}
-                        <strong className="inquiryPrice">{inq.propertyPrice}</strong>
+                        <strong className="text-text-primary font-mono font-bold bg-surface border border-border-light px-1 py-0.5 rounded ml-1">{inq.propertyPrice}</strong>
                       </span>
                     </div>
-                    <span className="timeBadge">{formatDate(inq.createdAt)}</span>
+                    <span className="text-[10px] text-text-tertiary font-mono">{formatDate(inq.createdAt)}</span>
                   </div>
-                  <p className="inquiryMsg">&ldquo;{inq.message}&rdquo;</p>
-                  <div className="inquiryActions">
-                    <a href={`mailto:${inq.tenantEmail}`} className="contactBtn contactBtnEmail">
+                  <p className="text-text-secondary text-sm italic leading-relaxed mb-4 border-l-2 border-border pl-3 bg-surface py-1.5 pr-2 rounded-r">&ldquo;{inq.message}&rdquo;</p>
+                  <div className="flex gap-2">
+                    <a href={`mailto:${inq.tenantEmail}`} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer bg-primary-accent/10 border-primary-accent/18 text-primary-accent hover:bg-primary-accent hover:text-white hover:border-primary-accent no-underline">
                       <MailIcon />
                       Email
                     </a>
-                    <a href={`tel:${inq.tenantPhone}`} className="contactBtn contactBtnPhone">
+                    <a href={`tel:${inq.tenantPhone}`} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer bg-success/10 border border-success/18 hover:border-success text-success hover:bg-success hover:text-white no-underline">
                       <PhoneCallIcon />
                       Call
                     </a>
