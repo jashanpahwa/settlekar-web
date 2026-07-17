@@ -6,6 +6,7 @@ import { FirebaseOwnerBrokerRepository } from './firebase/ownerBrokerRepository'
 import { FirebaseRatingRepository } from './firebase/ratingRepository';
 import { FirebaseStorageRepository } from './firebase/storageRepository';
 import { FirebaseReferencePropertyRepository } from './firebase/referencePropertyRepository';
+import { FirebaseVerificationRepository } from './firebase/verificationRepository';
 
 export const propertyRepo = new FirebasePropertyRepository();
 export const wishlistRepo = new FirebaseWishlistRepository();
@@ -15,5 +16,6 @@ export const ownerBrokerRepo = new FirebaseOwnerBrokerRepository();
 export const ratingRepo = new FirebaseRatingRepository();
 export const storageRepo = new FirebaseStorageRepository();
 export const referencePropertyRepo = new FirebaseReferencePropertyRepository();
+export const verificationRepo = new FirebaseVerificationRepository();
 
 export * from './types';

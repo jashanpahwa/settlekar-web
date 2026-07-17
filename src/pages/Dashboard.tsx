@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { auth } from '../firebase';
+import { auth, db } from '../firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
+import { collection, onSnapshot, query, orderBy, deleteDoc, doc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { userService } from '../services/userService';
 import { userCollectionService } from '../services/userCollectionService';
 import { ownerBrokerService } from '../services/ownerBrokerService';
@@ -14,16 +15,19 @@ import PropertiesTab from '../components/Dashboard/PropertiesTab';
 import InquiriesTab from '../components/Dashboard/InquiriesTab';
 import ListPropertyTab from '../components/Dashboard/ListPropertyTab';
 import WishlistTab from '../components/Dashboard/WishlistTab';
+import NotificationsTab from '../components/Dashboard/NotificationsTab';
 import LoginView from '../components/Dashboard/LoginView';
 import RegistrationGate, { OwnerProfile, BrokerProfile, FirmProfile } from '../components/Dashboard/RegistrationGate';
 import Sidebar from '../components/Dashboard/Sidebar';
 import Header from '../components/Dashboard/Header';
 import { trackMetaEvent } from '../utils/metaPixel';
+import { verificationService, PhoneVerificationStatus } from '../services/verificationService';
+
 
 export type { OwnerProfile, BrokerProfile, FirmProfile };
 
 const Dashboard: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'list' | 'properties' | 'inquiries' | 'wishlist'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'list' | 'properties' | 'inquiries' | 'wishlist' | 'notifications'>('overview');
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState<boolean>(false);
   
   // Auth States
@@ -35,12 +39,19 @@ const Dashboard: React.FC = () => {
   // Data States
   const [properties, setProperties] = useState<PropertyItem[]>([]);
   const [inquiries, setInquiries] = useState<InquiryItem[]>([]);
+  const [privateNotifications, setPrivateNotifications] = useState<any[]>([]);
+  const [globalNotifications, setGlobalNotifications] = useState<any[]>([]);
+  const [dismissedNotifIds, setDismissedNotifIds] = useState<string[]>([]);
   const [editingProperty, setEditingProperty] = useState<PropertyItem | null>(null);
 
   // Role and Registration States
   const [userRole, setUserRole] = useState<'broker' | 'owner' | 'firm' | 'tenant' | null>(null);
   const [roleLoading, setRoleLoading] = useState(false);
   const [userProfile, setUserProfile] = useState<OwnerProfile | BrokerProfile | FirmProfile | null>(null);
+
+  // Verification States
+  const [phoneVerificationStatus, setPhoneVerificationStatus] = useState<PhoneVerificationStatus | null>(null);
+
 
   // 1. Listen to Authentication State
   useEffect(() => {
@@ -61,6 +72,10 @@ const Dashboard: React.FC = () => {
                 setUserProfile(profile as OwnerProfile | BrokerProfile | FirmProfile);
               }
             }
+
+            // Load phone verification status (per-user, regardless of role)
+            const pvStatus = await verificationService.getPhoneVerificationStatus(firebaseUser.uid);
+            setPhoneVerificationStatus(pvStatus);
           } else {
             setUserRole(null);
             setUserProfile(null);
@@ -83,67 +98,207 @@ const Dashboard: React.FC = () => {
   }, []);
 
   // 2. Fetch Owner/Broker/Firm Properties & Inquiries from Firestore
-  useEffect(() => {
+  const fetchLandlordData = async () => {
     if (!user) return;
+    try {
+      const userProps = await propertyService.getUserProperties(user.uid);
+      const loadedProps: PropertyItem[] = userProps.map((prop) => ({
+        id: prop.id,
+        title: prop.title || '',
+        city: prop.city || 'Mumbai',
+        location: prop.location || '',
+        address: prop.address || '',
+        price: typeof prop.price === 'number' ? `₹${prop.price.toLocaleString('en-IN')}` : prop.price || '',
+        rating: prop.rating || '5.0',
+        badge: prop.badge || prop.propertyType || '1 BHK',
+        features: prop.features || `${prop.propertyType} • ${prop.area || 0} sq.ft • ${prop.furnishing || 'Semi-Furnished'}`,
+        image: prop.image || (prop.images && prop.images.length > 0 ? prop.images[0] : '') || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80',
+        isUserAdded: true,
+        indoorImages: prop.indoorImages || [],
+        outdoorImages: prop.outdoorImages || [],
+        securityFees: prop.securityFees,
+        advanceRentMonths: prop.advanceRentMonths,
+        brokerage: prop.brokerage,
+        totalAdvance: prop.totalAdvance,
+        listedByRole: prop.listedByRole,
+        description: prop.description || '',
+        overallscore: prop.overallscore !== undefined ? prop.overallscore : prop.overallScore,
+        pillars: prop.pillars || prop.neighborhoodPillars || null,
+        meta: prop.meta || null,
+        confidence: prop.confidence !== undefined ? prop.confidence : prop.neighborhoodConfidence || null,
+        available: prop.available,
+        isIndependent: prop.isIndependent,
+        bachelorFriendly: prop.bachelorFriendly,
+        womenOnly: prop.womenOnly,
+        isTopFloor: prop.isTopFloor,
+        // Verification fields
+        availabilityExpiresAt: prop.availabilityExpiresAt?.toDate
+          ? prop.availabilityExpiresAt.toDate().toISOString()
+          : prop.availabilityExpiresAt || undefined,
+        videoVerificationStatus: prop.videoVerificationStatus || 'none',
+        ownerName: prop.ownerName || '',
+        ownerContact: prop.ownerContact || '',
+        sentExpiryWarnings: prop.sentExpiryWarnings || [],
+        createdBy: prop.createdBy || '',
+      }));
+      setProperties(loadedProps);
 
-    const fetchLandlordData = async () => {
-      try {
-        const userProps = await propertyService.getUserProperties(user.uid);
-        const loadedProps: PropertyItem[] = userProps.map((prop) => ({
-          id: prop.id,
-          title: prop.title || '',
-          city: prop.city || 'Mumbai',
-          location: prop.location || '',
-          address: prop.address || '',
-          price: typeof prop.price === 'number' ? `₹${prop.price.toLocaleString('en-IN')}` : prop.price || '',
-          rating: prop.rating || '5.0',
-          badge: prop.badge || prop.propertyType || '1 BHK',
-          features: prop.features || `${prop.propertyType} • ${prop.area || 0} sq.ft • ${prop.furnishing || 'Semi-Furnished'}`,
-          image: prop.image || (prop.images && prop.images.length > 0 ? prop.images[0] : '') || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80',
-          isUserAdded: true,
-          indoorImages: prop.indoorImages || [],
-          outdoorImages: prop.outdoorImages || [],
-          securityFees: prop.securityFees,
-          advanceRentMonths: prop.advanceRentMonths,
-          brokerage: prop.brokerage,
-          totalAdvance: prop.totalAdvance,
-          listedByRole: prop.listedByRole,
-          description: prop.description || '',
-          overallscore: prop.overallscore !== undefined ? prop.overallscore : prop.overallScore,
-          pillars: prop.pillars || prop.neighborhoodPillars || null,
-          meta: prop.meta || null,
-          confidence: prop.confidence !== undefined ? prop.confidence : prop.neighborhoodConfidence || null,
-          available: prop.available,
-          isIndependent: prop.isIndependent,
-          bachelorFriendly: prop.bachelorFriendly,
-          womenOnly: prop.womenOnly,
-          isTopFloor: prop.isTopFloor
-        }));
-        setProperties(loadedProps);
+      const ownerInquiries = await inquiryService.getInquiriesByOwner(user.uid);
+      const loadedInqs: InquiryItem[] = ownerInquiries.map((inq) => ({
+        id: inq.id,
+        propertyId: inq.propertyId || '',
+        propertyTitle: inq.propertyTitle || '',
+        propertyPrice: inq.propertyPrice || '',
+        tenantName: inq.tenantName || inq.inquirerName || 'Anonymous',
+        tenantEmail: inq.tenantEmail || inq.inquirerEmail || '',
+        tenantPhone: inq.tenantPhone || inq.inquirerPhone || '',
+        message: inq.message || '',
+        createdAt: inq.createdAt instanceof Date ? inq.createdAt.toISOString() : inq.createdAt || new Date().toISOString()
+      }));
+      
+      loadedInqs.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      setInquiries(loadedInqs);
 
-        const ownerInquiries = await inquiryService.getInquiriesByOwner(user.uid);
-        const loadedInqs: InquiryItem[] = ownerInquiries.map((inq) => ({
-          id: inq.id,
-          propertyId: inq.propertyId || '',
-          propertyTitle: inq.propertyTitle || '',
-          propertyPrice: inq.propertyPrice || '',
-          tenantName: inq.tenantName || inq.inquirerName || 'Anonymous',
-          tenantEmail: inq.tenantEmail || inq.inquirerEmail || '',
-          tenantPhone: inq.tenantPhone || inq.inquirerPhone || '',
-          message: inq.message || '',
-          createdAt: inq.createdAt instanceof Date ? inq.createdAt.toISOString() : inq.createdAt || new Date().toISOString()
-        }));
-        
-        loadedInqs.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-        setInquiries(loadedInqs);
+    } catch (err) {
+      console.error('Error fetching landlord Firestore data:', err);
+    }
+  };
 
-      } catch (err) {
-        console.error('Error fetching landlord Firestore data:', err);
-      }
-    };
-
+  useEffect(() => {
     fetchLandlordData();
   }, [user, activeTab]);
+
+  // Auto-expire stale property availabilities on dashboard load
+  useEffect(() => {
+    if (!user || properties.length === 0) return;
+    const propertyIds = properties.map((p) => p.id as string).filter(Boolean);
+    propertyService.checkAndExpireAvailabilities(propertyIds).then((expiredIds) => {
+      if (expiredIds.length > 0) {
+        // Update local state to reflect hidden properties
+        setProperties((prev) =>
+          prev.map((p) =>
+            expiredIds.includes(p.id as string)
+              ? { ...p, available: false }
+              : p
+          )
+        );
+        // Send dashboard notification for each expired listing
+        expiredIds.forEach(async (propId) => {
+          const prop = properties.find((p) => p.id === propId);
+          if (prop && user) {
+            await verificationService.scheduleVerificationReminder(user.uid, 'availability_expiring', {
+              propertyTitle: prop.title,
+              daysLeft: 0,
+            });
+          }
+        });
+      }
+    }).catch(() => { /* non-critical */ });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, properties.length]);
+
+
+  // 2.5. Real-time listener for private user notifications (subcollection)
+  useEffect(() => {
+    if (!user) {
+      setPrivateNotifications([]);
+      return;
+    }
+
+    const q = query(
+      collection(db, 'users', user.uid, 'notifications'),
+      orderBy('createdAt', 'desc')
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const loaded = snapshot.docs.map((docSnap) => {
+        const data = docSnap.data();
+        return {
+          id: docSnap.id,
+          title: data.title || '',
+          body: data.body || '',
+          read: !!data.read,
+          isGlobal: false,
+          createdAt: data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : data.createdAt || new Date().toISOString()
+        };
+      });
+      setPrivateNotifications(loaded);
+    }, (err) => {
+      console.error("Error listening to private notifications:", err);
+    });
+
+    return () => unsubscribe();
+  }, [user]);
+
+  // 2.6. Real-time listener for global announcements
+  useEffect(() => {
+    if (!user) {
+      setGlobalNotifications([]);
+      return;
+    }
+
+    const q = query(
+      collection(db, 'global_notifications'),
+      orderBy('createdAt', 'desc')
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const loaded = snapshot.docs.map((docSnap) => {
+        const data = docSnap.data();
+        return {
+          id: docSnap.id,
+          title: data.title || '',
+          body: data.body || '',
+          targetRole: data.targetRole || 'all',
+          isGlobal: true,
+          createdAt: data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : data.createdAt || new Date().toISOString()
+        };
+      });
+      setGlobalNotifications(loaded);
+    }, (err) => {
+      console.error("Error listening to global notifications:", err);
+    });
+
+    return () => unsubscribe();
+  }, [user]);
+
+  // 2.7. Real-time listener for user's dismissed notifications list
+  useEffect(() => {
+    if (!user) {
+      setDismissedNotifIds([]);
+      return;
+    }
+
+    const userDocRef = doc(db, 'users', user.uid);
+    const unsubscribe = onSnapshot(userDocRef, (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setDismissedNotifIds(data.dismissedNotifications || []);
+      }
+    });
+
+    return () => unsubscribe();
+  }, [user]);
+
+  // 2.8. Compute the unified, filtered, and sorted notifications feed
+  const notifications = React.useMemo(() => {
+    const roleMatchedGlobal = globalNotifications.filter((notif) => 
+      notif.targetRole === 'all' || notif.targetRole === userRole
+    );
+
+    const merged = [
+      ...privateNotifications,
+      ...roleMatchedGlobal
+    ];
+
+    // Filter out dismissed notifications
+    const active = merged.filter((notif) => !dismissedNotifIds.includes(notif.id));
+
+    // Sort by date desc
+    active.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+    return active;
+  }, [privateNotifications, globalNotifications, dismissedNotifIds, userRole]);
 
   // Auth Handlers
   const handleSignIn = async () => {
@@ -210,6 +365,63 @@ const Dashboard: React.FC = () => {
     setActiveTab('properties');
   };
 
+  // Re-enable property availability
+  const handleEnableAvailability = async (propId: string) => {
+    try {
+      await propertyService.enableAvailability(propId);
+      // Reset 7-day timer in local state too (Date-Only)
+      const now = new Date();
+      now.setHours(0, 0, 0, 0);
+      const expiresAt = new Date(now);
+      expiresAt.setDate(expiresAt.getDate() + 7);
+      expiresAt.setHours(0, 0, 0, 0);
+      setProperties((prev) =>
+        prev.map((p) =>
+          p.id === propId
+            ? { ...p, available: true, availabilityExpiresAt: expiresAt.toISOString(), sentExpiryWarnings: [] }
+            : p
+        )
+      );
+    } catch (err) {
+      console.error('Error re-enabling availability:', err);
+      alert('Failed to re-enable property. Please try again.');
+    }
+  };
+
+  // Toggle property availability
+  const handleToggleAvailability = async (propId: string, available: boolean) => {
+    try {
+      await propertyService.setAvailability(propId, available);
+      const now = new Date();
+      now.setHours(0, 0, 0, 0);
+      const expiresAt = new Date(now);
+      expiresAt.setDate(expiresAt.getDate() + 7);
+      expiresAt.setHours(0, 0, 0, 0);
+      setProperties((prev) =>
+        prev.map((p) =>
+          p.id === propId
+            ? { 
+                ...p, 
+                available, 
+                availabilityExpiresAt: available ? expiresAt.toISOString() : p.availabilityExpiresAt,
+                sentExpiryWarnings: available ? [] : p.sentExpiryWarnings
+              }
+            : p
+        )
+      );
+    } catch (err) {
+      console.error('Failed to toggle availability:', err);
+    }
+  };
+
+  // Refresh phone verification status
+  const handlePhoneVerified = async () => {
+    if (!user) return;
+    const pvStatus = await verificationService.getPhoneVerificationStatus(user.uid);
+    setPhoneVerificationStatus(pvStatus);
+  };
+
+
   // Delete listed property from Firestore
   const handleDeleteProperty = async (id: string | number) => {
     if (!window.confirm('Are you sure you want to remove this property? This will also remove it from the live home page explorer. All associated inquiries will also be deleted.')) {
@@ -240,6 +452,30 @@ const Dashboard: React.FC = () => {
     } catch (err) {
       console.error('Error dismissing inquiry:', err);
       alert('Failed to dismiss inquiry. Please check connection and try again.');
+    }
+  };
+
+  // Dismiss notification from Firestore
+  const handleDeleteNotification = async (notifId: string) => {
+    if (!window.confirm('Are you sure you want to dismiss this notification?')) {
+      return;
+    }
+
+    const targetNotif = notifications.find((n) => n.id === notifId);
+    const isGlobal = targetNotif ? !!targetNotif.isGlobal : false;
+
+    try {
+      if (isGlobal) {
+        const userDocRef = doc(db, 'users', user!.uid);
+        await updateDoc(userDocRef, {
+          dismissedNotifications: arrayUnion(notifId)
+        });
+      } else {
+        await deleteDoc(doc(db, 'users', user!.uid, 'notifications', notifId));
+      }
+    } catch (err) {
+      console.error('Error dismissing notification:', err);
+      alert('Failed to dismiss notification. Please check connection and try again.');
     }
   };
 
@@ -335,6 +571,7 @@ const Dashboard: React.FC = () => {
         setActiveTab={setActiveTab}
         propertiesCount={properties.length}
         inquiriesCount={inquiries.length}
+        notificationsCount={notifications.length}
         handleSignOut={handleSignOut}
         onSwitchRole={handleSwitchRole}
         isOpen={isMobileSidebarOpen}
@@ -368,6 +605,16 @@ const Dashboard: React.FC = () => {
               editingProperty={editingProperty}
               onSaveSuccess={handleSaveSuccess}
               onCancel={handleCancelEdit}
+              isPhoneVerified={phoneVerificationStatus?.isVerified ?? false}
+              verifiedPhone={
+                phoneVerificationStatus?.phone ||
+                (userProfile as any)?.phone ||
+                (userProfile as any)?.contactPhone ||
+                (userProfile as any)?.usernumber ||
+                user.phoneNumber ||
+                ''
+              }
+              onPhoneVerified={handlePhoneVerified}
             />
           )}
 
@@ -377,6 +624,19 @@ const Dashboard: React.FC = () => {
               triggerEditProperty={triggerEditProperty}
               handleDeleteProperty={handleDeleteProperty}
               setActiveTab={setActiveTab}
+              handleEnableAvailability={handleEnableAvailability}
+              userPhone={
+                (userProfile as any)?.phone ||
+                (userProfile as any)?.contactPhone ||
+                user.phoneNumber ||
+                ''
+              }
+              userId={user.uid}
+              isPhoneVerified={phoneVerificationStatus?.isVerified ?? false}
+              phoneVerificationDue={phoneVerificationStatus?.phoneVerificationDue?.toISOString()}
+              onPhoneVerified={handlePhoneVerified}
+              onVideoSubmitted={fetchLandlordData}
+              handleToggleAvailability={handleToggleAvailability}
             />
           )}
 
@@ -384,6 +644,14 @@ const Dashboard: React.FC = () => {
             <InquiriesTab
               inquiries={inquiries}
               handleDeleteInquiry={handleDeleteInquiry}
+              formatDate={formatDate}
+            />
+          )}
+
+          {activeTab === 'notifications' && (
+            <NotificationsTab
+              notifications={notifications}
+              handleDeleteNotification={handleDeleteNotification}
               formatDate={formatDate}
             />
           )}

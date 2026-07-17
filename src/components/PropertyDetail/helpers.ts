@@ -39,7 +39,7 @@ export const getFraudRiskDetails = (rating: number | string | undefined, score: 
   const numScore = score != null ? Number(score) : null;
 
   if ((numRating !== null && numRating >= 4.0) || (numScore !== null && numScore >= 75)) {
-    return { label: 'Verified & Secure', color: '#10b981', bg: 'rgba(16,185,129,0.1)', border: 'rgba(16,185,129,0.25)' };
+    return { label: 'Secure', color: '#10b981', bg: 'rgba(16,185,129,0.1)', border: 'rgba(16,185,129,0.25)' };
   }
   if ((numRating !== null && numRating >= 3.0) || (numScore !== null && numScore >= 50)) {
     return { label: 'Standard Check Required', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)', border: 'rgba(245,158,11,0.25)' };

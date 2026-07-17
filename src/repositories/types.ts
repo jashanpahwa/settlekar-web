@@ -32,6 +32,9 @@ export interface IPropertyRepository {
   ): Promise<{ success: boolean }>;
   getUserProperties(userId: string, bypassCache?: boolean): Promise<any[]>;
   deleteProperty(propertyId: string): Promise<{ success: boolean }>;
+  // ─── Availability ───
+  setAvailability(propertyId: string, available: boolean): Promise<{ success: boolean }>;
+  checkAndExpireAvailabilities(propertyIds: string[]): Promise<string[]>;
 }
 
 export interface IWishlistRepository {
@@ -103,4 +106,44 @@ export interface IReferencePropertyRepository {
     onError: (error: any) => void
   ): () => void;
   getReferencePropertyById(referenceId: string): Promise<ReferenceProperty | null>;
+}
+
+// ─── Verification Repository ─────────────────────────────────────────────────────
+
+export interface IVerificationRepository {
+  // Phone OTP
+  markPhoneVerified(userId: string, phone: string): Promise<{ success: boolean }>;
+  getPhoneVerificationStatus(userId: string): Promise<{
+    isVerified: boolean;
+    phoneVerifiedAt: Date | null;
+    phoneVerificationDue: Date | null;
+    daysRemaining: number;
+    phone?: string;
+  }>;
+
+  // Video Verification
+  submitVideoVerification(
+    propertyId: string,
+    videoUrl: string,
+    gpsLocation: { lat: number; lng: number }
+  ): Promise<{ success: boolean }>;
+  getVideoVerificationStatus(propertyId: string): Promise<{
+    status: 'pending' | 'approved' | 'rejected' | 'none';
+    videoUrl?: string;
+    submittedAt?: Date;
+    location?: { lat: number; lng: number };
+  }>;
+  uploadVerificationVideo(
+    propertyId: string,
+    videoFile: File,
+    onProgress?: (progress: number) => void
+  ): Promise<string>;
+
+  // Audit Log
+  logVerificationEvent(
+    userId: string,
+    type: 'phone_otp' | 'video_upload' | 'availability_renewed',
+    status: 'success' | 'failed',
+    meta?: Record<string, any>
+  ): Promise<void>;
 }

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import logoImage from '/logo.png';
-import { ArrowUpRight, MapPin, X, Download, Search } from 'lucide-react';
+import { ArrowUpRight, MapPin, X, PlusCircle, Search } from 'lucide-react';
 import Footer from '../components/Landing/Footer';
 import FeaturesSection from '../components/Landing/FeaturesSection';
 import FaqSection from '../components/Landing/FaqSection';
@@ -25,7 +25,6 @@ export interface WebPropertyItem {
 
 const LandingPage: React.FC = () => {
   const location = useLocation();
-  const googlePlayUrl = 'https://play.google.com/store/apps/details?id=com.settlekar.settlekar';
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
 
   // Handle hash navigation when component mounts or hash changes
@@ -241,10 +240,9 @@ const LandingPage: React.FC = () => {
           </nav>
 
           {/* CTA in mobile menu */}
-          <a
-            href={googlePlayUrl}
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            to="/dashboard"
+            onClick={() => setIsMobileMenuOpen(false)}
             className="inline-flex items-center gap-2.5 text-white no-underline text-[0.8rem] font-semibold tracking-[0.14em] uppercase border border-white/35 py-3.5 px-6 rounded mt-8 w-fit hover:bg-white/8 transition-all duration-300"
             style={{
               transitionDelay: `${5 * 80 + 100}ms`,
@@ -252,9 +250,9 @@ const LandingPage: React.FC = () => {
               transform: isMobileMenuOpen ? 'translateY(0)' : 'translateY(20px)',
             }}
           >
-            <Download size={16} />
-            DOWNLOAD APP
-          </a>
+            <PlusCircle size={16} />
+            LIST PROPERTY
+          </Link>
         </div>
 
         {/* ---- HERO SPLIT LAYOUT ---- */}
@@ -292,16 +290,14 @@ const LandingPage: React.FC = () => {
                 <Search size={16} />
                 SEARCH PROPERTIES
               </Link>
-              <a
-                href={googlePlayUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                to="/dashboard"
                 className="inline-flex items-center gap-2 no-underline text-[11px] sm:text-xs font-bold tracking-[0.14em] uppercase py-3.25 px-5.5 sm:py-3.75 sm:px-6.5 rounded transition-all duration-200 bg-transparent text-white border border-white/45 hover:border-white/80 hover:bg-white/8 hover:-translate-y-0.5"
-                id="hero-download-btn"
+                id="hero-list-property-cta-btn"
               >
-                <Download size={16} />
-                DOWNLOAD APP
-              </a>
+                <PlusCircle size={16} />
+                LIST PROPERTY
+              </Link>
             </div>
 
             {/* Stats Row */}

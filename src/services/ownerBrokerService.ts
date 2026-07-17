@@ -9,6 +9,10 @@ export interface OwnerProfile {
   govtIdNumber: string | null;
   createdAt?: any;
   updatedAt?: any;
+  // ─── Phone Verification ───
+  phoneVerifiedAt?: any;              // Timestamp of last successful OTP verification
+  phoneVerificationDue?: any;         // phoneVerifiedAt + 30 days
+  isPhoneCurrentlyVerified?: boolean; // true if today < phoneVerificationDue
 }
 
 export interface BrokerProfile {
@@ -21,6 +25,10 @@ export interface BrokerProfile {
   experience: number | null;
   createdAt?: any;
   updatedAt?: any;
+  // ─── Phone Verification ───
+  phoneVerifiedAt?: any;
+  phoneVerificationDue?: any;
+  isPhoneCurrentlyVerified?: boolean;
 }
 
 export interface FirmProfile {

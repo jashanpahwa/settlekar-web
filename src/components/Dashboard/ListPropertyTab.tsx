@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { User } from 'firebase/auth';
 import { PropertyItem } from './types';
 import { propertyService } from '../../services/propertyService';
+import VerificationModal from './VerificationModal';
+import { verificationService } from '../../services/verificationService';
 
 interface ListPropertyTabProps {
   user: User;
@@ -9,7 +11,11 @@ interface ListPropertyTabProps {
   editingProperty: PropertyItem | null;
   onSaveSuccess: (updatedOrNewProp: PropertyItem, isEdit: boolean) => void;
   onCancel: () => void;
+  isPhoneVerified: boolean;
+  verifiedPhone: string;
+  onPhoneVerified: () => void;
 }
+
 
 interface SegmentedControlProps {
   label: string;
@@ -60,6 +66,9 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
   editingProperty,
   onSaveSuccess,
   onCancel,
+  isPhoneVerified,
+  verifiedPhone,
+  onPhoneVerified,
 }) => {
   // Check if tenant
   if (userRole === 'tenant') {
@@ -96,13 +105,20 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
   const [searchingMap, setSearchingMap] = useState(false);
   const [locationWarning, setLocationWarning] = useState('');
   const [ownerName, setOwnerName] = useState(user.displayName || '');
-  const [ownerContact, setOwnerContact] = useState('+91');
+  const [ownerContact, setOwnerContact] = useState(verifiedPhone || '+91');
+  const [phoneModalOpen, setPhoneModalOpen] = useState(false);
+  const cleanPhone = (phone: string) => phone.replace(/[\s\-().+]/g, '');
+  const isContactVerified = !!(isPhoneVerified && verifiedPhone && cleanPhone(ownerContact) === cleanPhone(verifiedPhone));
   const [furnishing, setFurnishing] = useState('Semi-Furnished');
   const [indoorFiles, setIndoorFiles] = useState<File[]>([]);
   const [indoorPreviews, setIndoorPreviews] = useState<string[]>([]);
   const [outdoorFiles, setOutdoorFiles] = useState<File[]>([]);
   const [outdoorPreviews, setOutdoorPreviews] = useState<string[]>([]);
   const [uploadProgress, setUploadProgress] = useState(false);
+  const [uploadStatus, setUploadStatus] = useState('');
+  const [verificationVideoFile, setVerificationVideoFile] = useState<File | null>(null);
+  const [videoError, setVideoError] = useState('');
+  const videoInputRef = useRef<HTMLInputElement>(null);
   
   // New role-based financial fields
   const [securityFees, setSecurityFees] = useState('');
@@ -390,6 +406,11 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
       setNeighborhoodConfidence(dbConfidence);
       setIsScoreFetched(dbScore !== undefined && dbScore !== null);
       setScoreError('');
+
+      setOwnerName(editingProperty.ownerName || user.displayName || '');
+      setOwnerContact(editingProperty.ownerContact || verifiedPhone || '+91');
+      setVerificationVideoFile(null);
+      setVideoError('');
     } else {
       // Clear form fields
       setTitle('');
@@ -411,6 +432,9 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
       setOutdoorFiles([]);
       setOutdoorPreviews([]);
 
+      setOwnerName(user.displayName || '');
+      setOwnerContact(verifiedPhone || '+91');
+
       // Reset financial fields
       setSecurityFees('');
       setAdvanceRentMonths(1);
@@ -419,12 +443,27 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
       // Reset neighborhood score fields
       setNeighborhoodScore(null);
       setNeighborhoodPillars(null);
+
       setNeighborhoodMeta(null);
       setNeighborhoodConfidence(null);
       setIsScoreFetched(false);
       setScoreError('');
+      setVerificationVideoFile(null);
+      setVideoError('');
     }
   }, [editingProperty]);
+
+  // Set default contact details when profile finishes loading
+  useEffect(() => {
+    if (!editingProperty) {
+      if (user.displayName && !ownerName) {
+        setOwnerName(user.displayName);
+      }
+      if (verifiedPhone && (ownerContact === '+91' || ownerContact === '')) {
+        setOwnerContact(verifiedPhone);
+      }
+    }
+  }, [user.displayName, verifiedPhone, editingProperty, ownerName, ownerContact]);
 
   // Fetch current GPS location and update Leaflet map picker
   const getCurrentLocation = () => {
@@ -718,6 +757,7 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
         };
 
         // Update using propertyService
+        setUploadStatus('📤 Uploading Images to Storage...');
         await propertyService.updateProperty(
           editingPropId,
           updatePayload,
@@ -725,6 +765,23 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
           outdoorFiles,
           imagesToDelete
         );
+
+        // If a verification video was selected, upload it now!
+        if (verificationVideoFile) {
+          setUploadStatus('📹 Uploading Verification Video & capturing GPS...');
+          try {
+            const result = await verificationService.submitVideoVerification(
+              editingPropId,
+              verificationVideoFile
+            );
+            if (!result.success) {
+              throw new Error(result.error || 'Upload failed');
+            }
+          } catch (err: any) {
+            console.error('Failed to submit video verification on edit:', err);
+            alert(`Property updated successfully, but video verification upload failed: ${err.message || err}`);
+          }
+        }
 
         // Retrieve full updated property from Firestore to get final image URLs
         const updatedProp = await propertyService.getPropertyById(editingPropId);
@@ -763,8 +820,26 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
         onSaveSuccess(updatedPropItem, true);
       } else {
         // 2. CREATE MODE (Post New Property)
+        setUploadStatus('📤 Uploading Images to Storage...');
         setUploadProgress(true);
         const addedProp = await propertyService.addProperty(finalPropertyPayload, indoorFiles, outdoorFiles);
+
+        // If a verification video was selected, upload it now!
+        if (verificationVideoFile) {
+          setUploadStatus('📹 Uploading Verification Video & capturing GPS...');
+          try {
+            const result = await verificationService.submitVideoVerification(
+              addedProp.id.toString(),
+              verificationVideoFile
+            );
+            if (!result.success) {
+              throw new Error(result.error || 'Upload failed');
+            }
+          } catch (err: any) {
+            console.error('Failed to submit video verification on list:', err);
+            alert(`Property listed successfully, but video verification upload failed: ${err.message || err}`);
+          }
+        }
 
         const newPropItem: PropertyItem = {
           id: addedProp.id,
@@ -819,6 +894,8 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
       setIndoorPreviews([]);
       setOutdoorFiles([]);
       setOutdoorPreviews([]);
+      setVerificationVideoFile(null);
+      setVideoError('');
 
       // Redirect to properties tab after showing message
       setTimeout(() => {
@@ -1298,7 +1375,31 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
             </div>
 
             <div className="flex flex-col gap-1.5 flex-1 mb-4 text-left">
-              <label htmlFor="prop-owner-contact" className="text-xs font-semibold text-text-primary">Contact Number *</label>
+              <div className="flex justify-between items-center">
+                <label htmlFor="prop-owner-contact" className="text-xs font-semibold text-text-primary">Contact Number *</label>
+                {(() => {
+                  const cleanPhone = (phone: string) => phone.replace(/[\s\-().+]/g, '');
+                  const isContactVerified = isPhoneVerified && verifiedPhone && cleanPhone(ownerContact) === cleanPhone(verifiedPhone);
+                  return isContactVerified ? (
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-success uppercase tracking-wider bg-success/10 border border-success/20 px-2 py-0.5 rounded-full">
+                      🟢 Verified
+                    </span>
+                  ) : (
+                    <div className="flex items-center gap-1.5">
+                      <span className="inline-flex items-center gap-1 text-[10px] font-bold text-error uppercase tracking-wider bg-error/10 border border-error/20 px-2 py-0.5 rounded-full">
+                        🔴 Unverified
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setPhoneModalOpen(true)}
+                        className="px-2 py-0.5 bg-primary-accent hover:bg-primary-accent/90 text-white rounded text-[10px] font-semibold transition-colors cursor-pointer border-0"
+                      >
+                        Verify
+                      </button>
+                    </div>
+                  );
+                })()}
+              </div>
               <input
                 id="prop-owner-contact"
                 type="tel"
@@ -1316,6 +1417,7 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
                 required
               />
             </div>
+
           </div>
         </div>
 
@@ -1417,9 +1519,88 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
           </div>
         </div>
 
+        {/* CARD 6: Verification Video */}
+        <div className="bg-surface-elevated border border-border rounded-2xl p-6 shadow-sm">
+          <div className="flex items-center gap-2 pb-4 border-b border-border-light mb-5 text-left">
+            <span className="text-xl">📹</span>
+            <h3 className="font-head text-base font-bold text-text-primary">Verification Video (Optional)</h3>
+          </div>
+
+          <div className="bg-warning/5 border border-warning/18 rounded-xl p-4 text-xs text-text-secondary leading-relaxed space-y-1 mb-5 text-left">
+            <p><strong>📍 Geotagged Video Upload:</strong> Uploading a verification video marks your listing as trusted. You must be physically at the property when uploading.</p>
+            <p><strong>🎥 Requirements:</strong> Upload a 5–30 second video of rooms or building front (Max 150MB).</p>
+          </div>
+
+          <div className="flex flex-col gap-4 text-left">
+            <label className="text-xs font-semibold text-text-primary">Select Verification Video</label>
+            <button
+              type="button"
+              onClick={() => videoInputRef.current?.click()}
+              className={`w-full px-4 py-5 border-2 border-dashed rounded-xl text-sm transition-all cursor-pointer bg-transparent flex flex-col items-center gap-2 ${
+                verificationVideoFile
+                  ? 'border-success/40 bg-success/5 text-success'
+                  : 'border-border hover:border-primary-accent/40 hover:bg-primary-accent/3 text-text-tertiary'
+              }`}
+            >
+              <span className="text-2xl">{verificationVideoFile ? '✅' : '🎥'}</span>
+              <span className="font-medium text-text-secondary text-center truncate max-w-full px-2">
+                {verificationVideoFile ? verificationVideoFile.name : 'Tap to select verification video'}
+              </span>
+              {verificationVideoFile && (
+                <span className="text-xs text-text-tertiary">
+                  {(verificationVideoFile.size / (1024 * 1024)).toFixed(1)} MB
+                </span>
+              )}
+              {!verificationVideoFile && (
+                <span className="text-xs">MP4, MOV, or WEBM · Max 150MB</span>
+              )}
+            </button>
+            <input
+              ref={videoInputRef}
+              type="file"
+              accept="video/mp4,video/quicktime,video/webm,video/*"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                const MAX_MB = 150;
+                if (file.size > MAX_MB * 1024 * 1024) {
+                  setVideoError(`Video must be under ${MAX_MB}MB.`);
+                  setVerificationVideoFile(null);
+                  return;
+                }
+                setVerificationVideoFile(file);
+                setVideoError('');
+              }}
+              className="hidden"
+            />
+            {videoError && (
+              <p className="text-xs text-error font-semibold mt-1">⚠️ {videoError}</p>
+            )}
+            {verificationVideoFile && (
+              <button
+                type="button"
+                onClick={() => {
+                  setVerificationVideoFile(null);
+                  setVideoError('');
+                  if (videoInputRef.current) videoInputRef.current.value = '';
+                }}
+                className="self-start text-xs text-error hover:underline bg-transparent border-0 cursor-pointer"
+              >
+                Remove Video
+              </button>
+            )}
+          </div>
+        </div>
+
         {coords && !isScoreFetched && (
           <div className="bg-warning/10 border border-warning/18 text-warning text-sm p-4 rounded-xl mb-4 text-left">
             ⚠️ <strong>Action Required:</strong> Please click "Fetch Neighborhood Score" in the Location Details card above before publishing.
+          </div>
+        )}
+
+        {!isContactVerified && (
+          <div className="bg-error/10 border border-error/18 text-error text-sm p-4 rounded-xl mb-4 text-left">
+            ⚠️ <strong>Verification Required:</strong> You must verify the contact number <strong className="font-mono">{ownerContact}</strong> before you can publish or save this listing. Click the <strong>Verify</strong> button next to the phone number input above.
           </div>
         )}
 
@@ -1427,10 +1608,10 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
           <button 
             type="submit" 
             className="flex-1 px-5 py-3.5 bg-primary-accent hover:bg-primary-accent/90 text-white rounded-xl text-sm font-bold transition-colors shadow-md cursor-pointer border-0 disabled:opacity-55 disabled:cursor-not-allowed" 
-            disabled={formSuccess || uploadProgress || (coords !== null && !isScoreFetched)} 
+            disabled={formSuccess || uploadProgress || (coords !== null && !isScoreFetched) || !isContactVerified} 
           >
             {uploadProgress 
-              ? '📤 Uploading Images to Storage...' 
+              ? (uploadStatus || '📤 Uploading files to Storage...') 
               : (formSuccess 
                   ? (editingProperty ? 'Saving Changes...' : 'Publishing Listing...') 
                   : (editingProperty ? '💾 Save Changes & Update' : '➕ Publish Property Listing'))}
@@ -1444,6 +1625,14 @@ const ListPropertyTab: React.FC<ListPropertyTabProps> = ({
           </button>
         </div>
       </form>
+
+      <VerificationModal
+        isOpen={phoneModalOpen}
+        onClose={() => setPhoneModalOpen(false)}
+        userId={user.uid}
+        userPhone={ownerContact}
+        onPhoneVerified={onPhoneVerified}
+      />
     </div>
   );
 };

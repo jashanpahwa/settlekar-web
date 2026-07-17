@@ -4,10 +4,11 @@ import logoImage from '/logo.png';
 
 interface SidebarProps {
   userRole: 'owner' | 'broker' | 'firm' | 'tenant';
-  activeTab: 'overview' | 'list' | 'properties' | 'inquiries' | 'wishlist';
-  setActiveTab: (tab: 'overview' | 'list' | 'properties' | 'inquiries' | 'wishlist') => void;
+  activeTab: 'overview' | 'list' | 'properties' | 'inquiries' | 'wishlist' | 'notifications';
+  setActiveTab: (tab: 'overview' | 'list' | 'properties' | 'inquiries' | 'wishlist' | 'notifications') => void;
   propertiesCount: number;
   inquiriesCount: number;
+  notificationsCount: number;
   handleSignOut: () => Promise<void>;
   onSwitchRole: () => void;
   isOpen?: boolean;
@@ -46,6 +47,11 @@ const Icons = {
       <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z" />
     </svg>
   ),
+  Notifications: () => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0" />
+    </svg>
+  ),
   SwitchRole: () => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
       <path d="M17 1l4 4-4 4" />
@@ -75,12 +81,13 @@ const Sidebar: React.FC<SidebarProps> = ({
   setActiveTab,
   propertiesCount,
   inquiriesCount,
+  notificationsCount,
   handleSignOut,
   onSwitchRole,
   isOpen = false,
   onClose = () => {},
 }) => {
-  const handleTabClick = (tab: 'overview' | 'list' | 'properties' | 'inquiries' | 'wishlist') => {
+  const handleTabClick = (tab: 'overview' | 'list' | 'properties' | 'inquiries' | 'wishlist' | 'notifications') => {
     setActiveTab(tab);
     onClose();
   };
@@ -169,6 +176,17 @@ const Sidebar: React.FC<SidebarProps> = ({
             >
               <span className="flex items-center shrink-0 color-inherit"><Icons.Wishlist /></span>
               <span className="flex-1">Wishlist</span>
+            </button>
+
+            <button
+              className={`bg-transparent border-0 border-l-2 text-text-secondary font-body text-sm font-medium text-left py-2 px-3 rounded-r flex items-center gap-2.5 cursor-pointer transition-colors w-full ${activeTab === 'notifications' ? 'border-l-primary-accent bg-primary-accent/10 text-primary-accent font-semibold' : 'border-transparent hover:bg-surface hover:text-text-primary'}`}
+              onClick={() => handleTabClick('notifications')}
+            >
+              <span className="flex items-center shrink-0 color-inherit"><Icons.Notifications /></span>
+              <span className="flex-1">Notifications</span>
+              {notificationsCount > 0 && (
+                <span className="ml-auto font-mono text-[11px] font-bold px-1.5 py-0.5 rounded-full bg-primary-accent/10 text-primary-accent border border-primary-accent/18">{notificationsCount}</span>
+              )}
             </button>
           </div>
 

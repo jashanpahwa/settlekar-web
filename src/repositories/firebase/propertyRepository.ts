@@ -9,7 +9,9 @@ import {
   orderBy,
   query,
   updateDoc,
-  where
+  where,
+  serverTimestamp,
+  Timestamp,
 } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { PropertyData } from '../../services/propertyService';
@@ -30,9 +32,17 @@ export class FirebasePropertyRepository implements IPropertyRepository {
   async getAllProperties(): Promise<any[]> {
     try {
       const querySnapshot = await getDocs(collection(db, 'properties'));
+      const now = new Date();
       const properties: any[] = [];
       querySnapshot.forEach((doc) => {
-        properties.push({ id: doc.id, ...doc.data() });
+        const data = doc.data();
+        // Filter out unavailable and availability-expired properties
+        if (data.available === false) return;
+        if (data.availabilityExpiresAt) {
+          const expiresAt: Date = data.availabilityExpiresAt?.toDate?.() ?? new Date(0);
+          if (now > expiresAt) return;
+        }
+        properties.push({ id: doc.id, ...data });
       });
       return properties;
     } catch (error) {
@@ -48,9 +58,16 @@ export class FirebasePropertyRepository implements IPropertyRepository {
         where('city', '==', city)
       );
       const querySnapshot = await getDocs(q);
+      const now = new Date();
       const properties: any[] = [];
       querySnapshot.forEach((doc) => {
-        properties.push({ id: doc.id, ...doc.data() });
+        const data = doc.data();
+        if (data.available === false) return;
+        if (data.availabilityExpiresAt) {
+          const expiresAt: Date = data.availabilityExpiresAt?.toDate?.() ?? new Date(0);
+          if (now > expiresAt) return;
+        }
+        properties.push({ id: doc.id, ...data });
       });
       return properties;
     } catch (error) {
@@ -66,9 +83,16 @@ export class FirebasePropertyRepository implements IPropertyRepository {
     const q = query(collection(db, "properties"));
     const unsubscribe = onSnapshot(q,
       (querySnapshot) => {
+        const now = new Date();
         const properties: any[] = [];
         querySnapshot.forEach((doc) => {
-          properties.push({ id: doc.id, ...doc.data() });
+          const data = doc.data();
+          if (data.available === false) return;
+          if (data.availabilityExpiresAt) {
+            const expiresAt: Date = data.availabilityExpiresAt?.toDate?.() ?? new Date(0);
+            if (now > expiresAt) return;
+          }
+          properties.push({ id: doc.id, ...data });
         });
         onUpdate(properties);
       },
@@ -102,9 +126,16 @@ export class FirebasePropertyRepository implements IPropertyRepository {
       );
 
       const querySnapshot = await getDocs(q);
+      const now = new Date();
       const properties: any[] = [];
       querySnapshot.forEach((doc) => {
-        properties.push({ id: doc.id, ...doc.data() });
+        const data = doc.data();
+        if (data.available === false) return;
+        if (data.availabilityExpiresAt) {
+          const expiresAt: Date = data.availabilityExpiresAt?.toDate?.() ?? new Date(0);
+          if (now > expiresAt) return;
+        }
+        properties.push({ id: doc.id, ...data });
       });
       return properties;
     } catch (error) {
@@ -139,12 +170,23 @@ export class FirebasePropertyRepository implements IPropertyRepository {
     outdoorImages: (File | Blob)[] = []
   ): Promise<any> {
     try {
+      const now = new Date();
+      now.setHours(0, 0, 0, 0); // Date-Only
+      const expiresAt = new Date(now);
+      expiresAt.setDate(expiresAt.getDate() + 7);
+      expiresAt.setHours(0, 0, 0, 0); // Date-Only
+      const isAvailable = propertyData.available !== false;
+
       const propertyWithBaseData = {
         ...propertyData,
+        available: isAvailable,
+        lastAvailabilitySetAt: isAvailable ? Timestamp.fromDate(now) : null,
+        availabilityExpiresAt: isAvailable ? Timestamp.fromDate(expiresAt) : null,
+        sentExpiryWarnings: [],
         indoorImages: [] as string[],
         outdoorImages: [] as string[],
         images: [] as string[],
-        createdAt: new Date()
+        createdAt: now
       };
 
       const docRef = await addDoc(collection(db, 'properties'), propertyWithBaseData);
@@ -170,10 +212,14 @@ export class FirebasePropertyRepository implements IPropertyRepository {
 
       const updatedProperty = {
         ...propertyData,
+        available: isAvailable,
+        lastAvailabilitySetAt: isAvailable ? Timestamp.fromDate(now) : null,
+        availabilityExpiresAt: isAvailable ? Timestamp.fromDate(expiresAt) : null,
+        sentExpiryWarnings: [],
         indoorImages: indoorImageUrls,
         outdoorImages: outdoorImageUrls,
         images: allImageUrls,
-        createdAt: new Date()
+        createdAt: now
       };
 
       await updateDoc(docRef, updatedProperty);
@@ -303,5 +349,94 @@ export class FirebasePropertyRepository implements IPropertyRepository {
       console.error('Error deleting property:', error);
       throw error;
     }
+  }
+
+  // ─── Availability Management ─────────────────────────────────────────────────
+
+  /**
+   * Sets a property's availability. When enabling, resets the 7-day expiry timer.
+   */
+  async setAvailability(propertyId: string, available: boolean): Promise<{ success: boolean }> {
+    try {
+      const propertyRef = doc(db, 'properties', propertyId);
+      const updateData: Record<string, any> = {
+        available,
+        updatedAt: serverTimestamp(),
+      };
+
+      if (available) {
+        // Reset 7-day countdown every time the owner re-enables
+        const now = new Date();
+        now.setHours(0, 0, 0, 0); // Date-Only
+        const expiresAt = new Date(now);
+        expiresAt.setDate(expiresAt.getDate() + 7);
+        expiresAt.setHours(0, 0, 0, 0); // Date-Only
+
+        updateData.lastAvailabilitySetAt = Timestamp.fromDate(now);
+        updateData.availabilityExpiresAt = Timestamp.fromDate(expiresAt);
+        updateData.sentExpiryWarnings = [];
+      }
+
+      await updateDoc(propertyRef, updateData);
+      this.clearCache();
+
+      // Log to verificationLogs
+      const userId = (await getDoc(propertyRef)).data()?.createdBy || 'unknown';
+      try {
+        const { addDoc: addLogDoc, collection: logCollection } = await import('firebase/firestore');
+        await addLogDoc(logCollection(db, 'verificationLogs'), {
+          userId,
+          propertyId,
+          type: 'availability_renewed',
+          status: 'success',
+          timestamp: serverTimestamp(),
+          meta: { available },
+        });
+      } catch (_) { /* non-critical */ }
+
+      return { success: true };
+    } catch (error) {
+      console.error('Error setting availability:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Checks a list of property IDs and auto-expires those past their availabilityExpiresAt.
+   * Returns the IDs of properties that were expired.
+   */
+  async checkAndExpireAvailabilities(propertyIds: string[]): Promise<string[]> {
+    const expiredIds: string[] = [];
+    const now = new Date();
+
+    await Promise.allSettled(
+      propertyIds.map(async (propertyId) => {
+        try {
+          const propertyRef = doc(db, 'properties', propertyId);
+          const snap = await getDoc(propertyRef);
+          if (!snap.exists()) return;
+
+          const data = snap.data();
+          // Skip if already unavailable
+          if (data.available === false) return;
+
+          const expiresAt: Date | null = data.availabilityExpiresAt?.toDate?.() ?? null;
+          // No expiry set means this is an old listing without the new system — skip
+          if (!expiresAt) return;
+
+          if (now > expiresAt) {
+            await updateDoc(propertyRef, {
+              available: false,
+              updatedAt: serverTimestamp(),
+            });
+            expiredIds.push(propertyId);
+          }
+        } catch (err) {
+          console.warn(`Could not check expiry for property ${propertyId}:`, err);
+        }
+      })
+    );
+
+    return expiredIds;
   }
 }

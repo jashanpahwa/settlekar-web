@@ -36,6 +36,17 @@ export interface PropertyData {
   createdBy?: string;
   createdAt?: any;
   updatedAt?: any;
+  // ─── Verification Fields ──────────────────────────────────────────────────
+  availabilityExpiresAt?: any;           // Timestamp: auto-expiry (lastAvailabilitySetAt + 7 days)
+  lastAvailabilitySetAt?: any;           // Timestamp: when owner last manually set available=true
+  videoVerificationUrl?: string;         // Firebase Storage URL of verification video
+  videoVerificationStatus?: 'pending' | 'approved' | 'rejected' | 'none';
+  videoVerificationSubmittedAt?: any;    // When video was last uploaded
+  videoVerificationLocation?: {          // GPS coords captured at video upload time
+    lat: number;
+    lng: number;
+  };
+  videoVerificationScheduledDeletion?: any; // Timestamp: 1 week after upload for storage cleanup
   [key: string]: any;
 }
 
@@ -82,5 +93,27 @@ export const propertyService = {
 
   deleteProperty: async (propertyId: string): Promise<{ success: boolean }> => {
     return propertyRepo.deleteProperty(propertyId);
-  }
+  },
+
+  // ─── Availability Management ─────────────────────────────────────────────
+
+  /**
+   * Manually re-enable a property's availability.
+   * Resets the 7-day expiry timer from now.
+   */
+  enableAvailability: async (propertyId: string): Promise<{ success: boolean }> => {
+    return propertyRepo.setAvailability(propertyId, true);
+  },
+
+  setAvailability: async (propertyId: string, available: boolean): Promise<{ success: boolean }> => {
+    return propertyRepo.setAvailability(propertyId, available);
+  },
+
+  /**
+   * Check all of a user's properties and auto-expire any whose availabilityExpiresAt has passed.
+   * Call this on dashboard load.
+   */
+  checkAndExpireAvailabilities: async (propertyIds: string[]): Promise<string[]> => {
+    return propertyRepo.checkAndExpireAvailabilities(propertyIds);
+  },
 };

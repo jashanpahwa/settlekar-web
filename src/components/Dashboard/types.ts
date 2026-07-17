@@ -27,6 +27,15 @@ export interface PropertyItem {
   bachelorFriendly?: boolean;
   womenOnly?: boolean;
   isTopFloor?: boolean;
+  // ─── Verification Fields ───
+  availabilityExpiresAt?: string;         // ISO string
+  videoVerificationStatus?: 'pending' | 'approved' | 'rejected' | 'none';
+  isPhoneVerified?: boolean;
+  phoneVerificationDue?: string;          // ISO string
+  ownerName?: string;
+  ownerContact?: string;
+  sentExpiryWarnings?: string[];
+  createdBy?: string;
 }
 
 export interface InquiryItem {
