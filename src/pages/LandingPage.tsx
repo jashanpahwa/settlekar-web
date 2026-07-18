@@ -23,9 +23,99 @@ export interface WebPropertyItem {
   image: string;
 }
 
+interface Keyword {
+  word: string;
+  size: string;
+  weight: string;
+  opacity: string;
+  top?: string;
+  left?: string;
+  right?: string;
+  bottom?: string;
+  depth: number;
+  animation: string;
+  mobileVisible?: boolean;
+}
+
+const desktopKeywords: Keyword[] = [
+ 
+  // Top-left area
+  { word: 'One mission: fix rental real estate', size: 'text-[clamp(1rem,2vw,1.6rem)]', weight: 'font-bold', opacity: 'opacity-35', top: '14%', left: '12%', depth: 0.7, animation: 'animate-float-a' },
+  { word: 'Rs500 FREE Listings', size: 'text-[clamp(1.2rem,2.5vw,2rem)]', weight: 'font-extrabold', opacity: 'opacity-55', top: '23%', left: '8%', depth: 0.9, animation: 'animate-float-c'},
+  { word: '3-step verification', size: 'text-[clamp(1.9rem,1.8vw,1.3rem)]', weight: 'font-semibold', opacity: 'opacity-30', top: '25%', left: '55%', depth: 0.5, animation: 'animate-float-b' },
+  { word: 'Transparent pricing', size: 'text-[clamp(0.9rem,1.6vw,1.2rem)]', weight: 'font-bold', opacity: 'opacity-40', top: '32%', left: '40%', depth: 0.6, animation: 'animate-float-a' },
+  { word: 'Bangalore', size: 'text-[clamp(1.3rem,2.4vw,2rem)]', weight: 'font-black', opacity: 'opacity-45', top: '32%', left: '28%', depth: 0.9, animation: 'animate-float-b' },
+
+  // Top-right area
+  { word: 'Digital rent agreement', size: 'text-[clamp(0.9rem,1.8vw,1.3rem)]', weight: 'font-semibold', opacity: 'opacity-30', top: '12%', right: '12%', depth: 0.5, animation: 'animate-float-c' },
+  { word: 'Quality leads only', size: 'text-[clamp(1.1rem,2.2vw,1.8rem)]', weight: 'font-extrabold', opacity: 'opacity-50', top: '24%', right: '8%', depth: 0.8, animation: 'animate-float-a' },
+  { word: 'Verified Owners', size: 'text-[clamp(1.2rem,2.4vw,1.9rem)]', weight: 'font-bold', opacity: 'opacity-45', top: '15%', right: '30%', depth: 0.7, animation: 'animate-float-b' },
+  { word: 'Delhi', size: 'text-[clamp(1.2rem,2.2vw,1.8rem)]', weight: 'font-extrabold', opacity: 'opacity-45', top: '35%', right: '28%', depth: 0.8, animation: 'animate-float-c' },
+
+  // Mid-left / Middle-left
+  { word: 'Broker assistance', size: 'text-[clamp(0.85rem,1.6vw,1.2rem)]', weight: 'font-medium', opacity: 'opacity-55', top: '48%', left: '6%', depth: 0.4, animation: 'animate-float-c' },
+  { word: 'No fake listings', size: 'text-[clamp(1rem,2vw,1.5rem)]', weight: 'font-bold', opacity: 'opacity-40', bottom: '30%', left: '7%', depth: 0.6, animation: 'animate-float-b', mobileVisible: true },
+  { word: 'Instant rent agreement', size: 'text-[clamp(0.9rem,1.7vw,1.25rem)]', weight: 'font-semibold', opacity: 'opacity-35', bottom: '40%', left: '12%', depth: 0.5, animation: 'animate-float-a', mobileVisible: true },
+  { word: '1 BHK', size: 'text-[clamp(1rem,2.2vw,1.7rem)]', weight: 'font-black', opacity: 'opacity-50', top: '36%', left: '16%', depth: 0.7, animation: 'animate-float-c', mobileVisible: true },
+
+  // Mid-right / Middle-right
+  { word: 'Zero logins', size: 'text-[clamp(0.85rem,1.6vw,1.2rem)]', weight: 'font-medium', opacity: 'opacity-55', top: '48%', right: '6%', depth: 0.4, animation: 'animate-float-a' , mobileVisible: true},
+  { word: 'No outdated listings', size: 'text-[clamp(1rem,2vw,1.5rem)]', weight: 'font-bold', opacity: 'opacity-40', bottom: '35%', right: '14%', depth: 0.6, animation: 'animate-float-c', mobileVisible: true },
+  { word: 'Hassle-free move-in', size: 'text-[clamp(0.95rem,1.8vw,1.4rem)]', weight: 'font-bold', opacity: 'opacity-45', bottom: '32%', right: '50%', depth: 0.6, animation: 'animate-float-b' },
+  { word: '2 BHK', size: 'text-[clamp(1.1rem,2.4vw,1.9rem)]', weight: 'font-black', opacity: 'opacity-50', top: '36%', right: '18%', depth: 0.8, animation: 'animate-float-a', mobileVisible: true },
+
+  // Bottom-left area
+  { word: '72-hour guarantee', size: 'text-[clamp(1.1rem,2vw,1.6rem)]', weight: 'font-bold', opacity: 'opacity-45', bottom: '18%', left: '18%', depth: 0.7, animation: 'animate-float-a', mobileVisible: true },
+  { word: '100% free search', size: 'text-[clamp(1rem,2vw,1.5rem)]', weight: 'font-extrabold', opacity: 'opacity-50', bottom: '10%', left: '4%', depth: 0.8, animation: 'animate-float-c' , mobileVisible: true},
+  { word: '3 BHK', size: 'text-[clamp(1.2rem,2.6vw,2.1rem)]', weight: 'font-black', opacity: 'opacity-45', bottom: '28%', left: '26%', depth: 0.9, animation: 'animate-float-b'},
+
+  // Bottom-right area
+  { word: '7 days guarantee', size: 'text-[clamp(1.1rem,2vw,1.6rem)]', weight: 'font-bold', opacity: 'opacity-45', bottom: '22%', right: '18%', depth: 0.7, animation: 'animate-float-b', mobileVisible: true },
+  { word: 'Real estate, minus the friction', size: 'text-[clamp(1rem,2vw,1.6rem)]', weight: 'font-bold', opacity: 'opacity-35', bottom: '12%', right: '12%', depth: 0.8, animation: 'animate-float-b' },
+  { word: 'Safe deposits', size: 'text-[clamp(0.95rem,1.8vw,1.3rem)]', weight: 'font-semibold', opacity: 'opacity-40', bottom: '20%', right: '38%', depth: 0.5, animation: 'animate-float-a' },
+  { word: 'Mumbai', size: 'text-[clamp(1.3rem,2.4vw,2rem)]', weight: 'font-extrabold', opacity: 'opacity-40', bottom: '28%', right: '32%', depth: 0.7, animation: 'animate-float-a' },
+
+  // Bottom-center area
+  { word: 'Mover & packers', size: 'text-[clamp(0.9rem,1.8vw,1.3rem)]', weight: 'font-semibold', opacity: 'opacity-35', bottom: '10%', left: '40%', depth: 0.5, animation: 'animate-float-a' , mobileVisible: true},
+  { word: 'Jaipur', size: 'text-[clamp(1.1rem,2vw,1.6rem)]', weight: 'font-bold', opacity: 'opacity-40', top: '18%', left: '42%', depth: 0.5, animation: 'animate-float-b', mobileVisible: true },
+  { word: 'Gurugram', size: 'text-[clamp(1rem,1.8vw,1.4rem)]', weight: 'font-semibold', opacity: 'opacity-35', bottom: '20%', left: '42%', depth: 0.6, animation: 'animate-float-a' },
+  { word: 'Flatmate', size: 'text-[clamp(0.9rem,1.8vw,1.3rem)]', weight: 'font-semibold', opacity: 'opacity-35', bottom: '48%', right: '16%', depth: 0.4, animation: 'animate-float-c' }
+];
+
+
+const mobileKeywords: Keyword[] = [
+  // Top margins (above buttons)
+  { word: 'Rs500 FREE Listings', size: 'text-[clamp(0.95rem,3.2vw,1.2rem)]', weight: 'font-extrabold', opacity: 'opacity-55', top: '12%', left: '4%', depth: 0.6, animation: 'animate-float-c' },
+  { word: 'Zero logins', size: 'text-[clamp(0.85rem,3vw,1.1rem)]', weight: 'font-bold', opacity: 'opacity-55', top: '12%', right: '4%', depth: 0.5, animation: 'animate-float-a' },
+  { word: 'Instant rent agreement', size: 'text-[clamp(0.9rem,1.7vw,1.25rem)]', weight: 'font-semibold', opacity: 'opacity-35', bottom: '28%', left: '32%', depth: 0.5, animation: 'animate-float-a', mobileVisible: true },
+  { word: 'Quality leads only', size: 'text-[clamp(0.9rem,3vw,1.1rem)]', weight: 'font-extrabold', opacity: 'opacity-45', top: '25%', left: '50%', depth: 0.7, animation: 'animate-float-b' },
+
+  // Upper sides (gutter layout)
+  { word: 'Broker assistance', size: 'text-[clamp(0.8rem,2.8vw,1rem)]', weight: 'font-semibold', opacity: 'opacity-40', top: '32%', left: '3%', depth: 0.4, animation: 'animate-float-d' },
+  { word: '1 BHK', size: 'text-[clamp(0.95rem,3.2vw,1.2rem)]', weight: 'font-black', opacity: 'opacity-50', top: '20%', left: '15%', depth: 0.5, animation: 'animate-float-a' },
+  { word: '2 BHK', size: 'text-[clamp(0.95rem,3.2vw,1.2rem)]', weight: 'font-black', opacity: 'opacity-50', top: '34%', right: '35%', depth: 0.5, animation: 'animate-float-c' },
+  { word: 'Verified Owners', size: 'text-[clamp(0.8rem,2.8vw,1rem)]', weight: 'font-semibold', opacity: 'opacity-40', top: '32%', right: '3%', depth: 0.4, animation: 'animate-float-b' },
+
+  // Lower sides (gutter layout)
+  { word: 'No fake listings', size: 'text-[clamp(0.85rem,3vw,1.1rem)]', weight: 'font-bold', opacity: 'opacity-45', bottom: '32%', left: '3%', depth: 0.6, animation: 'animate-float-b' },
+  { word: 'Real estate, minus the friction', size: 'text-[clamp(1rem,2vw,1.6rem)]', weight: 'font-bold', opacity: 'opacity-35', bottom: '7%', right: '12%', depth: 0.8, animation: 'animate-float-b' },
+  { word: 'No outdated listings', size: 'text-[clamp(0.85rem,3vw,1.1rem)]', weight: 'font-bold', opacity: 'opacity-45', bottom: '35%', right: '3%', depth: 0.6, animation: 'animate-float-c' },
+
+  // Bottom margins (below buttons)
+  { word: '72-hour guarantee', size: 'text-[clamp(0.85rem,3vw,1.1rem)]', weight: 'font-bold', opacity: 'opacity-50', bottom: '24%', left: '4%', depth: 0.7, animation: 'animate-float-a' },
+  { word: '100% free search', size: 'text-[clamp(1rem,2vw,1.5rem)]', weight: 'font-extrabold', opacity: 'opacity-50', bottom: '10%', left: '4%', depth: 0.8, animation: 'animate-float-c' , mobileVisible: true},
+  { word: '7 days guarantee', size: 'text-[clamp(0.85rem,3vw,1.1rem)]', weight: 'font-bold', opacity: 'opacity-50', bottom: '24%', right: '14%', depth: 0.7, animation: 'animate-float-b' },
+  
+  // Outer bottom
+  { word: 'Jaipur', size: 'text-[clamp(0.9rem,3vw,1.15rem)]', weight: 'font-bold', opacity: 'opacity-40', bottom: '18%', left: '16%', depth: 0.5, animation: 'animate-float-c' },
+  { word: 'Mumbai', size: 'text-[clamp(0.9rem,3vw,1.15rem)]', weight: 'font-bold', opacity: 'opacity-40', bottom: '15%', right: '16%', depth: 0.5, animation: 'animate-float-a' },
+  { word: 'Mover & packers', size: 'text-[clamp(0.8rem,2.8vw,1rem)]', weight: 'font-semibold', opacity: 'opacity-35', top: '18%', left: '40%', depth: 0.4, animation: 'animate-float-d' }
+];
+
 const LandingPage: React.FC = () => {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
   // Handle hash navigation when component mounts or hash changes
   useEffect(() => {
@@ -39,6 +129,19 @@ const LandingPage: React.FC = () => {
       }
     }
   }, [location]);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const x = (e.clientX / window.innerWidth) - 0.5;
+      const y = (e.clientY / window.innerHeight) - 0.5;
+      setMousePos({ x, y });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, []);
 
   const handleScrollToSection = (sectionId: string, e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
@@ -255,90 +358,113 @@ const LandingPage: React.FC = () => {
           </Link>
         </div>
 
-        {/* ---- HERO SPLIT LAYOUT ---- */}
-        <div className="absolute z-5 inset-0 flex flex-col justify-between pt-40 px-6 pb-3 md:grid md:grid-cols-2 md:grid-rows-1 md:items-center md:pt-[90px] md:px-10 md:pb-8 md:gap-10 lg:grid-cols-[55fr_45fr] lg:pt-[100px] lg:px-16 lg:pb-10 lg:gap-[60px]">
+        {/* ---- REDESIGNED HERO SECTION CONTENT ---- */}
+        <div className="absolute z-5 inset-0 flex flex-col items-center justify-center px-6 pt-24 pb-12 md:pt-28 md:px-16 overflow-hidden">
+          
+          {/* Floating Keyword Cloud (Desktop vs Mobile) */}
+          <div className="absolute inset-0 pointer-events-none z-0">
+            {/* Desktop Cloud */}
+            <div className="hidden md:block absolute inset-0">
+              {desktopKeywords.map((kw, idx) => {
+                const duration = `${(idx % 4) * 3 + 8 + (idx % 3) * 0.7}s`;
+                const delay = `${-((idx % 7) * 1.8 + (idx % 5) * 0.5)}s`;
+                const floatClasses = ['animate-float-a', 'animate-float-b', 'animate-float-c', 'animate-float-d'];
+                const animationClass = floatClasses[idx % floatClasses.length];
 
-          {/* LEFT: Text Content */}
-          <div className="flex flex-col items-start justify-center">
+                const floatStyle = {
+                  top: kw.top,
+                  left: kw.left,
+                  right: kw.right,
+                  bottom: kw.bottom,
+                  animationDuration: duration,
+                  animationDelay: delay,
+                };
 
-            <div className="flex items-center gap-2 text-white/70 text-[11px] sm:text-xs tracking-[0.22em] uppercase font-medium mb-3 sm:mb-4 ">
+                const transformStyle = {
+                  transform: `translate(${mousePos.x * kw.depth * 45}px, ${mousePos.y * kw.depth * 45}px)`,
+                  transition: 'transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                };
+
+                return (
+                  <div
+                    key={`desk-${idx}`}
+                    className={`absolute pointer-events-none select-none ${animationClass}`}
+                    style={floatStyle}
+                  >
+                    <div
+                      className={`text-white font-sans ${kw.size} ${kw.weight} ${kw.opacity}`}
+                      style={transformStyle}
+                    >
+                      {kw.word}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Mobile Cloud */}
+            <div className="block md:hidden absolute inset-0">
+              {mobileKeywords.map((kw, idx) => {
+                const duration = `${(idx % 4) * 3 + 8 + (idx % 3) * 0.7}s`;
+                const delay = `${-((idx % 7) * 1.8 + (idx % 5) * 0.5)}s`;
+                const floatClasses = ['animate-float-a', 'animate-float-b', 'animate-float-c', 'animate-float-d'];
+                const animationClass = floatClasses[idx % floatClasses.length];
+
+                const floatStyle = {
+                  top: kw.top,
+                  left: kw.left,
+                  right: kw.right,
+                  bottom: kw.bottom,
+                  animationDuration: duration,
+                  animationDelay: delay,
+                };
+
+                return (
+                  <div
+                    key={`mob-${idx}`}
+                    className={`absolute pointer-events-none select-none ${animationClass}`}
+                    style={floatStyle}
+                  >
+                    <div className={`text-white font-sans ${kw.size} ${kw.weight} ${kw.opacity}`}>
+                      {kw.word}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Centered CTA Content Area */}
+          <div className="relative z-10 flex flex-col items-center justify-center max-w-4xl text-center">
+            
+            {/* Eyebrow badge */}
+            <div className="flex items-center gap-2 text-white/70 text-[11px] sm:text-xs tracking-[0.22em] uppercase font-medium mb-6 sm:mb-8 animate-fade-in">
               <MapPin className="text-white/60 shrink-0" size={16} />
               <span>India's 1st Rental-Only Platform</span>
             </div>
 
-            {/* Main Heading */}
-            <h1 className="flex flex-col mb-4 sm:mb-5 p-0 font-extrabold text-white leading-[0.93] tracking-tight uppercase  ">
-              <span className="block text-[clamp(2.4rem,6.5vw,5.5rem)]">Find.</span>
-              <span className="block text-[clamp(2.4rem,6.5vw,5.5rem)]">Connect.</span>
-              <span className="block text-[clamp(2.4rem,6.5vw,5.5rem)]">Settle.</span>
-            </h1>
-
-            {/* Subtext */}
-            <p className="text-white/72 text-sm sm:text-[0.9375rem] leading-relaxed max-w-[480px] mb-4.5 sm:mb-6 ">
-              We connect verified property owners with tenants<br />
-              through smart location-based search —{' '}
-              <strong className="text-white font-semibold">true transparency, zero hassle.</strong>
-            </p>
-
-            {/* CTA Row */}
-            <div className="flex flex-wrap items-center gap-2.5 sm:gap-3.5 mb-6 sm:mb-8 lg:mb-9 ">
+            {/* Redesigned CTAs */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-5 sm:gap-7 w-full mb-12 sm:mb-16 animate-fade-up">
               <Link
                 to="/search"
-                className="inline-flex items-center gap-2 no-underline text-[11px] sm:text-xs font-bold tracking-[0.14em] uppercase py-3.25 px-5.5 sm:py-3.75 sm:px-6.5 rounded transition-all duration-200 bg-white text-[#0a1628] hover:bg-white/92 hover:-translate-y-0.5 hover:shadow-lg"
+                className="inline-flex items-center justify-center gap-3 no-underline text-[12px] sm:text-[13.5px] font-bold tracking-[0.16em] uppercase py-4.5 px-9 sm:py-5 sm:px-11 rounded-xl transition-all duration-300 bg-white text-[#0a1628] hover:bg-white/95 hover:-translate-y-0.5 active:translate-y-0 shadow-[0_0_28px_rgba(255,255,255,0.22),0_4px_14px_rgba(0,0,0,0.16)] hover:shadow-[0_0_38px_rgba(255,255,255,0.42),0_8px_24px_rgba(0,0,0,0.22)]"
                 id="hero-search-btn"
               >
-                <Search size={16} />
+                <Search size={18} />
                 SEARCH PROPERTIES
               </Link>
               <Link
                 to="/dashboard"
-                className="inline-flex items-center gap-2 no-underline text-[11px] sm:text-xs font-bold tracking-[0.14em] uppercase py-3.25 px-5.5 sm:py-3.75 sm:px-6.5 rounded transition-all duration-200 bg-transparent text-white border border-white/45 hover:border-white/80 hover:bg-white/8 hover:-translate-y-0.5"
+                className="inline-flex items-center justify-center gap-3 no-underline text-[12px] sm:text-[13.5px] font-bold tracking-[0.16em] uppercase py-4.5 px-9 sm:py-5 sm:px-11 rounded-xl transition-all duration-300 bg-white/8 backdrop-blur-md text-white border border-white/20 hover:border-white/35 hover:bg-white/12 hover:-translate-y-0.5 active:translate-y-0 shadow-[0_0_18px_rgba(255,255,255,0.06),inset_0_1px_0_rgba(255,255,255,0.15)] hover:shadow-[0_0_28px_rgba(255,255,255,0.18),inset_0_1px_0_rgba(255,255,255,0.2)]"
                 id="hero-list-property-cta-btn"
               >
-                <PlusCircle size={16} />
+                <PlusCircle size={18} />
                 LIST PROPERTY
               </Link>
             </div>
 
-            {/* Stats Row */}
-            <div className="flex flex-wrap gap-5 sm:gap-9 lg:gap-13  ">
-              <div className="flex flex-col">
-                <span className="text-[clamp(1.5rem,3.5vw,2.75rem)] font-bold text-white tracking-tight leading-none">10K+</span>
-                <span className="text-white/50 text-[9.6px] sm:text-[11px] tracking-widest uppercase font-medium mt-1.5">Properties Listed</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-[clamp(1.5rem,3.5vw,2.75rem)] font-bold text-white tracking-tight leading-none">5K+</span>
-                <span className="text-white/50 text-[9.6px] sm:text-[11px] tracking-widest uppercase font-medium mt-1.5">Happy Users</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-[clamp(1.5rem,3.5vw,2.75rem)] font-bold text-white tracking-tight leading-none">50+</span>
-                <span className="text-white/50 text-[9.6px] sm:text-[11px] tracking-widest uppercase font-medium mt-1.5">Cities Covered</span>
-              </div>
-            </div>
+            
 
-          </div>
-
-          {/* RIGHT: Phone Mockup */}
-          <div className="flex justify-center items-start overflow-hidden h-[300px] sm:h-[300px] md:h-auto w-full md:w-auto relative scale-[0.7] sm:scale-[0.85] md:scale-100 origin-top z-0 md:z-1">
-            <div className="" />
-            <div className="relative z-1 ">
-              <div className="w-[240px] h-[480px] lg:w-[280px] lg:h-[560px] xl:w-[300px] xl:h-[600px] bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f3460] rounded-[36px] p-2 shadow-[0_0_0_1.5px_rgba(255,255,255,0.08),0_0_0_3px_rgba(37,99,235,0.15),0_20px_40px_rgba(0,0,0,0.5),inset_0_1px_3px_rgba(255,255,255,0.12)] relative">
-                <div className="absolute top-2 left-1/2 -translate-x-1/2 w-[110px] h-6 bg-black rounded-b-2xl z-10"></div>
-                <div className="absolute top-[13px] left-1/2 -translate-x-1/2 w-[50px] h-[5px] bg-[#222] rounded-[3px] z-11"></div>
-                <div className="absolute top-4 right-8 w-2.5 h-2.5 bg-[radial-gradient(circle,#1a1a2e_30%,#333_70%)] rounded-full z-11 shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]"></div>
-                <div className="w-full h-full bg-[#f8fafc] rounded-[28px] overflow-hidden relative">
-                  <img
-                    src="/app-screenshot.webp"
-                    alt="SettleKar Mobile App"
-                    className="w-full h-full object-cover block"
-                    fetchPriority="high"
-                    width={473}
-                    height={1024}
-                  />
-                </div>
-                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[120px] h-1 bg-white/25 rounded-[2px]"></div>
-              </div>
-            </div>
           </div>
 
         </div>
